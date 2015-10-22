@@ -23,6 +23,9 @@ public class PlanetBehavior : MonoBehaviour
         VectorLine planetBounds = new VectorLine("planetBounds", points, null, _boundThickness, LineType.Continuous);
         planetBounds.SetColor(_planetColor);
         planetBounds.MakeCircle(transform.position, collider.radius, _segments - 1, 0);
+
+        VectorManager.ObjectSetup(gameObject, planetBounds, Visibility.Static, Brightness.None);
+
         planetBounds.Draw3DAuto();
     }
 

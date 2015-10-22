@@ -21,7 +21,11 @@ public class PlayerController : MonoBehaviour
     public GameObject planet;
     public float gravityScale = 1f;
 
-    public Camera camera;
+    public Camera camera = null;
+
+    private ParticleSystem _thrustParticles;
+
+    private Vector3 _prevThrustDir = new Vector3();
 
     // Use this for initialization
     void Start()
@@ -32,6 +36,8 @@ public class PlayerController : MonoBehaviour
         Vector2 newPos = transform.position;
         newPos.y = planet.transform.position.y + planet.GetComponent<CircleCollider2D>().radius + 1;
         transform.position = newPos;
+
+        _thrustParticles = GameObject.Find("Player/Thrust").GetComponent<ParticleSystem>();
     }
 
     // Update is called once per frame
@@ -46,14 +52,13 @@ public class PlayerController : MonoBehaviour
 
         _rigidBody.AddForce(-up() * gravityScale);
 
-        setColor();
-
+        // Make the camera go around the planet.
+        camera.gameObject.transform.right = right();
     }
 
     void FixedUpdate()
     {
-        // Make the camera go around the planet.
-        camera.gameObject.transform.right = right();
+        setColor();
     }
 
     void thrust()
@@ -61,31 +66,61 @@ public class PlayerController : MonoBehaviour
         Vector2 upDir = new Vector2(0, 0);
         Vector2 rightDir = new Vector2(0, 0);
 
-        // Up - Down movement.
+        // Up thrust.
         if (Input.GetKey("w")) {
             upDir = up();
         }
 
+        // Down thrust.
         else if (Input.GetKey("s")) {
             upDir = -up();
         }
 
-        // Left - Right movement.
+        // Left thrust.
         if (Input.GetKey("a")) {
             rightDir = -right();
         }
 
+        // Right thrust.
         else if (Input.GetKey("d")) {
             rightDir = right();
         }
 
         else {
-
+            // Keep velocity going around the planet's tangent.
         }
 
-        Vector2 thrust = (upDir + rightDir).normalized * acceleration;
-        _rigidBody.AddForce(thrust);
+        Vector3 thrustDir = (upDir + rightDir).normalized;
+        Vector3 thrust = thrustDir * acceleration;
 
+        generateThrustParticles(thrust, thrustDir);
+        _rigidBody.AddForce(thrust);
+    }
+
+    void generateThrustParticles(Vector3 thrust, Vector3 thrustDir)
+    {
+        // Play the thrust particles.
+        if (thrust.sqrMagnitude > 0f) {
+            if (_thrustParticles.isStopped)
+                _thrustParticles.Play();
+
+            if (_prevThrustDir != thrustDir) {
+
+                // Set the direction of the particles opposite to the player's motion.
+                //_thrustParticles.gameObject.transform.LookAt(transform.position - thrustDir);
+
+                float rotationZ = Mathf.Atan2(thrustDir.y, thrustDir.x) * Mathf.Rad2Deg;
+                _thrustParticles.transform.rotation = Quaternion.Euler(0, 0, rotationZ);
+                _prevThrustDir = thrustDir;
+            }
+        }
+        else {
+
+            //_thrustParticles.gameObject.transform.LookAt(transform.position + Vector3.forward);
+
+            if (_thrustParticles.isPlaying)
+                _thrustParticles.Stop();
+        }
     }
 
     // Calculate the up vector relative to the planet's surface.
@@ -93,7 +128,6 @@ public class PlayerController : MonoBehaviour
     {
         //return new Vector2(0, 1);
         return (transform.position - planet.transform.position).normalized;
-
     }
 
     // Calculate the right vector relative to the planet's surface.
@@ -122,6 +156,6 @@ public class PlayerController : MonoBehaviour
 
     void rotateAroundPlanet()
     {
-      
+
     }
 }
