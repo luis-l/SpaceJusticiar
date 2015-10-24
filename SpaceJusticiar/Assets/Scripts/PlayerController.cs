@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 _prevThrustDir = new Vector3();
 
+    public enum FrameOfReference { GLOBAL, PLANET };
+    public FrameOfReference currentFrameOfRef = FrameOfReference.PLANET;
+
     // Use this for initialization
     void Start()
     {
@@ -44,15 +47,19 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
-        thrust();
+        Vector2 thrustForce = thrust();
 
-        if (_rigidBody.velocity.SqrMagnitude() > maxVelocity * maxVelocity) {
+        // Cap velocity if accelerating.
+        if (thrustForce.sqrMagnitude != 0 && _rigidBody.velocity.SqrMagnitude() > maxVelocity * maxVelocity) {
             _rigidBody.velocity = Vector3.ClampMagnitude(_rigidBody.velocity, maxVelocity);
         }
 
         _rigidBody.AddForce(-up() * gravityScale);
+    }
 
-        // Make the camera go around the planet.
+    void LateUpdate()
+    {
+        // Make the camera align to the planet's tangent.
         camera.gameObject.transform.right = right();
     }
 
@@ -61,7 +68,7 @@ public class PlayerController : MonoBehaviour
         setColor();
     }
 
-    void thrust()
+    Vector3 thrust()
     {
         Vector2 upDir = new Vector2(0, 0);
         Vector2 rightDir = new Vector2(0, 0);
@@ -86,8 +93,11 @@ public class PlayerController : MonoBehaviour
             rightDir = right();
         }
 
-        else {
-            // Keep velocity going around the planet's tangent.
+        if (Input.GetKeyDown(KeyCode.LeftShift)) {
+            acceleration *= 2;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift)) {
+            acceleration /= 2;
         }
 
         Vector3 thrustDir = (upDir + rightDir).normalized;
@@ -95,6 +105,8 @@ public class PlayerController : MonoBehaviour
 
         generateThrustParticles(thrust, thrustDir);
         _rigidBody.AddForce(thrust);
+
+        return thrust;
     }
 
     void generateThrustParticles(Vector3 thrust, Vector3 thrustDir)
@@ -126,8 +138,11 @@ public class PlayerController : MonoBehaviour
     // Calculate the up vector relative to the planet's surface.
     Vector2 up()
     {
-        //return new Vector2(0, 1);
-        return (transform.position - planet.transform.position).normalized;
+        if (currentFrameOfRef == FrameOfReference.PLANET)
+            return (transform.position - planet.transform.position).normalized;
+
+        // Global up
+        return Vector2.up;
     }
 
     // Calculate the right vector relative to the planet's surface.
@@ -152,10 +167,5 @@ public class PlayerController : MonoBehaviour
 
             _spriteRenderer.material.color = c;
         }
-    }
-
-    void rotateAroundPlanet()
-    {
-
     }
 }
