@@ -5,8 +5,8 @@ using Vectrosity;
 
 public class PlanetBehavior : MonoBehaviour
 {
-    private float _boundThickness = 2;
-    private int _segments = 100;
+    private float _boundThickness = 1;
+    private int _segments = 40;
 
     private Color _planetColor = new Color(255/255f, 180/255f, 140/255f);
 

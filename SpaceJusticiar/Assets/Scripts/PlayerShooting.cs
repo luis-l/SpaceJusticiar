@@ -9,8 +9,9 @@ public class PlayerShooting : MonoBehaviour
 
     private GameObject _projectile;
 
-    private float firingTimer = 0f;
-    private float firingRate = 0.1f;
+    private float _firingTimer = 0f;
+    private float _firingRate = 0.1f;
+    private float _firingSpeed = 30f;
 
     private AudioSource _laserShotSfx;
 
@@ -26,21 +27,23 @@ public class PlayerShooting : MonoBehaviour
 
     void Update()
     {
-        if (firingTimer > firingRate && Input.GetMouseButton(0)) {
-            GameObject proj = GameObject.Instantiate(_projectile);
+        if (_firingTimer >= _firingRate && Input.GetMouseButton(0)) {
+            GameObject proj = Pools.Instance.Fetch(_projectile.name);
+
+            proj.SetActive(true);
 
             Vector2 toMouse = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             toMouse.Normalize();
 
             proj.transform.position = transform.position;
-            proj.GetComponent<Rigidbody2D>().velocity = toMouse * 20f;
+            proj.GetComponent<Rigidbody2D>().velocity = toMouse * _firingSpeed;
 
-            firingTimer = 0f;
+            _firingTimer = 0f;
 
             _laserShotSfx.Play();
         }
-
-        firingTimer += Time.deltaTime;
+        if (_firingTimer < _firingRate)
+            _firingTimer += Time.deltaTime;
     }
 
     // Update is called once per frame

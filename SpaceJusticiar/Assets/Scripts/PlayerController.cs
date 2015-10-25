@@ -10,6 +10,11 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 1f;
     public float maxVelocity = 10f;
 
+    // How much to wait in seconds in order to boost.
+    private float _boostInterval = 2f;
+    private float _boostTimer = 0f;
+    private float _boostScalar = 40f;
+
     private float _colorTimer = 0;
 
     // How often to change the player color in seconds.
@@ -51,7 +56,7 @@ public class PlayerController : MonoBehaviour
 
         // Cap velocity if accelerating.
         if (thrustForce.sqrMagnitude != 0 && _rigidBody.velocity.SqrMagnitude() > maxVelocity * maxVelocity) {
-            _rigidBody.velocity = Vector3.ClampMagnitude(_rigidBody.velocity, maxVelocity);
+            _rigidBody.velocity = Vector2.ClampMagnitude(_rigidBody.velocity, maxVelocity);
         }
 
         _rigidBody.AddForce(-up() * gravityScale);
@@ -66,6 +71,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         setColor();
+        //camera.gameObject.transform.right = right();
     }
 
     Vector3 thrust()
@@ -93,20 +99,32 @@ public class PlayerController : MonoBehaviour
             rightDir = right();
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift)) {
-            acceleration *= 2;
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftShift)) {
-            acceleration /= 2;
-        }
+        float accel = boost();
 
-        Vector3 thrustDir = (upDir + rightDir).normalized;
-        Vector3 thrust = thrustDir * acceleration;
+        Vector2 thrustDir = (upDir + rightDir).normalized;
+        Vector2 thrust = thrustDir * accel;
 
         generateThrustParticles(thrust, thrustDir);
         _rigidBody.AddForce(thrust);
 
         return thrust;
+    }
+
+    // Boost the acceleration if ready.
+    private float boost()
+    {
+        // Boost if ready.
+        if (_boostTimer >= _boostInterval && Input.GetKeyDown(KeyCode.LeftShift)) {
+            _boostTimer = 0f;
+            return acceleration * _boostScalar;
+        }
+
+        // Tick boost timer.
+        if (_boostTimer < _boostInterval) {
+            _boostTimer += Time.deltaTime;
+        }
+
+        return acceleration;
     }
 
     void generateThrustParticles(Vector3 thrust, Vector3 thrustDir)
