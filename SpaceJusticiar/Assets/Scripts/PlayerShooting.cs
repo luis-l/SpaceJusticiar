@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerShooting : MonoBehaviour
@@ -10,10 +11,21 @@ public class PlayerShooting : MonoBehaviour
     private GameObject _projectile;
 
     private float _firingTimer = 0f;
-    private float _firingRate = 0.1f;
-    private float _firingSpeed = 30f;
+    private float _firingRate = 0.15f;
+    private float _firingSpeed = 100f;
+
+    // The bounds of the firing rate.
+    private float _lowestFiringDelay = 0.015f;
+    private float _highestFiringDelay = 0.3f;
+    private float _firingDelayChange = 0.05f;
+
+    private float _energyConsumption = 0.04f;
 
     private AudioSource _laserShotSfx;
+
+    public PlayerController playerController = null;
+
+    public Text firingRateText = null;
 
     // Use this for initialization
     void Start()
@@ -23,39 +35,75 @@ public class PlayerShooting : MonoBehaviour
 
         _projectile = Resources.Load("Prefabs/EnergyProjectile") as GameObject;
         _laserShotSfx = GetComponent<AudioSource>();
+
+        firingRateText.text = _firingRate.ToString();
     }
 
     void Update()
     {
-        if (_firingTimer >= _firingRate && Input.GetMouseButton(0)) {
+        if ( playerController.Energy > 0.01 && _firingTimer >= _firingRate && Input.GetMouseButton(0)) {
             GameObject proj = Pools.Instance.Fetch(_projectile.name);
 
             proj.SetActive(true);
 
-            Vector2 toMouse = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+            Vector2 toMouse = new Vector2();
+            if (Camera.main.orthographic) {
+                toMouse = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+            }
+            else {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit)) {
+                    
+                }
+            }
             toMouse.Normalize();
 
             proj.transform.position = transform.position;
+            proj.transform.rotation = transform.rotation;
             proj.GetComponent<Rigidbody2D>().velocity = toMouse * _firingSpeed;
+            proj.GetComponent<ProjectileBehavior>().targetTag = "Enemy";
 
             _firingTimer = 0f;
 
             _laserShotSfx.Play();
+
+            playerController.Energy -= _energyConsumption;
+            if (playerController.Energy < 0) {
+                playerController.Energy = 0f;
+            }
         }
         if (_firingTimer < _firingRate)
             _firingTimer += Time.deltaTime;
+
+
+        // Manage firing rate
+        float wheelDelta = Input.GetAxis("Mouse ScrollWheel");
+        if (wheelDelta > 0) {
+            _firingRate += _firingDelayChange;
+        }
+        else if (wheelDelta < 0) {
+            _firingRate -= _firingDelayChange;
+        }
+
+        // Cap firing rate.
+        if (_firingRate > _highestFiringDelay)
+            _firingRate = _highestFiringDelay;
+        else if (_firingRate < _lowestFiringDelay)
+            _firingRate = _lowestFiringDelay;
+
+        // Update firing rate text.
+        if (wheelDelta != 0) {
+            firingRateText.text = _firingRate.ToString("#.##");
+        }
     }
 
-    // Update is called once per frame
     void LateUpdate()
     {
         if (prevPos != transform.position || prevMousePos != Input.mousePosition) {
 
             Vector3 toMouse = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             toMouse.Normalize();
-
-            toMouse.x = Mathf.Abs(toMouse.x) * toMouse.x;
-            toMouse.y = Mathf.Abs(toMouse.y) * toMouse.y;
 
             float rotationZ = Mathf.Atan2(toMouse.y, toMouse.x) * Mathf.Rad2Deg;
 

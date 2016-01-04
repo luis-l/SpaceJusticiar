@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class ProjectileBehavior : MonoBehaviour
@@ -7,10 +8,17 @@ public class ProjectileBehavior : MonoBehaviour
     public float life = 2f;
     private float lifeTimer;
 
+    // What the projectile can hit.
+    public string targetTag = "None";
+
+    public Text scoreValueText = null;
+    private static int _playerScore = 0;
+
     // Use this for initialization
     void Start()
     {
         lifeTimer = life;
+        scoreValueText = GameObject.Find("Canvas/Score/ScoreValue").GetComponent<Text>();
     }
 
     // Update is called once per frame
@@ -32,7 +40,12 @@ public class ProjectileBehavior : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Collidable") {
+        if (other.tag == "Collidable" || other.tag == targetTag){
+
+            if (other.tag == "Enemy") {
+                _playerScore += 100;
+                scoreValueText.text = _playerScore.ToString(); 
+            }
 
             GameObject explosion = Pools.Instance.Fetch("EnergyExplosion");
             explosion.transform.position = transform.position;
