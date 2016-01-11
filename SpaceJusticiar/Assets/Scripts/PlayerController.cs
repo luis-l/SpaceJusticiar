@@ -40,27 +40,29 @@ public class PlayerController : MonoBehaviour
     private float _health = 1f;
     private float _healthRegenRate = 0.04f;
 
-    private float _energy = 1f;
-    private float _energySlowTimeDrainRate = 0.5f;
-    private float _energyRegenRate = 0.12f;
-    private bool _bInSlowMotion = false;
+    private EnergyCell _energyCell;
 
-    private bool _bEnergyEmpty = false;
-    private float _startEnergyRegenTimer = 0;
-    private float _energyRegenWait = 4f;
+    private float _energySlowTimeDrainRate = 0.5f;
+    private bool _bInSlowMotion = false;
 
     public Text healthText = null;
     public Text energyText = null;
 
     public float Energy
     {
-        get { return _energy; }
-        set { _energy = value; }
+        get { return _energyCell.Charge; }
+    }
+
+    public EnergyCell EnergyCell
+    {
+        get { return _energyCell; }
     }
 
     // Use this for initialization
     void Start()
     {
+        _energyCell = new EnergyCell();
+
         _rigidBody = gameObject.GetComponent<Rigidbody2D>();
         _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
 
@@ -86,7 +88,7 @@ public class PlayerController : MonoBehaviour
 
         _rigidBody.AddForce(-up() * gravityScale);
 
-        if (Input.GetKeyDown(KeyCode.Space) && _energy > 0) {
+        if (Input.GetKeyDown(KeyCode.Space) && Energy > 0) {
             Time.timeScale = 0.5f;
             _bInSlowMotion = true;
         }
@@ -95,42 +97,23 @@ public class PlayerController : MonoBehaviour
             _bInSlowMotion = false;
         }
 
-        if (_bInSlowMotion && _energy > 0) {
-            _energy -= _energySlowTimeDrainRate * Time.deltaTime;
+        if (_bInSlowMotion && Energy > 0) {
+            _energyCell.UseEnergy(_energySlowTimeDrainRate * Time.deltaTime);
         }
 
         // Set to normal time scale if we ran out of energy.
         // Set other values when energy runs out too.
-        if (_energy <= 0) {
-            _energy = 0;
+        if (Energy == 0) {
             _bInSlowMotion = false;
             Time.timeScale = 1f;
-            
-            if(!_bEnergyEmpty)
-                _bEnergyEmpty = true;
-            
             energyText.text = "0";
         }
 
-        // Energy regen.
-        if (_energy < 1) {
-            if (!_bEnergyEmpty) {
-                _energy += _energyRegenRate * Time.deltaTime;
-                if (_energy > 1) {
-                    _energy = 1;
-                }
+        _energyCell.Update();
 
-                int energyPercent = (int)(_energy * 100);
-                energyText.text = energyPercent.ToString();
-            }
-            else {
-                _startEnergyRegenTimer += Time.deltaTime;
-                if (_startEnergyRegenTimer >= _energyRegenWait) {
-                    _startEnergyRegenTimer = 0f;
-                    _bEnergyEmpty = false;
-                    _energy = 0.1f;
-                }
-            }
+        // Energy regen.
+        if (Energy < EnergyCell.MAX_ENERGY) {
+            energyText.text = _energyCell.GetPercentage().ToString();
         }
 
         // Health regen.

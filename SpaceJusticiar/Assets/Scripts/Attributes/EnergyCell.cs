@@ -2,12 +2,32 @@
 
 public class EnergyCell
 {
+    private float _currentCharge;
+    private float _regenRate;
 
-    private float _currentCharge = 1f;
     public const float MAX_ENERGY = 1f;
     public const float MIN_ENERGY = 0f;
 
-    private float _regenRate = 0.1f;
+    /// <summary>
+    /// This timer is to provide a wait time between successive (quick) usage of the cell,
+    /// before being able to recharge again.
+    /// </summary>
+    private CountUpTimer _intermediateUsageTimer;
+
+    /// <summary>
+    /// If the energy cell is depleted of energy then there is a wait time
+    /// before the cell starts recharging again.
+    /// </summary>
+    private CountUpTimer _emptiedCellTimer;
+
+    public EnergyCell(float regenRate = 0.1f, float currentCharge = 1f)
+    {
+        _regenRate = regenRate;
+        Charge = currentCharge;
+
+        _intermediateUsageTimer = new CountUpTimer(0.5f);
+        _emptiedCellTimer = new CountUpTimer(4f);
+    }
 
     public float Charge
     {
@@ -36,8 +56,8 @@ public class EnergyCell
 
     public void Update()
     {
-        if (_currentCharge < MAX_ENERGY) {
-            _currentCharge += _regenRate;
+        if (_currentCharge < MAX_ENERGY && !_intermediateUsageTimer.IsRunning() && !_emptiedCellTimer.IsRunning()) {
+            Charge += _regenRate * Time.deltaTime;
         }
     }
 
@@ -49,10 +69,40 @@ public class EnergyCell
     /// <returns></returns>
     public bool UseEnergy(float amountRequested)
     {
-        if (_currentCharge - amountRequested >= MIN_ENERGY) {
-            _currentCharge -= amountRequested;
-            return true;
+        Charge -= amountRequested;
+
+        // Cell is empty/overused
+        if (Charge == 0) {
+            Charge = 0f;
+            if (!_emptiedCellTimer.IsRunning()) {
+                _emptiedCellTimer.Start();
+                _intermediateUsageTimer.Stop();
+            }
+            return false;
         }
-        return false;
+
+        _intermediateUsageTimer.Start();
+        return true;
+    }
+
+    /// <summary>
+    /// Sets the time interval needed to wait between successive cell usage before recharge.
+    /// </summary>
+    public void setIntermediateWaitTime(float waitTime)
+    {
+        _intermediateUsageTimer.SetTargetTime(waitTime);
+    }
+
+    /// <summary>
+    /// Sets the time interval needed to wait before recharging an emptied cell.
+    /// </summary>
+    public void setEmptiedCellWaitTime(float waitTime)
+    {
+        _emptiedCellTimer.SetTargetTime(waitTime);
+    }
+
+    public bool HasEnergy()
+    {
+        return Charge > 0f;
     }
 }

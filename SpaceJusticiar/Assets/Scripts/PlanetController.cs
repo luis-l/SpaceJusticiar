@@ -51,7 +51,7 @@ public class PlanetController : MonoBehaviour {
         }
         
         if (damage != 0) {
-            int integrityPercent = (int)(_planetIntegrity * 100);
+            int integrityPercent = Mathf.CeilToInt(_planetIntegrity * 100);
             planetIntegrityText.text = integrityPercent.ToString();
         }
     }

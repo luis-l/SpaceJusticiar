@@ -19,7 +19,7 @@ public class PlayerShooting : MonoBehaviour
     private float _highestFiringDelay = 0.3f;
     private float _firingDelayChange = 0.05f;
 
-    private float _energyConsumption = 0.04f;
+    private float _energyConsumption = 0.1f;
 
     private AudioSource _laserShotSfx;
 
@@ -41,10 +41,10 @@ public class PlayerShooting : MonoBehaviour
 
     void Update()
     {
-        if ( playerController.Energy > 0.01 && _firingTimer >= _firingRate && Input.GetMouseButton(0)) {
-            GameObject proj = Pools.Instance.Fetch(_projectile.name);
+        if (playerController.EnergyCell.HasEnergy() && _firingTimer >= _firingRate && Input.GetMouseButton(0)) {
+            playerController.EnergyCell.UseEnergy(_energyConsumption);
 
-            proj.SetActive(true);
+            GameObject proj = Pools.Instance.Fetch(_projectile.name);
 
             Vector2 toMouse = new Vector2();
             if (Camera.main.orthographic) {
@@ -68,10 +68,6 @@ public class PlayerShooting : MonoBehaviour
 
             _laserShotSfx.Play();
 
-            playerController.Energy -= _energyConsumption;
-            if (playerController.Energy < 0) {
-                playerController.Energy = 0f;
-            }
         }
         if (_firingTimer < _firingRate)
             _firingTimer += Time.deltaTime;
