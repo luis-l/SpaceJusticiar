@@ -10,7 +10,7 @@ public class SystemTimer : MonoBehaviour
     private static List<CountUpTimer> _timers;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         _timers = new List<CountUpTimer>();
     }

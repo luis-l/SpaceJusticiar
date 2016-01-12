@@ -14,6 +14,8 @@ public class ProjectileBehavior : MonoBehaviour
     public Text scoreValueText = null;
     private static int _playerScore = 0;
 
+    public static float energyConsumption = 0.03f;
+
     // Use this for initialization
     void Start()
     {

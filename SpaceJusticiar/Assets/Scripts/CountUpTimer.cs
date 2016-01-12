@@ -20,6 +20,8 @@ public class CountUpTimer
 
     private bool _running = false;
 
+    private bool _done = false;
+
     /// <summary>
     /// Creates a count up timer.
     /// Target time is the goal amount of time to reach.
@@ -27,13 +29,14 @@ public class CountUpTimer
     /// </summary>
     /// <param name="targetTime"></param>
     /// <param name="currentTick"></param>
-    public CountUpTimer(float targetTime, float incrementScale = 1f, float currentTick = 0f)
+    public CountUpTimer(float targetTime, float incrementScale = 1f, float currentTick = 0f, bool autoUpdate = true)
     {
         _targetTime = targetTime;
         _incrementScale = incrementScale;
         _counter = currentTick;
 
-        SystemTimer.RegisterTimer(this);
+        if (autoUpdate)
+            SystemTimer.RegisterTimer(this);
     }
 
     /// <summary>
@@ -43,6 +46,7 @@ public class CountUpTimer
     {
         _running = true;
         _counter = 0f;
+        _done = false;
     }
 
     /// <summary>
@@ -52,6 +56,7 @@ public class CountUpTimer
     {
         _running = false;
         _counter = 0f;
+        _done = false;
     }
 
     /// <summary>
@@ -77,13 +82,19 @@ public class CountUpTimer
     /// <returns></returns>
     public void CountUpTick()
     {
+        if (!_running) return;
+
         if (_counter < _targetTime) {
 
-            if (_running) {
-                _counter += _incrementScale * Time.deltaTime;
-            }
+            if (_done)
+                _done = false;
+
+            _counter += _incrementScale * Time.deltaTime;
         }
+
         else {
+
+            _done = true;
 
             if (autoReset) {
                 _counter = 0f;
@@ -102,9 +113,10 @@ public class CountUpTimer
     }
 
 
-    public void SetTargetTime(float targetTime)
+    public float TargetTime
     {
-        _targetTime = targetTime;
+        get { return _targetTime; }
+        set { _targetTime = value; }
     }
 
     public void Reset()
@@ -117,9 +129,9 @@ public class CountUpTimer
         return _running;
     }
 
-    public bool Done()
+    public bool IsDone()
     {
-        return _counter >= _targetTime;
+        return _done;
     }
 
 }

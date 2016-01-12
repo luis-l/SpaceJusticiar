@@ -20,13 +20,13 @@ public class EnergyCell
     /// </summary>
     private CountUpTimer _emptiedCellTimer;
 
-    public EnergyCell(float regenRate = 0.1f, float currentCharge = 1f)
+    public EnergyCell(float regenRate = 0.15f, float currentCharge = 1f)
     {
         _regenRate = regenRate;
         Charge = currentCharge;
 
-        _intermediateUsageTimer = new CountUpTimer(0.5f);
-        _emptiedCellTimer = new CountUpTimer(4f);
+        _intermediateUsageTimer = new CountUpTimer(1f);
+        _emptiedCellTimer = new CountUpTimer(5f);
     }
 
     public float Charge
@@ -69,16 +69,15 @@ public class EnergyCell
     /// <returns></returns>
     public bool UseEnergy(float amountRequested)
     {
+        if (!HasCharge())
+            return false;
+
         Charge -= amountRequested;
 
         // Cell is empty/overused
         if (Charge == 0) {
-            Charge = 0f;
-            if (!_emptiedCellTimer.IsRunning()) {
-                _emptiedCellTimer.Start();
-                _intermediateUsageTimer.Stop();
-            }
-            return false;
+            _emptiedCellTimer.Start();
+            _intermediateUsageTimer.Stop();
         }
 
         _intermediateUsageTimer.Start();
@@ -90,7 +89,7 @@ public class EnergyCell
     /// </summary>
     public void setIntermediateWaitTime(float waitTime)
     {
-        _intermediateUsageTimer.SetTargetTime(waitTime);
+        _intermediateUsageTimer.TargetTime = waitTime;
     }
 
     /// <summary>
@@ -98,10 +97,10 @@ public class EnergyCell
     /// </summary>
     public void setEmptiedCellWaitTime(float waitTime)
     {
-        _emptiedCellTimer.SetTargetTime(waitTime);
+        _emptiedCellTimer.TargetTime = waitTime;
     }
 
-    public bool HasEnergy()
+    public bool HasCharge()
     {
         return Charge > 0f;
     }
