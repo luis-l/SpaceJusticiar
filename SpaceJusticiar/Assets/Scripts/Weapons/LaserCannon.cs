@@ -21,33 +21,25 @@ public class LaserCannon : MonoBehaviour
             _nozzleTrans = transform;
 
         _firingTimer = new CountUpTimer(0.1f);
-        _firingTimer.autoReset = true;
     }
 
     /// <summary>
-    /// Fires a projectile at the target position, and consumes
+    /// Fires a projectiles at the target position, and consumes
     /// energy from the cell.
     /// </summary>
     /// <param name="targetPos"></param>
     public void Fire(Vector2 targetPos, string targetTag, EnergyCell energyCell)
     {
-        if (!_firingTimer.IsRunning()) {
+        if (!_firingTimer.HasStarted()) {
             _firingTimer.Start();
         }
 
         if (_firingTimer.IsDone() && energyCell.UseEnergy(ProjectileBehavior.energyConsumption)) {
+            FireProjectile(targetPos, targetTag, energyCell);
 
-            GameObject proj = Pools.Instance.Fetch(projectileType.name);
-
-            Vector2 toTarget = targetPos - (Vector2)_nozzleTrans.position;
-            toTarget.Normalize();
-
-            proj.transform.position = _nozzleTrans.position;
-            proj.transform.rotation = _nozzleTrans.rotation;
-            proj.GetComponent<Rigidbody2D>().velocity = toTarget * firingSpeed;
-            proj.GetComponent<ProjectileBehavior>().targetTag = targetTag;
-
-            firingSfx.Play();
+            // Allow for 'single fire' mode by doing a forced reset of the timer.
+            //_firingTimer.Stop();
+            _firingTimer.Reset();
         }
     }
 
@@ -65,5 +57,20 @@ public class LaserCannon : MonoBehaviour
             else
                 _firingTimer.TargetTime = value;
         }
+    }
+
+    private void FireProjectile(Vector2 targetPos, string targetTag, EnergyCell energyCell)
+    {
+        GameObject proj = Pools.Instance.Fetch(projectileType.name);
+
+        Vector2 toTarget = targetPos - (Vector2)_nozzleTrans.position;
+        toTarget.Normalize();
+
+        proj.transform.position = _nozzleTrans.position;
+        proj.transform.rotation = _nozzleTrans.rotation;
+        proj.GetComponent<Rigidbody2D>().velocity = toTarget * firingSpeed;
+        proj.GetComponent<ProjectileBehavior>().targetTag = targetTag;
+
+        firingSfx.Play();
     }
 }

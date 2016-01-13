@@ -22,6 +22,8 @@ public class CountUpTimer
 
     private bool _done = false;
 
+    private bool _started = false;
+
     /// <summary>
     /// Creates a count up timer.
     /// Target time is the goal amount of time to reach.
@@ -29,14 +31,13 @@ public class CountUpTimer
     /// </summary>
     /// <param name="targetTime"></param>
     /// <param name="currentTick"></param>
-    public CountUpTimer(float targetTime, float incrementScale = 1f, float currentTick = 0f, bool autoUpdate = true)
+    public CountUpTimer(float targetTime, float incrementScale = 1f, float currentTick = 0f)
     {
         _targetTime = targetTime;
         _incrementScale = incrementScale;
         _counter = currentTick;
 
-        if (autoUpdate)
-            SystemTimer.RegisterTimer(this);
+        SystemTimer.RegisterTimer(this);
     }
 
     /// <summary>
@@ -47,6 +48,8 @@ public class CountUpTimer
         _running = true;
         _counter = 0f;
         _done = false;
+
+        _started = true;
     }
 
     /// <summary>
@@ -57,6 +60,7 @@ public class CountUpTimer
         _running = false;
         _counter = 0f;
         _done = false;
+        _started = false;
     }
 
     /// <summary>
@@ -82,12 +86,11 @@ public class CountUpTimer
     /// <returns></returns>
     public void CountUpTick()
     {
-        if (!_running) return;
-
         if (_counter < _targetTime) {
 
-            if (_done)
+            if (_done) {
                 _done = false;
+            }
 
             _counter += _incrementScale * Time.deltaTime;
         }
@@ -122,6 +125,8 @@ public class CountUpTimer
     public void Reset()
     {
         _counter = 0f;
+        _done = false;
+        _running = true;
     }
 
     public bool IsRunning()
@@ -132,6 +137,11 @@ public class CountUpTimer
     public bool IsDone()
     {
         return _done;
+    }
+
+    public bool HasStarted()
+    {
+        return _started;
     }
 
 }

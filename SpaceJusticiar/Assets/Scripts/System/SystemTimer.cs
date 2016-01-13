@@ -26,7 +26,7 @@ public class SystemTimer : MonoBehaviour
             if (timer == null) {
                 _timers.Remove(timer);
             }
-            else {
+            else if (timer.IsRunning()) {
                 _timers[i].CountUpTick();
             }
         }
