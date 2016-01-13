@@ -48,7 +48,6 @@ public class CountUpTimer
         _running = true;
         _counter = 0f;
         _done = false;
-
         _started = true;
     }
 
@@ -122,9 +121,9 @@ public class CountUpTimer
         set { _targetTime = value; }
     }
 
-    public void Reset()
+    public void Restart(float startTime = 0f)
     {
-        _counter = 0f;
+        _counter = startTime;
         _done = false;
         _running = true;
     }

@@ -36,12 +36,14 @@ public class EnergyCell
         set
         {
             // Cap energy.
-            _currentCharge = value;
-            if (_currentCharge > MAX_ENERGY)
+            if (value > MAX_ENERGY)
                 _currentCharge = MAX_ENERGY;
 
-            else if (_currentCharge < MIN_ENERGY)
+            else if (value < MIN_ENERGY)
                 _currentCharge = MIN_ENERGY;
+
+            else
+                _currentCharge = value;
         }
     }
 

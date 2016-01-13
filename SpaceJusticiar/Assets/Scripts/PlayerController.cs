@@ -37,10 +37,9 @@ public class PlayerController : MonoBehaviour
     public enum FrameOfReference { GLOBAL, PLANET };
     public FrameOfReference currentFrameOfRef = FrameOfReference.PLANET;
 
-    private float _health = 1f;
-    private float _healthRegenRate = 0.04f;
+    private HealthComponent _health = null;
 
-    private EnergyCell _energyCell;
+    private EnergyCell _energyCell = null;
 
     private float _energySlowTimeDrainRate = 0.5f;
     private bool _bInSlowMotion = false;
@@ -53,6 +52,11 @@ public class PlayerController : MonoBehaviour
         get { return _energyCell.Charge; }
     }
 
+    public float Health
+    {
+        get { return _health.GetHealth(); }
+    }
+
     public EnergyCell EnergyCell
     {
         get { return _energyCell; }
@@ -62,6 +66,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _energyCell = new EnergyCell();
+        _health = new HealthComponent();
 
         _rigidBody = gameObject.GetComponent<Rigidbody2D>();
         _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
@@ -110,6 +115,7 @@ public class PlayerController : MonoBehaviour
         }
 
         _energyCell.Update();
+        _health.Update();
 
         // Energy regen.
         if (Energy < EnergyCell.MAX_ENERGY) {
@@ -117,18 +123,8 @@ public class PlayerController : MonoBehaviour
         }
 
         // Health regen.
-        if (_health < 1) {
-            _health += _healthRegenRate * Time.deltaTime;
-            if (_health > 1) {
-                _health = 1;
-            }
-
-            int healthPercent = (int)(_health * 100);
-            healthText.text = healthPercent.ToString();
-        }
-
-        if (_health < 0) {
-            _health = 0;
+        if (Health < HealthComponent.MAX_HEALTH) {
+            healthText.text = _health.GetPercentage().ToString();
         }
 
     }
@@ -275,9 +271,9 @@ public class PlayerController : MonoBehaviour
             // Projectile is meant to hit enemy
             if (other.gameObject.GetComponent<ProjectileBehavior>().targetTag == gameObject.tag) {
 
-                _health -= .2f;
+                _health.DealDamage(0.2f);
 
-                if (_health <= 0)
+                if (Health == 0)
                     Destroy(gameObject, 0.1f);
             }
         }
