@@ -20,7 +20,7 @@ public class PlayerShooting : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _mainGun.firingSpeed = 100f;
+        _mainGun.firingForce = 6000f;
         _mainGun.FiringDelay = 0.15f;
 
         prevPos = transform.position;
