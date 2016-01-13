@@ -106,4 +106,9 @@ public class EnergyCell
     {
         return Charge > 0f;
     }
+
+    public bool IsEmptied()
+    {
+        return _emptiedCellTimer.IsRunning();
+    }
 }

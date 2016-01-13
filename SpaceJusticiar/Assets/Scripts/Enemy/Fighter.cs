@@ -17,7 +17,9 @@ public class Fighter : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _energyCell = new EnergyCell(0.5f);
+        _energyCell = new EnergyCell(100f);
+        _energyCell.setEmptiedCellWaitTime(1f);
+
         _health = new HealthComponent();
 
         mainGun.FiringDelay = 0.2f;
@@ -36,7 +38,6 @@ public class Fighter : MonoBehaviour
                 Vector2 toTarget = distToTarget.normalized;
                 float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
                 mainGun.transform.rotation = Quaternion.Euler(0, 0, rotZ);
-
                 mainGun.Fire(target.position, "Player", _energyCell);
             }
         }

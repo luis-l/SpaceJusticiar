@@ -39,7 +39,6 @@ public class LaserCannon : MonoBehaviour
             FireProjectile(targetPos, targetTag, energyCell);
 
             // Allow for 'single fire' mode by doing a forced reset of the timer.
-            //_firingTimer.Stop();
             _firingTimer.Restart();
         }
     }
