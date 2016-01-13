@@ -7,13 +7,7 @@ using System.Collections.Generic;
 public class SystemTimer : MonoBehaviour
 {
 
-    private static List<CountUpTimer> _timers;
-
-    // Use this for initialization
-    void Awake()
-    {
-        _timers = new List<CountUpTimer>();
-    }
+    private static List<CountUpTimer> _timers = new List<CountUpTimer>();
 
     // Update is called once per frame
     void Update()

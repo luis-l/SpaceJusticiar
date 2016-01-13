@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class LaserCannon : MonoBehaviour
 {
@@ -17,7 +16,7 @@ public class LaserCannon : MonoBehaviour
     public GameObject projectileType = null;
     public AudioSource firingSfx = null;
 
-    void Start()
+    void Awake()
     {
         if (_nozzleTrans == null)
             _nozzleTrans = transform;
