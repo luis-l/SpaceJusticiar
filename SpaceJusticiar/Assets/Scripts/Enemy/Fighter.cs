@@ -45,7 +45,8 @@ public class Fighter : MonoBehaviour
                     float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
                     proj.transform.rotation = Quaternion.Euler(0, 0, rotZ);
 
-                    proj.GetComponent<Rigidbody2D>().velocity = toTarget * _firingSpeed;
+                    //proj.GetComponent<Rigidbody2D>().velocity = toTarget * _firingSpeed;
+                    proj.GetComponent<Rigidbody2D>().AddForce(toTarget * 5000);
                     proj.GetComponent<ProjectileBehavior>().targetTag = "Player";
                     _firingTimer = 0f;
                     _laserShotSfx.Play();

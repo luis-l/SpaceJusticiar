@@ -6,12 +6,14 @@ public class LaserCannon : MonoBehaviour
     private float _lowestFiringDelay = 0.015f;
     private float _highestFiringDelay = 0.3f;
 
-    public float firingSpeed = 60f;
+    public float firingForce = 5000f;
 
     // Timer to limit the firing rate.
     private CountUpTimer _firingTimer = null;
 
+    [SerializeField]
     private Transform _nozzleTrans = null;
+
     public GameObject projectileType = null;
     public AudioSource firingSfx = null;
 
@@ -68,7 +70,7 @@ public class LaserCannon : MonoBehaviour
 
         proj.transform.position = _nozzleTrans.position;
         proj.transform.rotation = _nozzleTrans.rotation;
-        proj.GetComponent<Rigidbody2D>().velocity = toTarget * firingSpeed;
+        proj.GetComponent<Rigidbody2D>().AddForce(toTarget * firingForce);
         proj.GetComponent<ProjectileBehavior>().targetTag = targetTag;
 
         firingSfx.Play();

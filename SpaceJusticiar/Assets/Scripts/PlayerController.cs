@@ -38,7 +38,6 @@ public class PlayerController : MonoBehaviour
     public FrameOfReference currentFrameOfRef = FrameOfReference.PLANET;
 
     private HealthComponent _health = null;
-
     private EnergyCell _energyCell = null;
 
     private float _energySlowTimeDrainRate = 0.5f;
