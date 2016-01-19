@@ -12,8 +12,7 @@ public class PlayerController : MonoBehaviour
     public float maxVelocity = 10f;
 
     // How much to wait in seconds in order to boost.
-    private float _boostInterval = 2f;
-    private float _boostTimer = 0f;
+    private CountUpTimer _boostTimer = null;
     private float _boostScalar = 40f;
 
     private float _colorTimer = 0;
@@ -40,7 +39,7 @@ public class PlayerController : MonoBehaviour
     private HealthComponent _health = null;
     private EnergyCell _energyCell = null;
 
-    private float _energySlowTimeDrainRate = 0.5f;
+    private float _energySlowTimeDrainRate = 0.4f;
     private bool _bInSlowMotion = false;
 
     public Text healthText = null;
@@ -77,6 +76,8 @@ public class PlayerController : MonoBehaviour
         _thrustParticles = GameObject.Find("Player/Thrust").GetComponent<ParticleSystem>();
 
         _prevPlayerPos = transform.position;
+
+        _boostTimer = new CountUpTimer(2f);
     }
 
     // Update is called once per frame
@@ -190,14 +191,9 @@ public class PlayerController : MonoBehaviour
     private float boost()
     {
         // Boost if ready.
-        if (_boostTimer >= _boostInterval && Input.GetKeyDown(KeyCode.LeftShift)) {
-            _boostTimer = 0f;
+        if (!_boostTimer.IsRunning() && Input.GetKeyDown(KeyCode.LeftShift)) {
+            _boostTimer.Start();
             return acceleration * _boostScalar;
-        }
-
-        // Tick boost timer.
-        if (_boostTimer < _boostInterval) {
-            _boostTimer += Time.deltaTime;
         }
 
         return acceleration;
