@@ -120,6 +120,9 @@ public class Fighter : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.name == planet.name) {
+            Rigidbody2D rigid = GetComponent<Rigidbody2D>();
+            rigid.velocity.Set(0, 0);
+
             GetComponent<SpriteRenderer>().sprite = secondFormSprite;
             mainGun.projectileType = secondFormProjectileType;
             mainGun.FiringDelay = 0.05f;
