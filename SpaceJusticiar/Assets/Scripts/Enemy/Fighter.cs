@@ -6,6 +6,8 @@ public class Fighter : MonoBehaviour
     float _rangeSq = 20f * 20f;
 
     public Transform targetTrans;
+    public Rigidbody2D targetRigid = null;
+    
     public GameObject planet = null;
     public EnemySpawner enemySpawner = null;
     public LaserCannon mainGun = null;
@@ -15,6 +17,10 @@ public class Fighter : MonoBehaviour
 
     private bool _bTargetInRange = false;
     private bool _bTargetInSight = false;
+
+    public Sprite secondFormSprite = null;
+    public GameObject secondFormProjectileType = null;
+    private bool _bInSecondForm = false;
 
     // Use this for initialization
     void Start()
@@ -28,6 +34,8 @@ public class Fighter : MonoBehaviour
         mainGun.firingForce = 5000f;
 
         planet = GameObject.Find("Planet");
+
+        
     }
 
     // Update is called once per frame
@@ -46,7 +54,23 @@ public class Fighter : MonoBehaviour
                 if (_bTargetInSight) {
                     float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
                     mainGun.transform.rotation = Quaternion.Euler(0, 0, rotZ);
-                    mainGun.Fire(targetTrans.position, "Player", _energyCell);
+
+                    Vector2 fireAtPos;
+
+                    // Make it fire around the target (random positions close to target) - simulate machine gun spread.
+                    if (_bInSecondForm) {
+
+                        // Make it aim at the front of the player. Temporary approach, will use something better to lead target.
+                        Vector2 targetForward = targetRigid.velocity.normalized;
+
+                        Vector2 spawnDir = (new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f))).normalized;
+                        fireAtPos = (Vector2)targetTrans.position + 4 * targetForward + spawnDir * Random.Range(0.3f, 1.5f);
+                    }
+                    else {
+                        fireAtPos = targetTrans.position;
+                    }
+
+                    mainGun.Fire(fireAtPos, "Player", _energyCell);
                 }
             }
 
@@ -91,9 +115,19 @@ public class Fighter : MonoBehaviour
                 }
             }
         }
+    }
 
-        else if (other.gameObject.name == planet.name) {
-            GetComponent<SpriteRenderer>().material.color = Color.blue;
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.name == planet.name) {
+            GetComponent<SpriteRenderer>().sprite = secondFormSprite;
+            mainGun.projectileType = secondFormProjectileType;
+            mainGun.FiringDelay = 0.05f;
+            mainGun.firingForce = 2000;
+            AudioSource gunSound = GetComponent<AudioSource>();
+            gunSound.pitch = 1.4f;
+            gunSound.volume = 0.2f;
+            _bInSecondForm = true;
         }
     }
 }

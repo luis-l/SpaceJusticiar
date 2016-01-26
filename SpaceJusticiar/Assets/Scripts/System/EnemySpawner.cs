@@ -66,9 +66,11 @@ public class EnemySpawner : MonoBehaviour
                 Fighter fighterComponent = fighter.GetComponent<Fighter>();
                 fighterComponent.enemySpawner = this;
 
-                if (player != null)
+                if (player != null) {
                     fighterComponent.targetTrans = player.transform;
-                
+                    fighterComponent.targetRigid = player.GetComponent<Rigidbody2D>();
+                }
+
                 //Vector2 right = new Vector2(toPlanetCenterDir.y, -toPlanetCenterDir.x);
                 //fighter.GetComponent<Rigidbody2D>().velocity = right * 2f;
                 fighter.GetComponent<Rigidbody2D>().AddForce(toPlanetCenterDir * 70f);
