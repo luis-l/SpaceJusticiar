@@ -13,7 +13,7 @@ public class EnemySpawner : MonoBehaviour
     private const string ENEMY_PREFAB_PATH = "Prefabs/Enemy/";
 
     private const int MAX_TORPEDOES = 10;
-    private const int MAX_FIGHTERS = 12;
+    private const int MAX_FIGHTERS = 15;
     private float torpedoSpawnInterval = 1.5f;
     private float torpedoSpawnTimer = 0f;
 
@@ -60,17 +60,18 @@ public class EnemySpawner : MonoBehaviour
                 fighterCount++;
 
                 GameObject fighter = GameObject.Instantiate(_fighterPrefab);
-                fighter.transform.position = Random.value < 0.5f ? spawnPos / 2f : spawnPos;
+                //fighter.transform.position = Random.value < 0.5f ? spawnPos / 2f : spawnPos;
+                fighter.transform.position = spawnPos;
 
                 Fighter fighterComponent = fighter.GetComponent<Fighter>();
                 fighterComponent.enemySpawner = this;
 
                 if (player != null)
-                    fighterComponent.target = player.transform;
+                    fighterComponent.targetTrans = player.transform;
                 
                 //Vector2 right = new Vector2(toPlanetCenterDir.y, -toPlanetCenterDir.x);
                 //fighter.GetComponent<Rigidbody2D>().velocity = right * 2f;
-                //fighter.GetComponent<Rigidbody2D>().AddForce(toPlanetCenterDir * 10f);
+                fighter.GetComponent<Rigidbody2D>().AddForce(toPlanetCenterDir * 70f);
             }
         }
 
