@@ -122,12 +122,13 @@ public class Fighter : MonoBehaviour
         if (other.gameObject.name == planet.name) {
             Rigidbody2D rigid = GetComponent<Rigidbody2D>();
             rigid.velocity.Set(0, 0);
-            rigid.mass = 1000;
+            rigid.isKinematic = true;
 
             GetComponent<SpriteRenderer>().sprite = secondFormSprite;
             mainGun.projectileType = secondFormProjectileType;
             mainGun.FiringDelay = 0.05f;
             mainGun.firingForce = 2000;
+
             AudioSource gunSound = GetComponent<AudioSource>();
             gunSound.pitch = 1.4f;
             gunSound.volume = 0.2f;
