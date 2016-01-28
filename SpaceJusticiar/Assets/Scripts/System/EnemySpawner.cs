@@ -56,7 +56,7 @@ public class EnemySpawner : MonoBehaviour
             torpedoSpawnTimer = 0f;
 
             // Spawn fighter. Temporary
-            if (fighterCount < MAX_FIGHTERS && Random.value < 0.18f) {
+            if (fighterCount < MAX_FIGHTERS && Random.value < 0.22f) {
                 fighterCount++;
 
                 GameObject fighter = GameObject.Instantiate(_fighterPrefab);

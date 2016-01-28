@@ -122,6 +122,7 @@ public class Fighter : MonoBehaviour
         if (other.gameObject.name == planet.name) {
             Rigidbody2D rigid = GetComponent<Rigidbody2D>();
             rigid.velocity.Set(0, 0);
+            rigid.mass = 1000;
 
             GetComponent<SpriteRenderer>().sprite = secondFormSprite;
             mainGun.projectileType = secondFormProjectileType;
