@@ -29,14 +29,14 @@ public class LaserCannon : MonoBehaviour
     /// energy from the cell.
     /// </summary>
     /// <param name="targetPos"></param>
-    public void Fire(Vector2 targetPos, string targetTag, EnergyCell energyCell)
+    public void Fire(Vector2 targetPos, string targetTag, EnergyCell energyCell, Vector2 initialVelocity)
     {
         if (!_firingTimer.HasStarted()) {
             _firingTimer.Start();
         }
 
         if (_firingTimer.IsDone() && energyCell.UseEnergy(ProjectileBehavior.energyConsumption)) {
-            FireProjectile(targetPos, targetTag, energyCell);
+            FireProjectile(targetPos, targetTag, energyCell, initialVelocity);
 
             // Allow for 'single fire' mode by doing a forced reset of the timer.
             _firingTimer.Restart();
@@ -59,7 +59,7 @@ public class LaserCannon : MonoBehaviour
         }
     }
 
-    private void FireProjectile(Vector2 targetPos, string targetTag, EnergyCell energyCell)
+    private void FireProjectile(Vector2 targetPos, string targetTag, EnergyCell energyCell, Vector2 initialVelocity)
     {
         GameObject proj = Pools.Instance.Fetch(projectileType.name);
 
@@ -68,7 +68,10 @@ public class LaserCannon : MonoBehaviour
 
         proj.transform.position = _nozzleTrans.position;
         proj.transform.rotation = _nozzleTrans.rotation;
-        proj.GetComponent<Rigidbody2D>().AddForce(toTarget * firingForce);
+
+        Rigidbody2D projRigid = proj.GetComponent<Rigidbody2D>();
+        projRigid.velocity = initialVelocity;
+        projRigid.AddForce(toTarget * firingForce);
         proj.GetComponent<ProjectileBehavior>().targetTag = targetTag;
 
         firingSfx.Play();

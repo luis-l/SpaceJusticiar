@@ -5,7 +5,7 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
 
-    private Rigidbody2D _rigidBody;
+    public Rigidbody2D rigidBody;
     private SpriteRenderer _spriteRenderer;
 
     public float acceleration = 1f;
@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
         _energyCell = new EnergyCell();
         _health = new HealthComponent();
 
-        _rigidBody = gameObject.GetComponent<Rigidbody2D>();
+        rigidBody = gameObject.GetComponent<Rigidbody2D>();
         _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
 
         Vector2 newPos = transform.position;
@@ -86,11 +86,11 @@ public class PlayerController : MonoBehaviour
         Vector2 thrustForce = thrust();
 
         // Cap velocity if accelerating.
-        if (thrustForce.sqrMagnitude != 0 && _rigidBody.velocity.SqrMagnitude() > maxVelocity * maxVelocity) {
-            _rigidBody.velocity = Vector2.ClampMagnitude(_rigidBody.velocity, maxVelocity);
+        if (thrustForce.sqrMagnitude != 0 && rigidBody.velocity.SqrMagnitude() > maxVelocity * maxVelocity) {
+            rigidBody.velocity = Vector2.ClampMagnitude(rigidBody.velocity, maxVelocity);
         }
 
-        _rigidBody.AddForce(-up() * gravityScale);
+        rigidBody.AddForce(-up() * gravityScale);
 
         if (Input.GetKeyDown(KeyCode.Space) && Energy > 0) {
             Time.timeScale = 0.5f;
@@ -181,7 +181,7 @@ public class PlayerController : MonoBehaviour
         Vector2 thrust = thrustDir * accel;
 
         generateThrustParticles(thrust, thrustDir);
-        _rigidBody.AddForce(thrust);
+        rigidBody.AddForce(thrust);
 
         return thrust;
     }

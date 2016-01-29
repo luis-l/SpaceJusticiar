@@ -70,7 +70,7 @@ public class Fighter : MonoBehaviour
                         fireAtPos = targetTrans.position;
                     }
 
-                    mainGun.Fire(fireAtPos, "Player", _energyCell);
+                    mainGun.Fire(fireAtPos, "Player", _energyCell, new Vector2(0, 0));
                 }
             }
 
