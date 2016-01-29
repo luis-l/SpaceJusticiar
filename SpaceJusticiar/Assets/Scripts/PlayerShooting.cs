@@ -17,23 +17,36 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField]
     private LaserCannon _mainGun = null;
 
+    public GameObject[] projectileTypes;
+
     // Use this for initialization
     void Start()
     {
+        _mainGun.projectileType = projectileTypes[0];
+
         _mainGun.firingForce = 6000f;
         _mainGun.FiringDelay = 0.15f;
 
         prevPos = transform.position;
         prevMousePos = Input.mousePosition;
-
-
         firingRateText.text = _mainGun.FiringDelay.ToString("#.##");
     }
 
     void Update()
     {
-        if (Input.GetMouseButton(0)) {
-            
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1)) {
+
+            if (Input.GetMouseButton(0) && _mainGun.projectileType.name != projectileTypes[0].name) {
+                _mainGun.projectileType = projectileTypes[0];
+                _mainGun.firingForce = 6000f;
+            }
+
+            else if (Input.GetMouseButton(1) && _mainGun.projectileType.name != projectileTypes[1].name) {
+                _mainGun.projectileType = projectileTypes[1];
+                _mainGun.firingForce = 1000f;
+            }
+
+
             Vector2 mousePos = new Vector2();
             if (Camera.main.orthographic) {
                 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

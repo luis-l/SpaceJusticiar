@@ -105,9 +105,10 @@ public class Fighter : MonoBehaviour
         if (other.tag == "Projectile") {
 
             // Projectile is meant to hit enemy
-            if (other.gameObject.GetComponent<ProjectileBehavior>().targetTag == gameObject.tag) {
+            ProjectileBehavior proj = other.gameObject.GetComponent<ProjectileBehavior>();
+            if (proj.targetTag == gameObject.tag) {
 
-                _health.DealDamage(0.4f);
+                _health.DealDamage(proj.damage);
 
                 if (_health.GetHealth() == 0) {
                     enemySpawner.fighterCount--;

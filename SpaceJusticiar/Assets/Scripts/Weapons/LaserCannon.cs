@@ -3,7 +3,7 @@
 public class LaserCannon : MonoBehaviour
 {
     private float _lowestFiringDelay = 0.015f;
-    private float _highestFiringDelay = 0.3f;
+    private float _highestFiringDelay = 0.25f;
 
     public float firingForce = 5000f;
 

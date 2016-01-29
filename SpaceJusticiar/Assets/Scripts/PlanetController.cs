@@ -8,9 +8,11 @@ public class PlanetController : MonoBehaviour {
     public Text planetIntegrityText = null;
     private float _planetIntegrity = 1f;
 
+    public static GameObject planet = null;
+
 	// Use this for initialization
 	void Start () {
-	
+        planet = gameObject;
 	}
 	
 	// Update is called once per frame
