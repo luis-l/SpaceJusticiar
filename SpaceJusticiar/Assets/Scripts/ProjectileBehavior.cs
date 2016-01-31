@@ -14,7 +14,7 @@ public class ProjectileBehavior : MonoBehaviour
     public Text scoreValueText = null;
     private static int _playerScore = 0;
 
-    public static float energyConsumption = 0.03f;
+    public float energyCost = 0.03f;
 
     public float gravityScale = 0f;
     public GameObject planet = null;
@@ -45,7 +45,7 @@ public class ProjectileBehavior : MonoBehaviour
 
         // Apply gravity to projectile.
         if (gravityScale != 0 && planet != null) {
-            Vector2 up = transform.position - planet.transform.position;
+            Vector2 up = (transform.position - planet.transform.position).normalized;
             _rigid.AddForce(-up * gravityScale);
         }
     }
