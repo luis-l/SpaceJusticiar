@@ -39,6 +39,9 @@ public class ExplosionBehavior : MonoBehaviour
         if (_explosionSfx == null) {
             _explosionSfx = GetComponent<AudioSource>();
         }
-        _explosionSfx.Play();
+
+        if (_explosionSfx != null) {
+            _explosionSfx.Play();
+        }
     }
 }

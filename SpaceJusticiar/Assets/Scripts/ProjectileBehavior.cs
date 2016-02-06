@@ -65,7 +65,7 @@ public class ProjectileBehavior : MonoBehaviour
                 scoreValueText.text = _playerScore.ToString(); 
             }
 
-            GameObject explosion = Pools.Instance.Fetch("EnergyExplosion");
+            GameObject explosion = Pools.Instance.Fetch("EnergyExplosion2");
             explosion.transform.position = transform.position;
 
             ParticleSystem effect = explosion.GetComponent<ParticleSystem>();
