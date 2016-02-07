@@ -10,6 +10,8 @@ public class PlanetController : MonoBehaviour {
 
     public static GameObject planet = null;
 
+    public float rotationSpeed = 0.1f;
+
 	// Use this for initialization
 	void Start () {
         planet = gameObject;
@@ -17,6 +19,8 @@ public class PlanetController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));
 
 	}
 

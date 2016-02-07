@@ -274,9 +274,27 @@ public class PlayerController : MonoBehaviour
 
                 camShake.PlayShake();
 
+                StopCoroutine(FlashScreen());
+                StartCoroutine(FlashScreen());
+
                 if (Health == 0)
                     Destroy(gameObject, 0.1f);
             }
         }
+    }
+
+    private IEnumerator FlashScreen()
+    {
+        float elapsed = 0f;
+        float duration = 0.06f;
+
+        Camera.main.backgroundColor = Color.white;
+
+        while (elapsed < duration) {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        Camera.main.backgroundColor = Color.black;
     }
 }
