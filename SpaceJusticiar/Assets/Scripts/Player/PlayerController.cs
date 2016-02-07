@@ -270,7 +270,7 @@ public class PlayerController : MonoBehaviour
 
                 CameraShake camShake = camTransform.gameObject.GetComponent<CameraShake>();
                 camShake.duration = 0.4f;
-                camShake.magnitude = 0.3f;
+                camShake.magnitude = 0.8f;
 
                 camShake.PlayShake();
 
