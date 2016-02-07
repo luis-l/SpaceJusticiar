@@ -18,7 +18,7 @@ public class Torpedo : MonoBehaviour {
     {
         if (other.tag == "Collidable" || other.tag == "Projectile") {
 
-            GameObject explosion = Pools.Instance.Fetch("EnergyExplosion");
+            GameObject explosion = Pools.Instance.Fetch("GreenEnergyExplosion");
             explosion.transform.position = transform.position;
 
             ParticleSystem effect = explosion.GetComponent<ParticleSystem>();

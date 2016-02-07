@@ -23,6 +23,8 @@ public class ProjectileBehavior : MonoBehaviour
 
     public float damage = 0.2f;
 
+    public string explosionName = "GreenEnergyExplosion";
+
     // Use this for initialization
     void Start()
     {
@@ -82,7 +84,7 @@ public class ProjectileBehavior : MonoBehaviour
                 }
             }
 
-            GameObject explosion = Pools.Instance.Fetch("EnergyExplosion2");
+            GameObject explosion = Pools.Instance.Fetch(explosionName);
             explosion.transform.position = transform.position;
 
             ParticleSystem effect = explosion.GetComponent<ParticleSystem>();

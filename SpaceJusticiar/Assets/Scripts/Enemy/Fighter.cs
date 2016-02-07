@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Fighter : MonoBehaviour
 {
-    float _rangeSq = 20f * 20f;
+    float _rangeSq = 22f * 22f;
 
     public Transform targetTrans;
     public Rigidbody2D targetRigid = null;
@@ -37,6 +37,8 @@ public class Fighter : MonoBehaviour
         mainGun.ProjectileType = initialProjectileType;
 
         planet = GameObject.Find("Planet");
+
+        initialProjectileType.GetComponent<ProjectileBehavior>().explosionName = "RedEnergyExplosion";
     }
 
     // Update is called once per frame

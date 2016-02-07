@@ -270,15 +270,18 @@ public class PlayerController : MonoBehaviour
 
                 CameraShake camShake = camTransform.gameObject.GetComponent<CameraShake>();
                 camShake.duration = 0.4f;
-                camShake.magnitude = 0.8f;
+                camShake.magnitude = 0.9f;
 
                 camShake.PlayShake();
 
                 StopCoroutine(FlashScreen());
                 StartCoroutine(FlashScreen());
 
-                if (Health == 0)
+                if (Health == 0) {
+                    StopAllCoroutines();
+                    Camera.main.backgroundColor = Color.black;
                     Destroy(gameObject, 0.1f);
+                }
             }
         }
     }
