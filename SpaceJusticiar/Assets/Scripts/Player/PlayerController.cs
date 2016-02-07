@@ -268,6 +268,8 @@ public class PlayerController : MonoBehaviour
 
                 _health.DealDamage(proj.damage);
 
+                camTransform.gameObject.GetComponent<CameraShake>().PlayShake();
+
                 if (Health == 0)
                     Destroy(gameObject, 0.1f);
             }

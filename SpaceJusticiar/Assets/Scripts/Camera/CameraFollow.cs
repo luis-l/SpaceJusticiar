@@ -13,7 +13,7 @@ public class CameraFollow : MonoBehaviour {
 	// Update is called once per frame
     void Update()
     {
-        if (target != null) {
+        if (target != null && !GetComponent<CameraShake>().IsShaking()) {
             Vector3 newPos = target.position;
             newPos.z = transform.position.z;
             transform.position = newPos;
