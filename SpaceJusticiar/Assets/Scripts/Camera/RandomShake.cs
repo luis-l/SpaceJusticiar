@@ -2,18 +2,6 @@ using UnityEngine;
 using System.Collections;
 
 public class RandomShake : CameraShake {
-	
-	public float duration = 0.5f;
-	public float magnitude = 0.1f;
-	
-	public bool test = false;
-
-    /// <summary>
-    /// The target to shake around from.
-    /// </summary>
-    public Transform targetTrans = null;
-
-    private bool _bIsShaking = false;
 
 	// -------------------------------------------------------------------------
 	void Update() {
@@ -22,13 +10,8 @@ public class RandomShake : CameraShake {
 		}
 	}
 
-    public bool IsShaking()
-    {
-        return _bIsShaking;
-    }
-	
 	// -------------------------------------------------------------------------
-	private IEnumerator Shake() {
+	public override IEnumerator Shake() {
 
         _bIsShaking = true;
 		float elapsed = 0.0f;
@@ -51,14 +34,16 @@ public class RandomShake : CameraShake {
             if (targetTrans != null) {
 
                 Vector3 newCamPos = new Vector3(x, y, originalCamPos.z);
-                //newCamPos.x += originalCamPos.x;
-                //newCamPos.y += originalCamPos.y;
-
                 newCamPos.x += targetTrans.position.x;
                 newCamPos.y += targetTrans.position.y;
 
                 Camera.main.transform.position = newCamPos;
+                originalCamPos = newCamPos;
             }
+
+            //else {
+              //  Camera.main.transform.position = new Vector3(x, y, originalCamPos.z);
+            //}
 
 			yield return null;
 		}

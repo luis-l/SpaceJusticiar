@@ -4,20 +4,29 @@ using System.Collections;
 
 public abstract class CameraShake : MonoBehaviour  {
 
+    public float duration = 0.5f;
+    public float magnitude = 0.1f;
+
+    protected bool _bIsShaking = false;
+
+    public bool test = false;
+
+    /// <summary>
+    /// The target to shake around from.
+    /// </summary>
+    public Transform targetTrans = null;
+
     public void PlayShake()
     {
         StopAllCoroutines();
         StartCoroutine("Shake");
     }
 
-    private IEnumerator Shake()
-    {
-        return null;
-    }
+    public abstract IEnumerator Shake();
 
 
     public bool IsShaking()
     {
-        return false;
+        return _bIsShaking;
     }
 }

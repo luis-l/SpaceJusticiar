@@ -65,6 +65,23 @@ public class ProjectileBehavior : MonoBehaviour
                 scoreValueText.text = _playerScore.ToString(); 
             }
 
+            // Make bullet impacts responsive near the player by shaking the camera a bit.
+            if (other.tag != "Player") {
+                Vector2 distToCam = Camera.main.transform.position - transform.position;
+                float mag = distToCam.magnitude;
+                if (mag < 25) {
+
+                    // The closer the impact, the stronger the camera shake.
+                    float shakeScalar = 2 / mag;
+
+                    CameraShake camShake = Camera.main.gameObject.GetComponent<CameraShake>();
+                    camShake.duration = 0.09f;
+                    camShake.magnitude = shakeScalar;
+                    camShake.PlayShake();
+
+                }
+            }
+
             GameObject explosion = Pools.Instance.Fetch("EnergyExplosion2");
             explosion.transform.position = transform.position;
 

@@ -3,11 +3,7 @@ using System.Collections;
 
 public class PerlinShake : CameraShake {
 	
-	public float duration = 0.5f;
 	public float speed = 1.0f;
-	public float magnitude = 0.1f;
-	
-	public bool test = false;
 
 	// -------------------------------------------------------------------------
 	void Update() {
@@ -18,10 +14,11 @@ public class PerlinShake : CameraShake {
 	}
 	
 	// -------------------------------------------------------------------------
-	private IEnumerator Shake() {
+	public override IEnumerator Shake() {
 		
 		float elapsed = 0.0f;
-		
+        _bIsShaking = true;
+
 		Vector3 originalCamPos = Camera.main.transform.position;
 		float randomStart = Random.Range(-1000.0f, 1000.0f);
 		
@@ -43,11 +40,27 @@ public class PerlinShake : CameraShake {
 			
 			x *= magnitude * damper;
 			y *= magnitude * damper;
-			
-			Camera.main.transform.position = new Vector3(x, y, originalCamPos.z);
-				
+
+            if (targetTrans != null) {
+
+                Vector3 newCamPos = new Vector3(x, y, originalCamPos.z);
+                newCamPos.x += targetTrans.position.x;
+                newCamPos.y += targetTrans.position.y;
+
+                Camera.main.transform.position = newCamPos;
+                originalCamPos = newCamPos;
+            }
+
+            //else {
+              //  Camera.main.transform.position = new Vector3(x, y, originalCamPos.z);
+            //}
+
 			yield return null;
 		}
+
+        if (elapsed > duration) {
+            _bIsShaking = false;
+        }
 		
 		Camera.main.transform.position = originalCamPos;
 	}

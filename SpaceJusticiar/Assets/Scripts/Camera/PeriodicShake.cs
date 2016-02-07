@@ -3,11 +3,7 @@ using System.Collections;
 
 public class PeriodicShake : CameraShake {
 	
-	public float duration = 0.5f;
 	public float speed = 3.0f;
-	public float magnitude = 0.1f;
-	
-	public bool test = false;
 	
 	// -------------------------------------------------------------------------
 	void Update() {
@@ -18,7 +14,7 @@ public class PeriodicShake : CameraShake {
 	}
 	
 	// -------------------------------------------------------------------------
-	private IEnumerator Shake() {
+	public override IEnumerator Shake() {
 		
 		float elapsed = 0.0f;
 		float randomStartX = Random.Range(-1000.0f, 1000.0f);
