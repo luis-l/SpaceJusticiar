@@ -22,6 +22,8 @@ public class CameraController : MonoBehaviour {
 
         _camShake.targetTrans = transformToFollow;
         _camFollow.targetTrans = transformToFollow;
+
+
 	}
 	
 	// Update is called once per frame

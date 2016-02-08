@@ -2,27 +2,46 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class PlanetController : MonoBehaviour {
+using Vectrosity;
+
+public class PlanetController : MonoBehaviour
+{
 
     public Canvas canvas = null;
     public Text planetIntegrityText = null;
     private float _planetIntegrity = 1f;
 
     public static GameObject planet = null;
-
     public float rotationSpeed = 0.1f;
 
-	// Use this for initialization
-	void Start () {
+    // Scales the influence by some factor * planet radius.
+    private float _influenceMultiplier = 1.5f;
+
+    private float _planetRadius = 1f;
+
+    // Use this for initialization
+    void Start()
+    {
         planet = gameObject;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        _planetRadius = GetComponent<CircleCollider2D>().radius;
+
+        int segments = 40;
+        Material mat = Resources.Load<Material>("Sprites/Materials/Line");
+        VectorLine circle = new VectorLine("circle", new Vector3[segments * 2], mat, 4);
+
+        circle.MakeCircle(transform.position, _planetRadius * _influenceMultiplier, segments);
+        circle.textureScale = 5f;
+
+        circle.Draw3DAuto();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
 
         transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));
 
-	}
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -42,7 +61,7 @@ public class PlanetController : MonoBehaviour {
 
             GameObject gameOverObject = new GameObject("GameOver Text");
             gameOverObject.transform.parent = canvas.transform;
-            
+
             RectTransform rectTrans = gameOverObject.AddComponent<RectTransform>();
 
             Text text = gameOverObject.AddComponent<Text>();
@@ -55,7 +74,7 @@ public class PlanetController : MonoBehaviour {
             rectTrans.sizeDelta = new Vector2(800, 100);
             rectTrans.localPosition = new Vector3(0, 0, 0);
         }
-        
+
         if (damage != 0) {
             int integrityPercent = Mathf.CeilToInt(_planetIntegrity * 100);
             planetIntegrityText.text = integrityPercent.ToString();
