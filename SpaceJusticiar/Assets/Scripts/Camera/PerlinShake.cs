@@ -61,7 +61,17 @@ public class PerlinShake : CameraShake {
         if (elapsed > duration) {
             _bIsShaking = false;
         }
-		
-		Camera.main.transform.position = originalCamPos;
+
+        if (targetTrans != null) {
+
+            originalCamPos.x = targetTrans.position.x;
+            originalCamPos.y = targetTrans.position.y;
+            Camera.main.transform.position = originalCamPos;
+        }
+
+        else {
+
+            Camera.main.transform.position = originalCamPos;
+        }
 	}
 }

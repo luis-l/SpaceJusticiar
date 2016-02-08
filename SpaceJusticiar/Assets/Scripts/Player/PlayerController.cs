@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour
     public float gravityScale = 1f;
 
     public Transform camTransform = null;
+    private CameraController _camController = null;
+
     private Vector3 _prevPlayerPos;
 
     private ParticleSystem _thrustParticles;
@@ -68,6 +70,7 @@ public class PlayerController : MonoBehaviour
 
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
         _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        _camController = camTransform.gameObject.GetComponent<CameraController>();
 
         Vector2 newPos = transform.position;
         newPos.y = planet.transform.position.y + planet.transform.localScale.x * planet.GetComponent<CircleCollider2D>().radius + 1;
@@ -207,20 +210,13 @@ public class PlayerController : MonoBehaviour
 
             if (_prevThrustDir != thrustDir) {
 
-                // Set the direction of the particles opposite to the player's motion.
-                //_thrustParticles.gameObject.transform.LookAt(transform.position - thrustDir);
-
                 float rotationZ = Mathf.Atan2(thrustDir.y, thrustDir.x) * Mathf.Rad2Deg;
                 _thrustParticles.transform.rotation = Quaternion.Euler(0, 0, rotationZ);
                 _prevThrustDir = thrustDir;
             }
         }
-        else {
-
-            //_thrustParticles.gameObject.transform.LookAt(transform.position + Vector3.forward);
-
-            if (_thrustParticles.isPlaying)
-                _thrustParticles.Stop();
+        else if (_thrustParticles.isPlaying) {
+            _thrustParticles.Stop();
         }
     }
 
@@ -268,36 +264,18 @@ public class PlayerController : MonoBehaviour
 
                 _health.DealDamage(proj.damage);
 
-                CameraShake camShake = camTransform.gameObject.GetComponent<CameraShake>();
+                CameraShake camShake = _camController.CameraShake;
                 camShake.duration = 0.4f;
                 camShake.magnitude = 0.9f;
-
                 camShake.PlayShake();
 
-                StopCoroutine(FlashScreen());
-                StartCoroutine(FlashScreen());
+                _camController.FillScreen(Color.white, 0.1f);
 
                 if (Health == 0) {
-                    StopAllCoroutines();
-                    Camera.main.backgroundColor = Color.black;
                     Destroy(gameObject, 0.1f);
                 }
             }
         }
     }
 
-    private IEnumerator FlashScreen()
-    {
-        float elapsed = 0f;
-        float duration = 0.06f;
-
-        Camera.main.backgroundColor = Color.white;
-
-        while (elapsed < duration) {
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        Camera.main.backgroundColor = Color.black;
-    }
 }

@@ -34,12 +34,37 @@ public class PeriodicShake : CameraShake {
 			float y = Mathf.Cos(randomStartY + percentComplete * speed);
 			x *= magnitude * damper;
 			y *= magnitude * damper;
-			
-			Camera.main.transform.position = new Vector3(x, y, originalCamPos.z);
+
+            if (targetTrans != null) {
+
+                Vector3 newCamPos = new Vector3(x, y, originalCamPos.z);
+                newCamPos.x += targetTrans.position.x;
+                newCamPos.y += targetTrans.position.y;
+
+                Camera.main.transform.position = newCamPos;
+                originalCamPos = newCamPos;
+            }
+
+            //else {
+            //  Camera.main.transform.position = new Vector3(x, y, originalCamPos.z);
+            //}
 				
 			yield return null;
 		}
-		
-		Camera.main.transform.position = originalCamPos;
+
+        if (elapsed > duration) {
+            _bIsShaking = false;
+        }
+
+        if (targetTrans != null) {
+
+            originalCamPos.x = targetTrans.position.x;
+            originalCamPos.y = targetTrans.position.y;
+            Camera.main.transform.position = originalCamPos;
+        }
+
+        else {
+            Camera.main.transform.position = originalCamPos;
+        }
 	}
 }

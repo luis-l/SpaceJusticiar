@@ -76,7 +76,7 @@ public class ProjectileBehavior : MonoBehaviour
                     // The closer the impact, the stronger the camera shake.
                     float shakeScalar = 2 / mag;
 
-                    CameraShake camShake = Camera.main.gameObject.GetComponent<CameraShake>();
+                    CameraShake camShake = Camera.main.gameObject.GetComponent<CameraController>().CameraShake;
                     camShake.duration = 0.09f;
                     camShake.magnitude = shakeScalar;
                     camShake.PlayShake();
