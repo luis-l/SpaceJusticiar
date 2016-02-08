@@ -14,22 +14,22 @@ public class PlanetController : MonoBehaviour
     public static GameObject planet = null;
     public float rotationSpeed = 0.1f;
 
-    // Scales the influence by some factor * planet radius.
-    private float _influenceMultiplier = 1.5f;
-
-    private float _planetRadius = 1f;
+    /// <summary>
+    /// This collider marks the area in which the planet influences a gameobject.
+    /// In other words, the planet becomes the parent transform of the gameobject.
+    /// </summary>
+    public CircleCollider2D areaOfInfluence = null;
 
     // Use this for initialization
     void Start()
     {
         planet = gameObject;
-        _planetRadius = GetComponent<CircleCollider2D>().radius;
 
-        int segments = 40;
+        int segments = 45;
         Material mat = Resources.Load<Material>("Sprites/Materials/Line");
         VectorLine circle = new VectorLine("circle", new Vector3[segments * 2], mat, 4);
 
-        circle.MakeCircle(transform.position, _planetRadius * _influenceMultiplier, segments);
+        circle.MakeCircle(transform.position, areaOfInfluence.radius / 2, segments);
         circle.textureScale = 5f;
 
         circle.Draw3DAuto();
@@ -38,10 +38,10 @@ public class PlanetController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));
-
     }
+
+
 
     void OnTriggerEnter2D(Collider2D other)
     {

@@ -276,6 +276,17 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
+        else if (other.name == "AreaOfInfluence") {
+            currentFrameOfRef = FrameOfReference.PLANET;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.name == "AreaOfInfluence") {
+            currentFrameOfRef = FrameOfReference.GLOBAL;
+        }
     }
 
 }
