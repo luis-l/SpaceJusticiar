@@ -54,7 +54,7 @@ public class CameraController : MonoBehaviour {
     /// <returns></returns>
     public void FillScreen(Color color, float duration)
     {
-        StopCoroutine(Fill(color, duration));
+        StopCoroutine("Fill");
         StartCoroutine(Fill(color, duration));
     } 
 

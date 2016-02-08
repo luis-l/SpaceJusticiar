@@ -132,7 +132,7 @@ public class PlayerController : MonoBehaviour
     void LateUpdate()
     {
         // Make the camera align to the planet's tangent.
-        if (_prevPlayerPos != transform.position) {
+        if (currentFrameOfRef == FrameOfReference.PLANET && _prevPlayerPos != transform.position) {
 
             Vector2 upVector = up();
             float z = Mathf.Acos(upVector.y) * Mathf.Rad2Deg;
@@ -229,8 +229,8 @@ public class PlayerController : MonoBehaviour
         if (currentFrameOfRef == FrameOfReference.PLANET)
             return (transform.position - planet.transform.position).normalized;
 
-        // Global up
-        return Vector2.up;
+        // Up relative from the camera's up vector.
+        return camTransform.up;
     }
 
     // Calculate the right vector relative to the planet's surface.
@@ -281,15 +281,54 @@ public class PlayerController : MonoBehaviour
         }
 
         else if (other.name == "AreaOfInfluence") {
-            currentFrameOfRef = FrameOfReference.PLANET;
+
+            //currentFrameOfRef = FrameOfReference.PLANET;
+            StopCoroutine("AlignCameraToPlanetSurface");
+            StartCoroutine("AlignCameraToPlanetSurface");
+            transform.parent = planet.transform;
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.name == "AreaOfInfluence") {
+            StopCoroutine("AlignCameraToPlanetSurface");
             currentFrameOfRef = FrameOfReference.GLOBAL;
+            transform.parent = null;
         }
+    }
+
+    private IEnumerator AlignCameraToPlanetSurface()
+    {
+        Vector2 normalToPlanetSurface = (transform.position - planet.transform.position).normalized;
+
+        float z = Mathf.Acos(normalToPlanetSurface.y) * Mathf.Rad2Deg;
+        if (normalToPlanetSurface.x > 0) {
+            z *= -1;
+        }
+
+        Quaternion planetAlignment = Quaternion.Euler(0, 0, z);
+
+        float speed = 7f;
+
+        // Keep slerping until the camera up aligns to the planet surface normal.
+        while (Vector2.Angle(normalToPlanetSurface, camTransform.up) > 1) {
+
+            camTransform.rotation = Quaternion.Slerp(camTransform.rotation, planetAlignment, Time.deltaTime * speed);
+
+            // Update planet surface normal since player moves.
+            normalToPlanetSurface = (transform.position - planet.transform.position).normalized;
+            z = Mathf.Acos(normalToPlanetSurface.y) * Mathf.Rad2Deg;
+            if (normalToPlanetSurface.x > 0) {
+                z *= -1;
+            }
+
+            planetAlignment = Quaternion.Euler(0, 0, z);
+
+            yield return null;
+        }
+
+        currentFrameOfRef = FrameOfReference.PLANET;
     }
 
 }
