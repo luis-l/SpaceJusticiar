@@ -38,13 +38,15 @@ public class ProjectileBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         // Tick life, once life runs out, recycle the projectile.
         lifeTimer -= Time.deltaTime;
         if (lifeTimer <= 0) {
             Pools.Instance.Recycle(gameObject);
         }
+    }
 
+    void FixedUpdate()
+    {
         // Apply gravity to projectile.
         if (gravityScale != 0 && planet != null) {
             Vector2 up = (transform.position - planet.transform.position).normalized;

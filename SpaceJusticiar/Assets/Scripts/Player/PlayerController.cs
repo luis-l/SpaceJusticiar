@@ -93,8 +93,6 @@ public class PlayerController : MonoBehaviour
             rigidBody.velocity = Vector2.ClampMagnitude(rigidBody.velocity, maxVelocity);
         }
 
-        rigidBody.AddForce(-up() * gravityScale);
-
         if (Input.GetKeyDown(KeyCode.Space) && Energy > 0) {
             Time.timeScale = 0.5f;
             _bInSlowMotion = true;
@@ -149,6 +147,11 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Apply gravity
+        if (currentFrameOfRef == FrameOfReference.PLANET) {
+            rigidBody.AddForce(-up() * gravityScale);
+        }
+
         setColor();
     }
 
