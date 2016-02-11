@@ -309,7 +309,7 @@ public class PlayerController : MonoBehaviour
 
         Quaternion planetAlignment = Quaternion.Euler(0, 0, z);
 
-        float speed = 7f;
+        float speed = 6.5f;
 
         // Keep slerping until the camera up aligns to the planet surface normal.
         while (Vector2.Angle(normalToPlanetSurface, camTransform.up) > 1) {

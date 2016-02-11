@@ -40,10 +40,11 @@ public class EnemySpawner : MonoBehaviour
         if (torpedoSpawnTimer >= torpedoSpawnInterval) {
 
             GameObject torpedo = GameObject.Instantiate(_torpedoPrefab);
+            torpedo.transform.parent = planet.transform;
 
             // Create a random direction vector.
             Vector2 spawnDir = (new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f))).normalized;
-            Vector2 spawnPos = spawnDir * (_planetCollider.radius + Random.Range(10, 30));
+            Vector2 spawnPos = spawnDir * (_planetCollider.radius + Random.Range(10, 30)) + (Vector2)planet.transform.position;
 
             Vector2 toPlanetCenterDir = (Vector2)planet.transform.position - spawnPos;
             toPlanetCenterDir.Normalize();
@@ -60,6 +61,8 @@ public class EnemySpawner : MonoBehaviour
                 fighterCount++;
 
                 GameObject fighter = GameObject.Instantiate(_fighterPrefab);
+                fighter.transform.parent = planet.transform;
+
                 //fighter.transform.position = Random.value < 0.5f ? spawnPos / 2f : spawnPos;
                 fighter.transform.position = spawnPos;
 
