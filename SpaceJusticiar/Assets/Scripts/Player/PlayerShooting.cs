@@ -68,10 +68,10 @@ public class PlayerShooting : MonoBehaviour
 
         // Manage chaning firing rate
         float wheelDelta = Input.GetAxis("Mouse ScrollWheel");
-        if (wheelDelta > 0) {
+        if (Input.GetKey(KeyCode.LeftShift) && wheelDelta > 0) {
             _mainGun.FiringDelay += _firingDelayChange;
         }
-        else if (wheelDelta < 0) {
+        else if (Input.GetKey(KeyCode.LeftShift) && wheelDelta < 0) {
             _mainGun.FiringDelay -= _firingDelayChange;
         }
 

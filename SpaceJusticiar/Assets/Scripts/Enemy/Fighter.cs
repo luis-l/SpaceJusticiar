@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Fighter : MonoBehaviour
 {
-    float _rangeSq = 22f * 22f;
+    float _rangeSq = 25f * 25f;
 
     public Transform targetTrans;
     public Rigidbody2D targetRigid = null;
