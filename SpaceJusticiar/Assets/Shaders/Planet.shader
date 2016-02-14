@@ -121,15 +121,16 @@
 
 					// Illuminate only the edge of the mesh. The plane perpendicular to the z axis
 					color.a = dot(zAxis, i.normal);
-					
+				
 					// Amplify the color
 					color.a = pow(color.a, _Falloff);
-					
+
 					// Use transparency to blend from bright to dark
 					color.a *= _Transparency;
-					
+
 					// Have the light vector only illuminate the bright side of the mesh.
 					color.a *= dot(i.normal, _WorldSpaceLightPos0);
+					color.a = saturate(color.a) * saturate(color.a);
 						
                     return color;
                 }
@@ -172,7 +173,7 @@
                 {
                     v2f o;
  
-                    v.vertex.xyz += v.normal*_Size;
+                    v.vertex.xyz += v.normal*_Size / 3;
                     o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
                     o.normal = mul((float3x3)_Object2World, v.normal);
                     o.worldvertpos = mul(_Object2World, v.vertex);
@@ -194,9 +195,10 @@
 					zAxis.z = 1;
 
 					color.a = dot(zAxis, i.normal);
-					color.a = pow(color.a, 3*_Falloff);
-					color.a *= 2 * _Transparency;
-						
+					color.a = pow(color.a, _Falloff);
+					color.a *= _Transparency / 2;
+					color.a = saturate(color.a);
+
                     return color;
                 }
             ENDCG

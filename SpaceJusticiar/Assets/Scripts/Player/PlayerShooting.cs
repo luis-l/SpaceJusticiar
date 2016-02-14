@@ -24,7 +24,7 @@ public class PlayerShooting : MonoBehaviour
     {
         _mainGun.ProjectileType = projectileTypes[0];
 
-        _mainGun.firingForce = 6000f;
+        _mainGun.firingForce = 5000f;
         _mainGun.FiringDelay = 0.15f;
 
         prevPos = transform.position;
