@@ -22,7 +22,7 @@ public class PlanetController : MonoBehaviour
     public GameObject sun = null;
     public GameObject lightFromSun = null;
 
-    private float _rotationSpeed = 1f;
+    private float _rotationSpeed = 0f;
     private float _orbitRadius = 200f;
     private float _orbitSpeed = 0.01f;
     private float _currentOrbitAngle = 0f;
@@ -41,6 +41,17 @@ public class PlanetController : MonoBehaviour
 
         VectorManager.ObjectSetup(gameObject, circle, Visibility.Dynamic, Brightness.None);
         circle.Draw3DAuto();
+
+        // Modify the mesh bounds so the atmosphere does not disappear when the planet mesh goes out of camera view.
+        GameObject graphic = transform.FindChild("Graphic").gameObject;
+        Material planetMaterial = graphic.GetComponent<MeshRenderer>().material;
+
+        float atmosphereSize = planetMaterial.GetFloat("_Size");
+        Vector3 planetBoundExtension = new Vector3(atmosphereSize, atmosphereSize, atmosphereSize);
+
+        Mesh planetMesh = graphic.GetComponent<MeshFilter>().mesh;
+        Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size + planetBoundExtension);
+        planetMesh.bounds = expandedPlanetBounds;
     }
 
     // Update is called once per frame

@@ -268,8 +268,10 @@ public class PlayerController : MonoBehaviour
                 _health.DealDamage(proj.damage);
 
                 CameraShake camShake = _camController.CameraShake;
-                camShake.duration = 0.4f;
-                camShake.magnitude = 0.9f;
+                camShake.duration = 0.5f;
+                camShake.magnitude = 1f;
+                camShake.speed = 3f;
+                
                 camShake.PlayShake();
 
                 _camController.FillScreen(Color.white, 0.1f);
@@ -309,7 +311,7 @@ public class PlayerController : MonoBehaviour
 
         Quaternion planetAlignment = Quaternion.Euler(0, 0, z);
 
-        float speed = 6.5f;
+        float speed = 6f;
 
         // Keep slerping until the camera up aligns to the planet surface normal.
         while (Vector2.Angle(normalToPlanetSurface, camTransform.up) > 1) {
@@ -324,6 +326,7 @@ public class PlayerController : MonoBehaviour
             }
 
             planetAlignment = Quaternion.Euler(0, 0, z);
+            speed *= 1.1f;
 
             yield return null;
         }

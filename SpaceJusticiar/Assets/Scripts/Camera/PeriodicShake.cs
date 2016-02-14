@@ -3,8 +3,6 @@ using System.Collections;
 
 public class PeriodicShake : CameraShake {
 	
-	public float speed = 3.0f;
-	
 	// -------------------------------------------------------------------------
 	void Update() {
 		if (test) {

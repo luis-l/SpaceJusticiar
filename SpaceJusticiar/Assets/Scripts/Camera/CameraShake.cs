@@ -6,6 +6,7 @@ public abstract class CameraShake : MonoBehaviour  {
 
     public float duration = 0.5f;
     public float magnitude = 0.1f;
+    public float speed = 3f;
 
     protected bool _bIsShaking = false;
 

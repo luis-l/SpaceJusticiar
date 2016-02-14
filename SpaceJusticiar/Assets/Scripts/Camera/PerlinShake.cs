@@ -3,8 +3,6 @@ using System.Collections;
 
 public class PerlinShake : CameraShake {
 	
-	public float speed = 1.0f;
-
 	// -------------------------------------------------------------------------
 	void Update() {
 		if (test) {

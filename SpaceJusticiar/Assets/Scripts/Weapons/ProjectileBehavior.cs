@@ -79,8 +79,9 @@ public class ProjectileBehavior : MonoBehaviour
                     float shakeScalar = 2 / mag;
 
                     CameraShake camShake = Camera.main.gameObject.GetComponent<CameraController>().CameraShake;
-                    camShake.duration = 0.09f;
+                    camShake.duration = 0.1f;
                     camShake.magnitude = shakeScalar;
+                    camShake.speed = 1f;
                     camShake.PlayShake();
 
                 }
