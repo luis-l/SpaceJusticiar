@@ -59,9 +59,6 @@ public class PlayerShooting : MonoBehaviour
             if (Camera.main.orthographic) {
                 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             }
-            else {
-                // Still thinking if perspective should be used.
-            }
 
             _mainGun.Fire(mousePos, "Enemy", playerController.EnergyCell, initialProjVelocity);
         }

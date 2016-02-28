@@ -20,7 +20,6 @@ public class PlanetController : MonoBehaviour
     public CircleCollider2D areaOfInfluence = null;
 
     public GameObject sun = null;
-    public GameObject lightFromSun = null;
 
     private float _rotationSpeed = 0f;
     private float _orbitRadius = 200f;
@@ -34,23 +33,23 @@ public class PlanetController : MonoBehaviour
 
         int segments = 45;
         Material mat = Resources.Load<Material>("Materials/Line");
-        VectorLine circle = new VectorLine("circle", new Vector3[segments * 2], mat, 4);
+        VectorLine areaInfluenceBorder = new VectorLine("circle", new Vector3[segments * 2], mat, 4);
 
-        circle.MakeCircle(transform.position, areaOfInfluence.radius, segments);
-        circle.textureScale = 5f;
+        areaInfluenceBorder.MakeCircle(transform.position, areaOfInfluence.radius, segments);
+        areaInfluenceBorder.textureScale = 5f;
 
-        VectorManager.ObjectSetup(gameObject, circle, Visibility.Dynamic, Brightness.None);
-        circle.Draw3DAuto();
+        VectorManager.ObjectSetup(gameObject, areaInfluenceBorder, Visibility.Dynamic, Brightness.None);
+        areaInfluenceBorder.Draw3DAuto();
 
+        
         // Modify the mesh bounds so the atmosphere does not disappear when the planet mesh goes out of camera view.
         GameObject graphic = transform.FindChild("Graphic").gameObject;
         Material planetMaterial = graphic.GetComponent<MeshRenderer>().material;
 
-        float atmosphereSize = planetMaterial.GetFloat("_Size");
-        Vector3 planetBoundExtension = new Vector3(atmosphereSize, atmosphereSize, atmosphereSize);
+        float atmosphereSize = planetMaterial.GetFloat("_AtmoSize");
 
         Mesh planetMesh = graphic.GetComponent<MeshFilter>().mesh;
-        Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size + planetBoundExtension);
+        Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size * atmosphereSize);
         planetMesh.bounds = expandedPlanetBounds;
     }
 
@@ -71,12 +70,6 @@ public class PlanetController : MonoBehaviour
         float x = _orbitRadius * Mathf.Cos(_currentOrbitAngle) + sun.transform.position.x;
         float y = _orbitRadius * Mathf.Sin(_currentOrbitAngle) + sun.transform.position.y;
         transform.position = new Vector3(x, y, transform.position.z);
-
-        // Align the directional light with the sun.
-        Vector2 toSun = sun.transform.position - transform.position;
-        toSun.Normalize();
-        float angleFromSun = Mathf.Atan2(toSun.y, toSun.x);
-        lightFromSun.transform.rotation = Quaternion.Euler(Mathf.Rad2Deg * angleFromSun, 270, 0);
     }
 
 
