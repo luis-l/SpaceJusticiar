@@ -15,7 +15,7 @@
 		_AtmoSize("Atm. Size", Range(1, 4)) = 1.1
 		_AtmoColor("Atm. Color", Color) = (0, 1, 1, 1)
 		_AtmoGradientExp("Atm. Gradient Exponent", Range(0, 3)) = 1
-		_AtmoBrightness("Atmo. Brightness", Range(0, 5)) = 1
+		_AtmoBrightness("Atmo. Brightness", Range(0, 10)) = 1
 		_AtmoEmission("Atm. Emission", Range(0, 1)) = 0
 	}
 
@@ -24,9 +24,9 @@
 		 // Render the atmosphere
 		Pass{
 
-			Tags {"LightMode" = "ForwardBase" "Queue"="Transparent+1" "IgnoreProjector"="True" "RenderType"="Transparent" }
+			Tags {"Queue"="Transparent" "RenderType"="Transparent" }
 
-			Blend One One
+			Blend SrcAlpha One
 			ZWrite Off
 			Offset 0, 1
 
@@ -37,7 +37,7 @@
 
 			#include "UnityCG.cginc"
 
-			uniform float4 _AtmoColor;
+			uniform half4 _AtmoColor;
 			uniform float _AtmoSize;
 			uniform float _AtmoGradientExp;
 			uniform float _AtmoBrightness;
@@ -96,7 +96,7 @@
 				float distanceToLight = length(lightToVertex);
 				float attenuation = 1.0 / (1.0 + _LightAttenA * distanceToLight + _LightAttenB * distanceToLight * distanceToLight);
 
-				float4 diffuseReflection = incidence * attenuation * float4(1, 1, 1, 1) * _AtmoColor * _AtmoBrightness;
+				float4 diffuseReflection = incidence * attenuation * _AtmoColor * _AtmoBrightness;
 				return diffuseReflection;
 			}
 
@@ -107,7 +107,7 @@
 		// Render the planet body.
 		Pass{
 		
-			Tags {"LightMode" = "ForwardBase"}
+			Tags {"RenderType"="Opaque"}
 
 			CGPROGRAM
 
@@ -131,8 +131,8 @@
 			
 			struct v2f{
 				float4 vertexPos : SV_POSITION;
-				float3 vertexWorldPos : TEXCOORD1;
-				float2 texcoord : TEXCOORD2;
+				float3 vertexWorldPos : TEXCOORD2;
+				float2 texcoord : TEXCOORD0;
 			};
 			
 			v2f vert(appdata_base v){
@@ -166,8 +166,7 @@
 				float distanceToLight = length(lightToVertexOnSphere);
 				float attenuation = _Albedo / (1.0 + _LightAttenA * distanceToLight + _LightAttenB * distanceToLight * distanceToLight);
 
-				// float3(1, 1, 1) is white light
-				float3 diffuseReflection = incidence * attenuation * float3(1, 1, 1) *  _Color.rgb * tex2D(_MainTex, i.texcoord);
+				float3 diffuseReflection = incidence * attenuation * _Color.rgb * tex2D(_MainTex, i.texcoord);
 				return float4(diffuseReflection, 1.0);
 			}
 

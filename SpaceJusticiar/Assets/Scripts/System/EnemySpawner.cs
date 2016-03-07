@@ -44,7 +44,7 @@ public class EnemySpawner : MonoBehaviour
 
             // Create a random direction vector.
             Vector2 spawnDir = (new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f))).normalized;
-            Vector2 spawnPos = spawnDir * (_planetCollider.radius + Random.Range(10, 30)) + (Vector2)planet.transform.position;
+            Vector2 spawnPos = spawnDir * _planetCollider.radius * 2 + (Vector2)planet.transform.position;
 
             Vector2 toPlanetCenterDir = (Vector2)planet.transform.position - spawnPos;
             toPlanetCenterDir.Normalize();

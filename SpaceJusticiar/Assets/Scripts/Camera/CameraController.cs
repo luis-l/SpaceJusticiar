@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour {
 
     public CameraShake CameraShake { get { return _camShake; } }
     public CameraFollow CameraFollow { get { return _camFollow; } }
+    private Color _originalColor;
 
 	// Use this for initialization
 	void Start () {
@@ -22,7 +23,7 @@ public class CameraController : MonoBehaviour {
 
         _camShake.targetTrans = transformToFollow;
         _camFollow.targetTrans = transformToFollow;
-
+        _originalColor = Camera.main.backgroundColor;
 
 	}
 	
@@ -61,7 +62,6 @@ public class CameraController : MonoBehaviour {
     private IEnumerator Fill(Color color, float duration)
     {
         float elapsed = 0f;
-
         Camera.main.backgroundColor = color;
 
         while (elapsed < duration) {
@@ -69,6 +69,6 @@ public class CameraController : MonoBehaviour {
             yield return null;
         }
 
-        Camera.main.backgroundColor = Color.black;
+        Camera.main.backgroundColor = _originalColor;
     }
 }

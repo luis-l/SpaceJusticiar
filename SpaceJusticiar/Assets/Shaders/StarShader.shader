@@ -13,7 +13,7 @@
 		// Render sun light
 		Pass{
 
-			Tags {"LightMode" = "ForwardBase" "Queue"="Transparent+1" "IgnoreProjector"="True" "RenderType"="Transparent" }
+			Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
 
 			Blend SrcAlpha One
 			ZWrite Off
