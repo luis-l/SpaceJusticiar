@@ -326,7 +326,7 @@ public class PlayerController : MonoBehaviour
             }
 
             planetAlignment = Quaternion.Euler(0, 0, z);
-            speed *= 1.1f;
+            speed *= 1.01f + Time.deltaTime;
 
             yield return null;
         }

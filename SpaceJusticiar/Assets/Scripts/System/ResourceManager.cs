@@ -4,12 +4,12 @@ using System.Collections;
 public class ResourceManager : MonoBehaviour
 {
 
-    private static AudioManager _audioManager;
+    private static CelestialResourcesManager _celestialResources;
 
     // Use this for initialization
     void Start()
     {
-        _audioManager = new AudioManager();
+        _celestialResources = new CelestialResourcesManager();
     }
 
     // Update is called once per frame
@@ -18,11 +18,9 @@ public class ResourceManager : MonoBehaviour
 
     }
 
-    public static AudioManager Audio
+    public static CelestialResourcesManager CelestialResources
     {
-        get
-        {
-            return _audioManager;
-        }
+        get { return _celestialResources; }
     }
+
 }
