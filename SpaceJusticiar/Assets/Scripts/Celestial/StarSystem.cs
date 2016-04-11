@@ -64,7 +64,7 @@ public class StarSystem : MonoBehaviour {
 
         
 
-        float bodySize = Random.RandomRange(20f, 60);
+        float bodySize = Random.Range(20f, 60);
         body.SetScale(bodySize);
 
     }
