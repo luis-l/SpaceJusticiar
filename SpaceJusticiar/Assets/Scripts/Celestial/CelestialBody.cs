@@ -8,46 +8,74 @@ public class CelestialBody : MonoBehaviour {
     // In other words, the planet becomes the parent transform of the gameobject.
     private CircleCollider2D _areaOfInfluence = null;
 
-    private float _rotationSpeed = 0f;
-    private float _orbitRadius = 200f;
-    private float _orbitSpeed = 0.01f;
+    public float rotationSpeed = 0f;
+    public float orbitRadius = 200f;
+    public float orbitSpeed = 0.01f;
     private float _currentOrbitAngle = 0f;
 
     // Do not parent directly.
     // A celestial parent is just for orbital purposes.
     // We do not want moons to rotate if the parent is rotating.
     // We just want the moons to orbit relative to the parent.
-    private GameObject _celestialParent = null;
+    public GameObject celestialParent = null;
+    private GameObject _graphic = null;
+    private MeshRenderer _graphicMeshRenderer = null;
 
-    private Material _material;
+    private CircleCollider2D _planetSurfaceCollider = null;
 
     public bool bRotateBody = false;
+
+    void Awake()
+    {
+        Transform aoiTrans = transform.FindChild("AreaOfInfluence");
+        if (aoiTrans != null) {
+            _areaOfInfluence = aoiTrans.gameObject.GetComponent<CircleCollider2D>();
+        }
+
+        // Graphic is the game object that contains the mesh renderer.
+        Transform graphicTrans = transform.FindChild("Graphic");
+        if (graphicTrans == null) {
+            _graphic = gameObject;
+        }
+        else {
+            _graphic = graphicTrans.gameObject;
+        }
+
+        _graphicMeshRenderer = _graphic.GetComponent<MeshRenderer>();
+
+        _planetSurfaceCollider = gameObject.GetComponent<CircleCollider2D>();
+    }
 
 	// Use this for initialization
     void Start()
     {
 
         // Create the influence graphic boundry.
-        int segments = 45;
-        Material mat = Resources.Load<Material>("Materials/Line");
-        VectorLine areaInfluenceBorder = new VectorLine("circle", new Vector3[segments * 2], mat, 4);
+        if (_areaOfInfluence != null) {
+            int segments = 45;
+            Material mat = Resources.Load<Material>("Materials/Line");
+            VectorLine areaInfluenceBorder = new VectorLine("AreaOfInfluence", new Vector3[segments * 2], mat, 4);
 
-        areaInfluenceBorder.MakeCircle(transform.position, _areaOfInfluence.radius, segments);
-        areaInfluenceBorder.textureScale = 5f;
+            areaInfluenceBorder.MakeCircle(transform.position, _areaOfInfluence.radius, segments);
+            areaInfluenceBorder.textureScale = 5f;
 
-        VectorManager.ObjectSetup(gameObject, areaInfluenceBorder, Visibility.Dynamic, Brightness.None);
-        areaInfluenceBorder.Draw3DAuto();
+            VectorManager.ObjectSetup(gameObject, areaInfluenceBorder, Visibility.Dynamic, Brightness.None);
+            areaInfluenceBorder.Draw3DAuto();
+        }
 
-        GameObject graphic = transform.FindChild("Graphic").gameObject;
-        _material = graphic.GetComponent<MeshRenderer>().material;
+        // For planets it is the atmosphere and for the sun it is the light range.
+        float glowSize = -1;
+        if (_graphicMeshRenderer.material.shader.name == "Custom/Planet Shader") {
+            glowSize = _graphicMeshRenderer.material.GetFloat("_AtmoSize");
+        }
+        else if(_graphicMeshRenderer.material.shader.name == "Custom/Star Shader"){
+            glowSize = _graphicMeshRenderer.material.GetFloat("_SunLightSize");
+        }
 
         // Modify the mesh bounds so the atmosphere does not disappear when the planet mesh goes out of camera view.
-        if (_material.shader.name == "PlanetShader" || _material.shader.name == "StarShader") {
-            float atmosphereSize = _material.GetFloat("_AtmoSize");
-
-            Mesh planetMesh = graphic.GetComponent<MeshFilter>().mesh;
-            Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size * atmosphereSize);
-
+        if (glowSize != -1) {
+            Mesh planetMesh = _graphic.GetComponent<MeshFilter>().mesh;
+            Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size *  glowSize);
             planetMesh.bounds = expandedPlanetBounds;
         }
     }
@@ -56,30 +84,42 @@ public class CelestialBody : MonoBehaviour {
 	void Update () {
         
         if (bRotateBody) {
-            transform.Rotate(new Vector3(0, 0, _rotationSpeed * Time.deltaTime));
+            transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));
         }
 
         // Orbit around the parent
-        if (_celestialParent != null) {
+        if (celestialParent != null) {
 
             // Move planet along orbit path.
-            _currentOrbitAngle += Time.deltaTime * _orbitSpeed;
+            _currentOrbitAngle += Time.deltaTime * orbitSpeed;
 
             // Clamp angle between 0 and 2 pi
             if (_currentOrbitAngle > Mathf.PI * 2) {
                 _currentOrbitAngle -= Mathf.PI * 2;
             }
 
-            float x = _orbitRadius * Mathf.Cos(_currentOrbitAngle) + _celestialParent.transform.position.x;
-            float y = _orbitRadius * Mathf.Sin(_currentOrbitAngle) + _celestialParent.transform.position.y;
+            float x = orbitRadius * Mathf.Cos(_currentOrbitAngle) + celestialParent.transform.position.x;
+            float y = orbitRadius * Mathf.Sin(_currentOrbitAngle) + celestialParent.transform.position.y;
             transform.position = new Vector3(x, y, transform.position.z);
         }
 	}
 
+    /// <summary>
+    /// Should only be done once when constructing the planet.
+    /// </summary>
+    /// <param name="scale"></param>
     public void SetScale(float scale)
     {
-        transform.localScale = new Vector3(scale, scale, scale);
-        _material.SetFloat("_TransformScale", scale);
+        _graphic.transform.localScale = new Vector3(scale, scale, scale);
+        _graphicMeshRenderer.material.SetFloat("_TransformScale", scale);
+
+        if (_areaOfInfluence != null) {
+            _areaOfInfluence.radius = scale * 2.5f;
+        }
+
+        if (_planetSurfaceCollider != null) {
+            _planetSurfaceCollider.radius = scale;
+        }
     }
 
     /// <summary>
@@ -88,6 +128,16 @@ public class CelestialBody : MonoBehaviour {
     /// <param name="pos"></param>
     public void SetSunPos(Vector2 pos)
     {
-        _material.SetVector("_SunPos", pos);
+        _graphicMeshRenderer.material.SetVector("_SunPos", pos);
+    }
+
+    public GameObject Graphic
+    {
+        get { return _graphic; }
+    }
+
+    public CircleCollider2D AreaOfInfluence
+    {
+        get { return _areaOfInfluence; }
     }
 }

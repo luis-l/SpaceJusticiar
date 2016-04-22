@@ -19,8 +19,8 @@ public class CelestialResourcesManager
         _starPrefab = Resources.Load(_celestialPrefabPath + "Star") as GameObject;
         _moonPrefab = Resources.Load(_celestialPrefabPath + "Moon") as GameObject;
 
-        _planetShader = Shader.Find("Custom/PlanetShader");
-        _starShader = Shader.Find("Custom/StarShader");
+        _planetShader = Shader.Find("Custom/Planet Shader");
+        _starShader = Shader.Find("Custom/Star Shader");
     }
 
     public GameObject PlanetPrefab

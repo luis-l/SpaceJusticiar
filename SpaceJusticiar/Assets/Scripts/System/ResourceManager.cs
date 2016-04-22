@@ -1,21 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ResourceManager : MonoBehaviour
+public class ResourceManager
 {
 
     private static CelestialResourcesManager _celestialResources;
 
     // Use this for initialization
-    void Start()
+    public static void Init()
     {
         _celestialResources = new CelestialResourcesManager();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public static CelestialResourcesManager CelestialResources

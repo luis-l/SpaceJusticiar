@@ -8,9 +8,15 @@ public class GameController : MonoBehaviour {
     private float _minCamSize = 14f;
     private float _maxCamSize = 100f;
 
+    private StarSystem _starSys;
+
 	// Use this for initialization
 	void Start () {
 
+        ResourceManager.Init();
+
+        _starSys = new StarSystem();
+        _starSys.Init();
 	}
 	
 	// Update is called once per frame
