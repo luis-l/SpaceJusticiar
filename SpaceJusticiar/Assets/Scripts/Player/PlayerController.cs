@@ -5,6 +5,8 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
 
+    public GameController gameController;
+
     public Rigidbody2D rigidBody;
     private SpriteRenderer _spriteRenderer;
 
@@ -23,7 +25,7 @@ public class PlayerController : MonoBehaviour
     private float _minColor = 0.5f;
     private float _maxColor = 1f;
 
-    public GameObject planet;
+    private GameObject _planet;
     public float gravityScale = 1f;
 
     public Transform camTransform = null;
@@ -65,6 +67,10 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        _planet = gameController.StarSystem.GetPlanet(0).gameObject;
+        transform.parent = _planet.transform;
+        transform.localPosition = Vector2.zero;
+
         _energyCell = new EnergyCell();
         _health = new HealthComponent();
 
@@ -73,7 +79,7 @@ public class PlayerController : MonoBehaviour
         _camController = camTransform.gameObject.GetComponent<CameraController>();
 
         Vector2 newPos = transform.position;
-        newPos.y = planet.transform.position.y + planet.transform.localScale.x * planet.GetComponent<CircleCollider2D>().radius + 1;
+        newPos.y = _planet.transform.position.y + _planet.transform.localScale.x * _planet.GetComponent<CircleCollider2D>().radius + 1;
         transform.position = newPos;
 
         _thrustParticles = GameObject.Find("Player/Thrust").GetComponent<ParticleSystem>();
@@ -227,7 +233,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 up()
     {
         if (currentFrameOfRef == FrameOfReference.PLANET)
-            return (transform.position - planet.transform.position).normalized;
+            return (transform.position - _planet.transform.position).normalized;
 
         // Up relative from the camera's up vector.
         return camTransform.up;
@@ -288,8 +294,8 @@ public class PlayerController : MonoBehaviour
             StartCoroutine("AlignCameraToPlanetSurface");
             
             // Update the planet reference which is the owner of the AreaOfInfluence child object
-            planet = other.transform.parent.gameObject;
-            transform.parent = planet.transform;
+            _planet = other.transform.parent.gameObject;
+            transform.parent = _planet.transform;
         }
     }
 
@@ -304,7 +310,7 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator AlignCameraToPlanetSurface()
     {
-        Vector2 normalToPlanetSurface = (transform.position - planet.transform.position).normalized;
+        Vector2 normalToPlanetSurface = (transform.position - _planet.transform.position).normalized;
 
         float z = Mathf.Acos(normalToPlanetSurface.y) * Mathf.Rad2Deg;
         if (normalToPlanetSurface.x > 0) {
@@ -321,7 +327,7 @@ public class PlayerController : MonoBehaviour
             camTransform.rotation = Quaternion.Slerp(camTransform.rotation, planetAlignment, Time.deltaTime * speed);
 
             // Update planet surface normal since player moves.
-            normalToPlanetSurface = (transform.position - planet.transform.position).normalized;
+            normalToPlanetSurface = (transform.position - _planet.transform.position).normalized;
             z = Mathf.Acos(normalToPlanetSurface.y) * Mathf.Rad2Deg;
             if (normalToPlanetSurface.x > 0) {
                 z *= -1;

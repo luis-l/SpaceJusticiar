@@ -5,7 +5,7 @@ public class EnemySpawner : MonoBehaviour
 {
 
     public GameObject player;
-    public GameObject planet;
+    private GameObject _planet;
     private CircleCollider2D _planetCollider;
     private GameObject _torpedoPrefab;
     private GameObject _fighterPrefab;
@@ -19,14 +19,16 @@ public class EnemySpawner : MonoBehaviour
 
     public int fighterCount = 0;
 
+    public GameController gameController;
 
     // Use this for initialization
     void Start()
     {
+        _planet = gameController.StarSystem.GetPlanet(0).gameObject;
         _torpedoPrefab = Resources.Load(ENEMY_PREFAB_PATH + "Torpedo") as GameObject;
         _fighterPrefab = Resources.Load(ENEMY_PREFAB_PATH + "Fighter") as GameObject;
 
-        _planetCollider = planet.GetComponent<CircleCollider2D>();
+        _planetCollider = _planet.GetComponent<CircleCollider2D>();
     }
 
     // Update is called once per frame
@@ -40,13 +42,13 @@ public class EnemySpawner : MonoBehaviour
         if (torpedoSpawnTimer >= torpedoSpawnInterval) {
 
             GameObject torpedo = GameObject.Instantiate(_torpedoPrefab);
-            torpedo.transform.parent = planet.transform;
+            torpedo.transform.parent = _planet.transform;
 
             // Create a random direction vector.
             Vector2 spawnDir = (new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f))).normalized;
-            Vector2 spawnPos = spawnDir * _planetCollider.radius * 4 + (Vector2)planet.transform.position;
+            Vector2 spawnPos = spawnDir * _planetCollider.radius * 4 + (Vector2)_planet.transform.position;
 
-            Vector2 toPlanetCenterDir = (Vector2)planet.transform.position - spawnPos;
+            Vector2 toPlanetCenterDir = (Vector2)_planet.transform.position - spawnPos;
             toPlanetCenterDir.Normalize();
 
             torpedo.transform.position = spawnPos;
@@ -60,23 +62,18 @@ public class EnemySpawner : MonoBehaviour
             if (fighterCount < MAX_FIGHTERS && Random.value < 0.22f) {
                 fighterCount++;
 
-                GameObject fighter = GameObject.Instantiate(_fighterPrefab);
-                fighter.transform.parent = planet.transform;
-
-                //fighter.transform.position = Random.value < 0.5f ? spawnPos / 2f : spawnPos;
-                fighter.transform.position = spawnPos;
-
-                Fighter fighterComponent = fighter.GetComponent<Fighter>();
+                GameObject fighterObj = GameObject.Instantiate(_fighterPrefab);
+                Fighter fighterComponent = fighterObj.GetComponent<Fighter>();
+                fighterComponent.SetPlanetTarget(_planet);
                 fighterComponent.enemySpawner = this;
+                fighterObj.transform.position = spawnPos;
 
                 if (player != null) {
                     fighterComponent.targetTrans = player.transform;
                     fighterComponent.targetRigid = player.GetComponent<Rigidbody2D>();
                 }
 
-                //Vector2 right = new Vector2(toPlanetCenterDir.y, -toPlanetCenterDir.x);
-                //fighter.GetComponent<Rigidbody2D>().velocity = right * 2f;
-                fighter.GetComponent<Rigidbody2D>().AddForce(toPlanetCenterDir * 70f);
+                fighterObj.GetComponent<Rigidbody2D>().AddForce(toPlanetCenterDir * 70f);
             }
         }
 

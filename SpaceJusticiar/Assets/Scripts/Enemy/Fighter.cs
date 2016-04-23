@@ -5,10 +5,11 @@ public class Fighter : MonoBehaviour
 {
     float _rangeSq = 30f * 30f;
 
+    private GameObject _targetPlanet = null;
+
     public Transform targetTrans;
     public Rigidbody2D targetRigid = null;
-    
-    public GameObject planet = null;
+
     public EnemySpawner enemySpawner = null;
     public LaserCannon mainGun = null;
 
@@ -35,8 +36,6 @@ public class Fighter : MonoBehaviour
         mainGun.FiringDelay = 0.2f;
         mainGun.firingForce = 5000f;
         mainGun.ProjectileType = initialProjectileType;
-
-        planet = GameObject.Find("Planet");
 
         initialProjectileType.GetComponent<ProjectileBehavior>().explosionName = "RedEnergyExplosion";
     }
@@ -129,7 +128,8 @@ public class Fighter : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.name == planet.name) {
+        // Convert fighter to second form
+        if (other.gameObject.name == _targetPlanet.name) {
             Rigidbody2D rigid = GetComponent<Rigidbody2D>();
             rigid.velocity.Set(0, 0);
             rigid.isKinematic = true;
@@ -144,5 +144,10 @@ public class Fighter : MonoBehaviour
             gunSound.volume = 0.14f;
             _bInSecondForm = true;
         }
+    }
+
+    public void SetPlanetTarget(GameObject planet){
+        transform.parent = planet.transform;
+        _targetPlanet = planet;
     }
 }

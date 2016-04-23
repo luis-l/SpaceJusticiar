@@ -10,13 +10,17 @@ public class GameController : MonoBehaviour {
 
     private StarSystem _starSys;
 
-	// Use this for initialization
-	void Start () {
-
+    void Awake()
+    {
         ResourceManager.Init();
 
         _starSys = new StarSystem();
         _starSys.Init();
+    }
+
+	// Use this for initialization
+	void Start () {
+
 	}
 	
 	// Update is called once per frame
@@ -39,4 +43,6 @@ public class GameController : MonoBehaviour {
             }
         }
 	}
+
+    public StarSystem StarSystem { get { return _starSys; } }
 }
