@@ -46,7 +46,6 @@ public class PlayerShooting : MonoBehaviour
             else if (Input.GetMouseButton(1) && _mainGun.ProjectileType.name != projectileTypes[1].name) {
                 _mainGun.ProjectileType = projectileTypes[1];
                 _mainGun.firingForce = 850f;
-                
             }
 
             // Give bullet initial velocity of the player to start with.

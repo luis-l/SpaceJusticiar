@@ -17,7 +17,7 @@ public class ProjectileBehavior : MonoBehaviour
     public float energyCost = 0.03f;
 
     public float gravityScale = 0f;
-    public GameObject planet = null;
+    private GameObject _planet = null;
 
     private Rigidbody2D _rigid = null;
 
@@ -31,8 +31,6 @@ public class ProjectileBehavior : MonoBehaviour
         lifeTimer = life;
         scoreValueText = GameObject.Find("Canvas/Score/ScoreValue").GetComponent<Text>();
         _rigid = GetComponent<Rigidbody2D>();
-
-        planet = PlanetController.planet;
     }
 
     // Update is called once per frame
@@ -48,8 +46,8 @@ public class ProjectileBehavior : MonoBehaviour
     void FixedUpdate()
     {
         // Apply gravity to projectile.
-        if (gravityScale != 0 && planet != null) {
-            Vector2 up = (transform.position - planet.transform.position).normalized;
+        if (gravityScale != 0 && _planet != null) {
+            Vector2 up = (transform.position - _planet.transform.position).normalized;
             _rigid.AddForce(-up * gravityScale);
         }
     }
@@ -60,8 +58,24 @@ public class ProjectileBehavior : MonoBehaviour
         lifeTimer = life;
     }
 
+    void OnDisable()
+    {
+        _planet = null;
+    }
+
+    // Sets the planet the influences the projectile.
+    public void SetPlanet(GameObject planet)
+    {
+        _planet = planet;
+    }
+
+    // Need to fix this tag stuff to something more generic
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.tag == "PlanetInfluence") {
+            _planet = other.gameObject;
+        }
+
         if (other.tag == "Collidable" || other.tag == targetTag){
 
             if (other.tag == "Enemy") {
@@ -94,6 +108,13 @@ public class ProjectileBehavior : MonoBehaviour
             effect.Play();
 
             Pools.Instance.Recycle(gameObject);
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.tag == "PlanetInfluence") {
+            _planet = null;
         }
     }
 }
