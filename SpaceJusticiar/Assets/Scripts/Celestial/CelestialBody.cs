@@ -56,7 +56,7 @@ public class CelestialBody : MonoBehaviour {
             Material mat = Resources.Load<Material>("Materials/Line");
             VectorLine areaInfluenceBorder = new VectorLine("AreaOfInfluence", new Vector3[segments * 2], mat, 4);
 
-            areaInfluenceBorder.MakeCircle(transform.position, _areaOfInfluence.radius, segments);
+            areaInfluenceBorder.MakeCircle(Vector3.zero, _areaOfInfluence.radius, segments);
             areaInfluenceBorder.textureScale = 5f;
 
             VectorManager.ObjectSetup(gameObject, areaInfluenceBorder, Visibility.Dynamic, Brightness.None);

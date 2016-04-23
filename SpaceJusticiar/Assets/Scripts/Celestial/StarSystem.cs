@@ -82,14 +82,16 @@ public class StarSystem {
         int planetCount = Random.Range(1, 15);
         for (int i = 0; i < planetCount; i++) {
 
-            CreatePlanet(currentPlanetOrbitRadius);
-            currentPlanetOrbitRadius *= Random.Range(1.7f, 2.8f);
+            GameObject planet = CreatePlanet(currentPlanetOrbitRadius);
+            currentPlanetOrbitRadius *= Random.Range(1.5f, 2.0f);
+            planet.name += i;
         }
     }
 
-    private void CreatePlanet(float orbitRadius)
+    private GameObject CreatePlanet(float orbitRadius)
     {
         GameObject planet = GameObject.Instantiate(ResourceManager.CelestialResources.PlanetPrefab);
+        planet.transform.position = _barycenter.transform.position + new Vector3(orbitRadius, 0, 0);
         CelestialBody body = planet.GetComponent<CelestialBody>();
         _planets.Add(body);
 
@@ -115,7 +117,7 @@ public class StarSystem {
         renderer.material.SetColor("_AtmoColor", atmoColor);
         renderer.material.SetFloat("_AtmoSize", Random.Range(1.25f, 1.4f));
         renderer.material.SetFloat("_AtmoGradientExp", 0.5f);
-        renderer.material.SetFloat("_AtmoBrightness", Random.Range(4.5f, 5.4f));
+        renderer.material.SetFloat("_AtmoBrightness", Random.Range(4.5f, 5.0f));
         renderer.material.SetFloat("_AtmoEmission", 0.156f);
 
         // Set planet rotations and orbit speeds
@@ -125,7 +127,9 @@ public class StarSystem {
 
         body.celestialParent = _barycenter;
         body.orbitRadius = orbitRadius;
-        body.orbitSpeed = 10 / orbitRadius;
+        body.orbitSpeed = 2.0f / orbitRadius;
+
+        return planet;
     }
 
     private void CreateMoons(CelestialBody parentPlanet)

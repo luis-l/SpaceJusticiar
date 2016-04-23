@@ -284,9 +284,11 @@ public class PlayerController : MonoBehaviour
 
         else if (other.name == "AreaOfInfluence") {
 
-            //currentFrameOfRef = FrameOfReference.PLANET;
             StopCoroutine("AlignCameraToPlanetSurface");
             StartCoroutine("AlignCameraToPlanetSurface");
+            
+            // Update the planet reference which is the owner of the AreaOfInfluence child object
+            planet = other.transform.parent.gameObject;
             transform.parent = planet.transform;
         }
     }
