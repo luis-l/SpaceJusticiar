@@ -6,7 +6,8 @@ using System.Collections.Generic;
 /// and other celestial bodies.
 /// The star system is seeded so it always generates the same celestial bodies.
 /// </summary>
-public class StarSystem {
+public class StarSystem
+{
 
     // The center of mass of the solar system. Stars and planets orbit around this.
     // A single star will be treated as the bary center for simplicity.
@@ -72,18 +73,32 @@ public class StarSystem {
         renderer.material.SetFloat("_SunLightGradientExp", lightGradient);
         renderer.material.SetFloat("_SunLightBrightness", brightness);
 
-        star.transform.position = pos + new Vector2(offset * size, 0);
+        float totalOffset = offset * size;
+        star.transform.position = pos + new Vector2(totalOffset, 0); ;
+
+        /* Make the stars orbit the barycenter
+        if (offset != 0) {
+            body.celestialParent = _barycenter;
+            body.orbitRadius = totalOffset;
+            body.orbitSpeed = 0.01f;
+        }*/
     }
 
     private void CreatePlanets()
     {
         float currentPlanetOrbitRadius = 300f + Random.Range(0, 50);
-        
-        int planetCount = Random.Range(1, 15);
+
+        int planetCount = Random.Range(SpaceEngine.MIN_PLANETS_PER_SYSTEM, SpaceEngine.MAX_PLANETS_PER_SYSTEM);
         for (int i = 0; i < planetCount; i++) {
 
             GameObject planet = CreatePlanet(currentPlanetOrbitRadius);
-            currentPlanetOrbitRadius *= Random.Range(1.5f, 2.0f);
+
+            if (currentPlanetOrbitRadius < 1500f) {
+                currentPlanetOrbitRadius *= Random.Range(1.5f, 1.8f);
+            }
+            else {
+                currentPlanetOrbitRadius += Random.Range(300f, 500f);
+            }
             planet.name += i;
         }
     }
@@ -97,7 +112,7 @@ public class StarSystem {
 
         MeshRenderer renderer = body.Graphic.GetComponent<MeshRenderer>();
         renderer.material = new Material(ResourceManager.CelestialResources.PlanetShader);
-        
+
         float bodySize = Random.Range(10, 30);
         body.SetScale(bodySize);
         body.SetSunPos(_barycenter.transform.position);
@@ -140,5 +155,15 @@ public class StarSystem {
     private void CreateAsteroids()
     {
 
+    }
+
+    public CelestialBody GetPlanet(int index)
+    {
+        return _planets[index];
+    }
+
+    public CelestialBody GetStar(int index)
+    {
+        return _suns[index];
     }
 }
