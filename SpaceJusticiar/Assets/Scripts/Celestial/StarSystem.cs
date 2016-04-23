@@ -21,6 +21,7 @@ public class StarSystem
     public void Init()
     {
         _barycenter.transform.position = Vector3.zero;
+        _barycenter.name = "Barycenter";
 
         _suns = new List<CelestialBody>();
         _planets = new List<CelestialBody>();
@@ -86,7 +87,7 @@ public class StarSystem
 
     private void CreatePlanets()
     {
-        float currentPlanetOrbitRadius = 300f + Random.Range(0, 50);
+        float currentPlanetOrbitRadius = 400f + Random.Range(0, 50);
 
         int planetCount = Random.Range(SpaceEngine.MIN_PLANETS_PER_SYSTEM, SpaceEngine.MAX_PLANETS_PER_SYSTEM);
         for (int i = 0; i < planetCount; i++) {
@@ -132,7 +133,7 @@ public class StarSystem
         //Color atmoColor = Color.HSVToRGB(Random.value, 1.0f, 1.0f);
 
         // Atmosphere color somewhat matches its hue to the planet
-        float atmoHue = Mathf.Abs(hue + Random.Range(-0.4f, 0.4f));
+        float atmoHue = Mathf.Abs(hue + Random.Range(-0.15f, 0.15f));
         Color atmoColor = Color.HSVToRGB(atmoHue, 1.0f, 1.0f);
 
         renderer.material.SetColor("_AtmoColor", atmoColor);
