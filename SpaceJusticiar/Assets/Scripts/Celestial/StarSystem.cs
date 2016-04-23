@@ -62,7 +62,7 @@ public class StarSystem
         float size = Random.Range(35f, 60f);
         body.SetScale(size);
 
-        Color color = Color.HSVToRGB(Random.value, Random.Range(0.2f, 0.6f), 1.0f);
+        Color color = Color.HSVToRGB(Random.value, Random.Range(0.2f, 0.5f), 1.0f);
         float lightSize = Random.Range(1.5f, 2.5f);
         float lightGradient = Random.Range(0.4f, 1f);
         float brightness = Random.Range(1.5f, 2.5f);
@@ -128,11 +128,17 @@ public class StarSystem
         renderer.material.SetFloat("_Albedo", Random.Range(3.8f, 5.0f));
         renderer.material.SetFloat("_Emission", Random.Range(0.01f, 0.02f));
 
-        Color atmoColor = Color.HSVToRGB(Random.value, 1.0f, 1.0f);
+        // Random atmosphere hue/
+        //Color atmoColor = Color.HSVToRGB(Random.value, 1.0f, 1.0f);
+
+        // Atmosphere color somewhat matches its hue to the planet
+        float atmoHue = Mathf.Abs(hue + Random.Range(-0.4f, 0.4f));
+        Color atmoColor = Color.HSVToRGB(atmoHue, 1.0f, 1.0f);
+
         renderer.material.SetColor("_AtmoColor", atmoColor);
         renderer.material.SetFloat("_AtmoSize", Random.Range(1.25f, 1.4f));
         renderer.material.SetFloat("_AtmoGradientExp", 0.5f);
-        renderer.material.SetFloat("_AtmoBrightness", Random.Range(4.5f, 5.0f));
+        renderer.material.SetFloat("_AtmoBrightness", Random.Range(4.5f, 4.8f));
         renderer.material.SetFloat("_AtmoEmission", 0.156f);
 
         // Set planet rotations and orbit speeds
