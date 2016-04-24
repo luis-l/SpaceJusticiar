@@ -117,4 +117,6 @@ public class ProjectileBehavior : MonoBehaviour
             _planet = null;
         }
     }
+
+    public Rigidbody2D RigidBody { get { return _rigid; } }
 }

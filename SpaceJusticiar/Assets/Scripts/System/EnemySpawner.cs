@@ -33,13 +33,16 @@ public class EnemySpawner : MonoBehaviour
         _planetCollider = _planet.GetComponent<CircleCollider2D>();
 
         // Spawn frigate
-        GameObject frigate = GameObject.Instantiate(_frigatePrefab);
-        frigate.transform.parent = _planet.transform;
-        frigate.transform.localPosition = new Vector2(0, _planetCollider.radius * 5);
+        int frigateCount = 2;
+        for (int i = 0; i < frigateCount; i++) {
+            GameObject frigate = GameObject.Instantiate(_frigatePrefab);
+            frigate.transform.parent = _planet.transform;
+            frigate.transform.localPosition = new Vector2(0, _planetCollider.radius * (i + 4));
 
-        // Have all frigate canons target the player.
-        foreach (TargetingSystem ts in frigate.GetComponentsInChildren<TargetingSystem>()) {
-            ts.targetTrans = player.transform;
+            // Have all frigate canons target the player.
+            foreach (TargetingSystem ts in frigate.GetComponentsInChildren<TargetingSystem>()) {
+                ts.targetTrans = player.transform;
+            }
         }
     }
 

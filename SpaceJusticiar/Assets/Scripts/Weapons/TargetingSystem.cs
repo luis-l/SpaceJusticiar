@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TargetingSystem : MonoBehaviour {
+public class TargetingSystem : MonoBehaviour
+{
 
-    float _rangeSq = 35f * 35f;
+    float _rangeSq = 36f * 36f;
 
     public Transform targetTrans = null;
 
@@ -16,45 +17,41 @@ public class TargetingSystem : MonoBehaviour {
 
     private EnergyCell _energyCell = null;
 
-	// Use this for initialization
-	void Start () {
+    public bool bUseTargetLeading = true;
+
+    // Use this for initialization
+    void Start()
+    {
 
         _energyCell = new EnergyCell(100f);
         _energyCell.setEmptiedCellWaitTime(1f);
-        
-        mainGun.FiringDelay = 0.17f;
+
+        mainGun.FiringDelay = 0.25f;
         mainGun.firingForce = 4000f;
         mainGun.ProjectileType = initialProjectileType;
 
         initialProjectileType.GetComponent<ProjectileBehavior>().explosionName = "RedEnergyExplosion";
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         if (targetTrans != null) {
 
             Vector2 distToTarget = targetTrans.position - transform.position;
 
-            if (distToTarget.sqrMagnitude <= _rangeSq) {
+            // Test if the target is within range.
+            _bTargetInRange = distToTarget.sqrMagnitude <= _rangeSq;
 
-                _bTargetInRange = true;
+            // Fire at the player if constraints are satisfied
+            if (_bTargetInSight && _bTargetInRange) {
                 Vector2 toTarget = distToTarget.normalized;
-
-                // Fire at the player
-                if (_bTargetInSight) {
-                    float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
-                    mainGun.transform.rotation = Quaternion.Euler(0, 0, rotZ);
-                    mainGun.Fire(targetTrans.position, "Player", _energyCell, new Vector2(0, 0));
-                }
-            }
-
-            else {
-                _bTargetInRange = false;
+                FireAtTarget(targetTrans.position, toTarget);
             }
         }
 
         _energyCell.Update();
-	}
+    }
 
     void FixedUpdate()
     {
@@ -71,5 +68,47 @@ public class TargetingSystem : MonoBehaviour {
                 _bTargetInSight = false;
             }
         }
+    }
+
+    // Pass in the position to fire at and the direction to the target.
+    void FireAtTarget(Vector2 targetPos, Vector2 toTarget)
+    {
+        if (bUseTargetLeading) {
+
+            float projectileForce = mainGun.firingForce;
+            float projectileMass = mainGun.ProjectileType.GetComponent<Rigidbody2D>().mass;
+            float projectileSpeed = projectileForce / projectileMass * Time.fixedDeltaTime;
+
+            Vector2 targetVel = targetTrans.gameObject.GetComponent<Rigidbody2D>().velocity;
+
+            // Target leading quadratic coefficients
+            // We are solving for time of impact of the projectile and target
+            // a * t^2 + b*t + c
+            Vector2 targetPosRel = targetPos - (Vector2)transform.position;
+            float a = Vector2.Dot(targetVel, targetVel) - projectileSpeed * projectileSpeed;
+            float b = 2 * Vector2.Dot(targetPosRel, targetVel);
+            float c = Vector2.Dot(targetPosRel, targetPosRel);
+
+            float discriminant = b * b - 4 * a * c;
+
+            // It is possible to hit the target with the projectile
+            if (discriminant >= 0) {
+
+                // Note:
+                // If discriminant = 0 then there is only 1 solution.
+                // If it is > 0 then there are 2 solutions.
+                float timeOfImpact = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
+
+                // Predict the future position of the target at t = timeOfImpact
+                targetPos += targetVel * timeOfImpact;
+
+                // Update toTarget
+                toTarget = targetPosRel.normalized;
+            }
+        }
+
+        float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
+        mainGun.transform.rotation = Quaternion.Euler(0, 0, rotZ);
+        mainGun.Fire(targetPos, "Player", _energyCell, new Vector2(0, 0));
     }
 }
