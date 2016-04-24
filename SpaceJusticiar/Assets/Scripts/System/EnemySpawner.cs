@@ -9,6 +9,7 @@ public class EnemySpawner : MonoBehaviour
     private CircleCollider2D _planetCollider;
     private GameObject _torpedoPrefab;
     private GameObject _fighterPrefab;
+    private GameObject _frigatePrefab;
 
     private const string ENEMY_PREFAB_PATH = "Prefabs/Enemy/";
 
@@ -27,8 +28,19 @@ public class EnemySpawner : MonoBehaviour
         _planet = gameController.StarSystem.GetPlanet(0).gameObject;
         _torpedoPrefab = Resources.Load(ENEMY_PREFAB_PATH + "Torpedo") as GameObject;
         _fighterPrefab = Resources.Load(ENEMY_PREFAB_PATH + "Fighter") as GameObject;
+        _frigatePrefab = Resources.Load(ENEMY_PREFAB_PATH + "EnemyFrigate") as GameObject;
 
         _planetCollider = _planet.GetComponent<CircleCollider2D>();
+
+        // Spawn frigate
+        GameObject frigate = GameObject.Instantiate(_frigatePrefab);
+        frigate.transform.parent = _planet.transform;
+        frigate.transform.localPosition = new Vector2(0, _planetCollider.radius * 5);
+
+        // Have all frigate canons target the player.
+        foreach (TargetingSystem ts in frigate.GetComponentsInChildren<TargetingSystem>()) {
+            ts.targetTrans = player.transform;
+        }
     }
 
     // Update is called once per frame
