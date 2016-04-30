@@ -24,7 +24,7 @@ public class PlayerShooting : MonoBehaviour
     {
         _mainGun.ProjectileType = projectileTypes[0];
 
-        _mainGun.firingForce = 5000f;
+        _mainGun.firingForce = 3000f;
         _mainGun.FiringDelay = 0.15f;
 
         prevPos = transform.position;
@@ -40,12 +40,12 @@ public class PlayerShooting : MonoBehaviour
 
             if (Input.GetMouseButton(0) && _mainGun.ProjectileType.name != projectileTypes[0].name) {
                 _mainGun.ProjectileType = projectileTypes[0];
-                _mainGun.firingForce = 6000f;
+                _mainGun.firingForce = 3000f;
             }
 
             else if (Input.GetMouseButton(1) && _mainGun.ProjectileType.name != projectileTypes[1].name) {
                 _mainGun.ProjectileType = projectileTypes[1];
-                _mainGun.firingForce = 850f;
+                _mainGun.firingForce = 750f;
             }
 
             // Give bullet initial velocity of the player to start with.

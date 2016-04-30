@@ -3,8 +3,9 @@ using System.Collections;
 
 public class TargetingSystem : MonoBehaviour
 {
-
-    float _rangeSq = 36f * 36f;
+    [SerializeField]
+    private float _range = 25f;
+    private float _rangeSq;
 
     public Transform targetTrans = null;
 
@@ -19,15 +20,22 @@ public class TargetingSystem : MonoBehaviour
 
     public bool bUseTargetLeading = true;
 
+    public float Range
+    {
+        get { return _range; }
+        set { _range = value; _rangeSq = value * value; }
+    }
+
     // Use this for initialization
     void Start()
     {
+        Range = _range;
 
         _energyCell = new EnergyCell(100f);
         _energyCell.setEmptiedCellWaitTime(1f);
 
         mainGun.FiringDelay = 0.25f;
-        mainGun.firingForce = 4000f;
+        mainGun.firingForce = 2500f;
         mainGun.ProjectileType = initialProjectileType;
 
         initialProjectileType.GetComponent<ProjectileBehavior>().explosionName = "RedEnergyExplosion";
@@ -43,6 +51,12 @@ public class TargetingSystem : MonoBehaviour
             // Test if the target is within range.
             _bTargetInRange = distToTarget.sqrMagnitude <= _rangeSq;
 
+            if (_bTargetInRange) {
+                Vector2 toTarget = distToTarget.normalized;
+                float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
+                mainGun.transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            }
+
             // Fire at the player if constraints are satisfied
             if (_bTargetInSight && _bTargetInRange) {
                 Vector2 toTarget = distToTarget.normalized;
@@ -57,7 +71,7 @@ public class TargetingSystem : MonoBehaviour
     {
         if (_bTargetInRange && targetTrans != null) {
 
-            Vector2 toTarget = (targetTrans.position - transform.position).normalized;
+            Vector2 toTarget = (mainGun.GetNozzle().position - transform.position).normalized;
             RaycastHit2D hit = Physics2D.Raycast(transform.position, toTarget);
 
             // Did not hit player.

@@ -33,15 +33,22 @@ public class EnemySpawner : MonoBehaviour
         _planetCollider = _planet.GetComponent<CircleCollider2D>();
 
         // Spawn frigate
-        int frigateCount = 2;
+        int frigateCount = 1;
         for (int i = 0; i < frigateCount; i++) {
             GameObject frigate = GameObject.Instantiate(_frigatePrefab);
             frigate.transform.parent = _planet.transform;
-            frigate.transform.localPosition = new Vector2(0, _planetCollider.radius * (i + 4));
+            frigate.transform.localPosition = new Vector2(0, _planetCollider.radius * (i + 3.5f));
 
             // Have all frigate canons target the player.
             foreach (TargetingSystem ts in frigate.GetComponentsInChildren<TargetingSystem>()) {
                 ts.targetTrans = player.transform;
+
+                Vector2 nozzlePos = ts.mainGun.GetNozzle().position;
+                nozzlePos.x = 3.0f;
+                nozzlePos.y = 0.0f;
+                ts.mainGun.GetNozzle().localPosition = nozzlePos;
+                ts.mainGun.FiringDelay = 0.3f;
+                ts.Range = 30f;
             }
         }
     }
@@ -61,7 +68,7 @@ public class EnemySpawner : MonoBehaviour
 
             // Create a random direction vector.
             Vector2 spawnDir = (new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f))).normalized;
-            Vector2 spawnPos = spawnDir * _planetCollider.radius * 4 + (Vector2)_planet.transform.position;
+            Vector2 spawnPos = spawnDir * _planetCollider.radius * 2.5f + (Vector2)_planet.transform.position;
 
             Vector2 toPlanetCenterDir = (Vector2)_planet.transform.position - spawnPos;
             toPlanetCenterDir.Normalize();
@@ -84,8 +91,7 @@ public class EnemySpawner : MonoBehaviour
                 fighterObj.transform.position = spawnPos;
 
                 if (player != null) {
-                    fighterComponent.targetTrans = player.transform;
-                    fighterComponent.targetRigid = player.GetComponent<Rigidbody2D>();
+                    fighterComponent.targetingSystem.targetTrans = player.transform;
                 }
 
                 fighterObj.GetComponent<Rigidbody2D>().AddForce(toPlanetCenterDir * 70f);

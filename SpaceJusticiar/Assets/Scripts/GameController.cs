@@ -5,8 +5,8 @@ using System.Collections;
 public class GameController : MonoBehaviour {
 
     private float _camZoomDelta = 1f;
-    private float _minCamSize = 14f;
-    private float _maxCamSize = 100f;
+    private float _minCamSize = 8f;
+    private float _maxCamSize = 20f;
 
     private StarSystem _starSys;
 

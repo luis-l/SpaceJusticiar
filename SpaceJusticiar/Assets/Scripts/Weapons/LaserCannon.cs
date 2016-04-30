@@ -5,7 +5,7 @@ public class LaserCannon : MonoBehaviour
     private float _lowestFiringDelay = 0.015f;
     private float _highestFiringDelay = 0.25f;
 
-    public float firingForce = 5000f;
+    public float firingForce = 3000f;
 
     // Timer to limit the firing rate.
     private CountUpTimer _firingTimer = null;
@@ -52,10 +52,10 @@ public class LaserCannon : MonoBehaviour
         {
             if (value > _highestFiringDelay)
                 _firingTimer.TargetTime = _highestFiringDelay;
-            
+
             else if (value < _lowestFiringDelay)
                 _firingTimer.TargetTime = _lowestFiringDelay;
-            
+
             else
                 _firingTimer.TargetTime = value;
         }
@@ -88,5 +88,22 @@ public class LaserCannon : MonoBehaviour
             _projectileType = value;
             _projBehavior = _projectileType.GetComponent<ProjectileBehavior>();
         }
+    }
+
+    public void SetNozzle(Transform t)
+    {
+        _nozzleTrans = t;
+    }
+
+    public void SetNozzle(Vector2 pos)
+    {
+        if (_nozzleTrans != null) {
+            _nozzleTrans.position = pos;
+        }
+    }
+
+    public Transform GetNozzle()
+    {
+        return _nozzleTrans;
     }
 }

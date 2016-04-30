@@ -139,7 +139,7 @@ public class StarSystem
         renderer.material.SetColor("_AtmoColor", atmoColor);
         renderer.material.SetFloat("_AtmoSize", Random.Range(1.25f, 1.4f));
         renderer.material.SetFloat("_AtmoGradientExp", 0.5f);
-        renderer.material.SetFloat("_AtmoBrightness", Random.Range(4.3f, 4.6f));
+        renderer.material.SetFloat("_AtmoBrightness", Random.Range(4.0f, 4.4f));
         renderer.material.SetFloat("_AtmoEmission", 0.156f);
 
         // Set planet rotations and orbit speeds
