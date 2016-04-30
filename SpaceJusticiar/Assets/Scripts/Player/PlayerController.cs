@@ -271,7 +271,7 @@ public class PlayerController : MonoBehaviour
             ProjectileBehavior proj = other.gameObject.GetComponent<ProjectileBehavior>();
             if (proj.targetTag == gameObject.tag) {
 
-                //_health.DealDamage(proj.damage);
+                _health.DealDamage(proj.damage);
 
                 CameraShake camShake = _camController.CameraShake;
                 camShake.duration = 0.5f;

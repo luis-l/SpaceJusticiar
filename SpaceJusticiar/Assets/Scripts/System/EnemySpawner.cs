@@ -44,7 +44,7 @@ public class EnemySpawner : MonoBehaviour
                 ts.targetTrans = player.transform;
 
                 Vector2 nozzlePos = ts.mainGun.GetNozzle().position;
-                nozzlePos.x = 3.0f;
+                nozzlePos.x = 1.0f;
                 nozzlePos.y = 0.0f;
                 ts.mainGun.GetNozzle().localPosition = nozzlePos;
                 ts.mainGun.FiringDelay = 0.3f;
