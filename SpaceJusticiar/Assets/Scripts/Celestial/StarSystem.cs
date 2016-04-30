@@ -92,7 +92,7 @@ public class StarSystem
         int planetCount = Random.Range(SpaceEngine.MIN_PLANETS_PER_SYSTEM, SpaceEngine.MAX_PLANETS_PER_SYSTEM);
         for (int i = 0; i < planetCount; i++) {
 
-            GameObject planet = CreatePlanet(currentPlanetOrbitRadius);
+            CelestialBody planet = CreatePlanet(currentPlanetOrbitRadius);
 
             if (currentPlanetOrbitRadius < 1500f) {
                 currentPlanetOrbitRadius *= Random.Range(1.5f, 1.8f);
@@ -100,16 +100,19 @@ public class StarSystem
             else {
                 currentPlanetOrbitRadius += Random.Range(300f, 500f);
             }
+
             planet.name += i;
         }
     }
 
-    private GameObject CreatePlanet(float orbitRadius)
+    private CelestialBody CreatePlanet(float orbitRadius)
     {
         GameObject planet = GameObject.Instantiate(ResourceManager.CelestialResources.PlanetPrefab);
         planet.transform.position = _barycenter.transform.position + new Vector3(orbitRadius, 0, 0);
         CelestialBody body = planet.GetComponent<CelestialBody>();
         _planets.Add(body);
+
+        body.currentOrbitAngle = Random.Range(0, 2 * Mathf.PI);
 
         MeshRenderer renderer = body.Graphic.GetComponent<MeshRenderer>();
         renderer.material = new Material(ResourceManager.CelestialResources.PlanetShader);
@@ -151,7 +154,7 @@ public class StarSystem
         body.orbitRadius = orbitRadius;
         body.orbitSpeed = 2.0f / orbitRadius;
 
-        return planet;
+        return body;
     }
 
     private void CreateMoons(CelestialBody parentPlanet)

@@ -108,7 +108,7 @@ public class TargetingSystem : MonoBehaviour
                 // Note:
                 // If discriminant = 0 then there is only 1 solution.
                 // If it is > 0 then there are 2 solutions.
-                float timeOfImpact = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
+                float timeOfImpact = Mathf.Abs((-b - Mathf.Sqrt(discriminant)) / (2 * a));
 
                 // Predict the future position of the target at t = timeOfImpact
                 targetPos += targetVel * timeOfImpact;

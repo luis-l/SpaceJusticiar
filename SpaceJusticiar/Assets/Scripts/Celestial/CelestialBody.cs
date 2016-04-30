@@ -11,7 +11,7 @@ public class CelestialBody : MonoBehaviour {
     public float rotationSpeed = 0f;
     public float orbitRadius = 200f;
     public float orbitSpeed = 0.01f;
-    private float _currentOrbitAngle = 0f;
+    public float currentOrbitAngle = 0f;
 
     // Do not parent directly.
     // A celestial parent is just for orbital purposes.
@@ -91,15 +91,15 @@ public class CelestialBody : MonoBehaviour {
         if (celestialParent != null) {
 
             // Move planet along orbit path.
-            _currentOrbitAngle += Time.deltaTime * orbitSpeed;
+            currentOrbitAngle += Time.deltaTime * orbitSpeed;
 
             // Clamp angle between 0 and 2 pi
-            if (_currentOrbitAngle > Mathf.PI * 2) {
-                _currentOrbitAngle -= Mathf.PI * 2;
+            if (currentOrbitAngle > Mathf.PI * 2) {
+                currentOrbitAngle -= Mathf.PI * 2;
             }
 
-            float x = orbitRadius * Mathf.Cos(_currentOrbitAngle) + celestialParent.transform.position.x;
-            float y = orbitRadius * Mathf.Sin(_currentOrbitAngle) + celestialParent.transform.position.y;
+            float x = orbitRadius * Mathf.Cos(currentOrbitAngle) + celestialParent.transform.position.x;
+            float y = orbitRadius * Mathf.Sin(currentOrbitAngle) + celestialParent.transform.position.y;
             transform.position = new Vector3(x, y, transform.position.z);
         }
 	}
