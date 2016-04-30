@@ -8,16 +8,13 @@ public class TargetingSystem : MonoBehaviour
     private float _rangeSq;
 
     public Transform targetTrans = null;
-
     public LaserCannon mainGun = null;
 
     private bool _bTargetInRange = false;
     private bool _bTargetInSight = false;
 
     public GameObject initialProjectileType = null;
-
     private EnergyCell _energyCell = null;
-
     public bool bUseTargetLeading = true;
 
     public float Range

@@ -18,6 +18,8 @@ public class LaserCannon : MonoBehaviour
 
     public AudioSource firingSfx = null;
 
+    public float spread = 0f;
+
     void Awake()
     {
         if (_nozzleTrans == null)
@@ -66,6 +68,13 @@ public class LaserCannon : MonoBehaviour
         GameObject proj = Pools.Instance.Fetch(_projectileType.name);
 
         Vector2 toTarget = targetPos - (Vector2)_nozzleTrans.position;
+
+        if (spread != 0) {
+            float x = Random.Range(-1, 1);
+            float y = Random.Range(-1, 1);
+            toTarget += spread * new Vector2(x, y).normalized;
+        }
+
         toTarget.Normalize();
 
         proj.transform.position = _nozzleTrans.position;

@@ -69,6 +69,7 @@ public class Fighter : MonoBehaviour
             mainGun.ProjectileType = secondFormProjectileType;
             mainGun.FiringDelay = 0.05f;
             mainGun.firingForce = 1000;
+            mainGun.spread = 2f;
 
             AudioSource gunSound = mainGun.GetComponent<AudioSource>();
             gunSound.pitch = 1.4f;
