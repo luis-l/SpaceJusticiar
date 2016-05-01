@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     private float _minColor = 0.5f;
     private float _maxColor = 1f;
 
-    private GameObject _planet;
+    private CelestialBody _planet;
     public float gravityScale = 1f;
 
     public Transform camTransform = null;
@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _planet = gameController.StarSystem.GetPlanet(0).gameObject;
+        _planet = gameController.StarSystem.GetPlanet(0);
         transform.parent = _planet.transform;
         transform.localPosition = Vector2.zero;
 
@@ -233,7 +233,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 up()
     {
         if (currentFrameOfRef == FrameOfReference.PLANET)
-            return (transform.position - _planet.transform.position).normalized;
+            return CelestialBody.GetUp(_planet, transform);
 
         // Up relative from the camera's up vector.
         return camTransform.up;
@@ -291,7 +291,7 @@ public class PlayerController : MonoBehaviour
         else if (other.name == "AreaOfInfluence") {
 
             // Update the planet reference which is the owner of the AreaOfInfluence child object
-            _planet = other.transform.parent.gameObject;
+            _planet = other.transform.parent.gameObject.GetComponent<CelestialBody>();
             transform.parent = _planet.transform;
 
             StopCoroutine("AlignCameraToPlanetSurface");

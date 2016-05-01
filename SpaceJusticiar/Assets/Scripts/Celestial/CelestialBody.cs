@@ -140,4 +140,9 @@ public class CelestialBody : MonoBehaviour {
     {
         get { return _areaOfInfluence; }
     }
+
+    public static Vector2 GetUp(CelestialBody body, Transform t)
+    {
+        return (t.position - body.transform.position).normalized;
+    }
 }

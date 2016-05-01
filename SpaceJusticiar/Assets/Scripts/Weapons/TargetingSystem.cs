@@ -85,6 +85,8 @@ public class TargetingSystem : MonoBehaviour
 
             Vector2 targetVel = targetTrans.gameObject.GetComponent<Rigidbody2D>().velocity;
 
+            // Should be using relative velocity but how to handle it for turrets without rigids but moving through space....
+
             // Target leading quadratic coefficients
             // We are solving for time of impact of the projectile and target
             // a * t^2 + b*t + c

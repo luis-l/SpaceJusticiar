@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Fighter : MonoBehaviour
+public class Lander : MonoBehaviour
 {
-    private GameObject _targetPlanet = null;
+    [SerializeField]
+    private ObjectController _oc;
 
-    public EnemySpawner enemySpawner = null;
     public LaserCannon mainGun = null;
     public TargetingSystem targetingSystem = null;
 
-    private HealthComponent _health = null;
     private EnergyCell _energyCell = null;
 
     public Sprite secondFormSprite = null;
@@ -20,41 +19,22 @@ public class Fighter : MonoBehaviour
     {
         _energyCell = new EnergyCell(100f);
         _energyCell.setEmptiedCellWaitTime(1f);
-
-        _health = new HealthComponent();
-
         mainGun.FiringDelay = 0.2f;
+
+        Vector2 down = -CelestialBody.GetUp(_oc.PlanetTarget, transform);
+        GetComponent<Rigidbody2D>().AddForce(down * 70f);
     }
 
     // Update is called once per frame
     void Update()
     {
         _energyCell.Update();
-        _health.Update();
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Projectile") {
-
-            // Projectile is meant to hit enemy
-            ProjectileBehavior proj = other.gameObject.GetComponent<ProjectileBehavior>();
-            if (proj.targetTag == gameObject.tag) {
-
-                _health.DealDamage(proj.damage);
-
-                if (_health.GetHealth() == 0) {
-                    enemySpawner.fighterCount--;
-                    Destroy(gameObject, 0.1f);
-                }
-            }
-        }
     }
 
     void OnCollisionEnter2D(Collision2D other)
     {
         // Convert fighter to second form
-        if (other.gameObject.name == _targetPlanet.name) {
+        if (other.gameObject.name == _oc.PlanetTarget.name) {
             Rigidbody2D rigid = GetComponent<Rigidbody2D>();
             rigid.velocity.Set(0, 0);
             rigid.isKinematic = true;
@@ -69,10 +49,5 @@ public class Fighter : MonoBehaviour
             gunSound.pitch = 1.4f;
             gunSound.volume = 0.14f;
         }
-    }
-
-    public void SetPlanetTarget(GameObject planet){
-        transform.parent = planet.transform;
-        _targetPlanet = planet;
     }
 }

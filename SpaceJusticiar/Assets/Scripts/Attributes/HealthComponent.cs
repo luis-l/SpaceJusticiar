@@ -12,10 +12,11 @@ public class HealthComponent
     public const float MAX_HEALTH = 1f;
     public const float MIN_HEALTH = 0f;
 
-    public HealthComponent(float regenRate = 0.04f)
+    public HealthComponent(float regenRate = 0.04f, float initialHealth = 1f)
     {
         _regenRate = regenRate;
         _hitWaitTimer = new CountUpTimer(1f);
+        Health = initialHealth;
     }
 
     public void Update()
@@ -59,5 +60,12 @@ public class HealthComponent
     public int GetPercentage()
     {
         return (int)(_health * 100);
+    }
+
+    // Reset the values for the health component;
+    public void ReInit(float regen, float initHealth)
+    {
+        Health = initHealth;
+        _regenRate = regen;
     }
 }
