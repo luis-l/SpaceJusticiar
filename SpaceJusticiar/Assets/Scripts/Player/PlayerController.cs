@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
         _camController = camTransform.gameObject.GetComponent<CameraController>();
 
         Vector2 newPos = transform.position;
-        newPos.y = _planet.transform.position.y + _planet.transform.localScale.x * _planet.GetComponent<CircleCollider2D>().radius + 1;
+        newPos.y = _planet.transform.position.y - _planet.transform.localScale.x * _planet.GetComponent<CircleCollider2D>().radius + 1;
         transform.position = newPos;
 
         _thrustParticles = GameObject.Find("Player/Thrust").GetComponent<ParticleSystem>();
@@ -271,7 +271,7 @@ public class PlayerController : MonoBehaviour
             ProjectileBehavior proj = other.gameObject.GetComponent<ProjectileBehavior>();
             if (proj.targetTag == gameObject.tag) {
 
-                //_health.DealDamage(proj.damage);
+                _health.DealDamage(proj.damage);
 
                 CameraShake camShake = _camController.CameraShake;
                 camShake.duration = 0.5f;

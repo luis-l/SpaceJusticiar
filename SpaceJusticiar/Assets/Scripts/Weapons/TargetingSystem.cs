@@ -13,7 +13,6 @@ public class TargetingSystem : MonoBehaviour
     private bool _bTargetInRange = false;
     private bool _bTargetInSight = false;
 
-    public GameObject initialProjectileType = null;
     private EnergyCell _energyCell = null;
     public bool bUseTargetLeading = true;
 
@@ -30,12 +29,6 @@ public class TargetingSystem : MonoBehaviour
 
         _energyCell = new EnergyCell(100f);
         _energyCell.setEmptiedCellWaitTime(1f);
-
-        mainGun.FiringDelay = 0.25f;
-        mainGun.firingForce = 2500f;
-        mainGun.ProjectileType = initialProjectileType;
-
-        initialProjectileType.GetComponent<ProjectileBehavior>().explosionName = "RedEnergyExplosion";
     }
 
     // Update is called once per frame

@@ -23,7 +23,8 @@ public class ProjectileBehavior : MonoBehaviour
 
     public float damage = 0.2f;
 
-    public string explosionName = "GreenEnergyExplosion";
+    [SerializeField]
+    private string _explosionTypeName = "GreenEnergyExplosion";
 
     // Use this for initialization
     void Start()
@@ -101,7 +102,7 @@ public class ProjectileBehavior : MonoBehaviour
                 }
             }
 
-            GameObject explosion = Pools.Instance.Fetch(explosionName);
+            GameObject explosion = Pools.Instance.Fetch(_explosionTypeName);
             explosion.transform.position = transform.position;
 
             ParticleSystem effect = explosion.GetComponent<ParticleSystem>();

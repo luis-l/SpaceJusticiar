@@ -12,8 +12,6 @@ public class Fighter : MonoBehaviour
     private HealthComponent _health = null;
     private EnergyCell _energyCell = null;
 
-    public GameObject initialProjectileType = null;
-
     public Sprite secondFormSprite = null;
     public GameObject secondFormProjectileType = null;
 
@@ -26,10 +24,6 @@ public class Fighter : MonoBehaviour
         _health = new HealthComponent();
 
         mainGun.FiringDelay = 0.2f;
-        mainGun.firingForce = 2500f;
-        mainGun.ProjectileType = initialProjectileType;
-
-        initialProjectileType.GetComponent<ProjectileBehavior>().explosionName = "RedEnergyExplosion";
     }
 
     // Update is called once per frame
@@ -68,7 +62,7 @@ public class Fighter : MonoBehaviour
             GetComponent<SpriteRenderer>().sprite = secondFormSprite;
             mainGun.ProjectileType = secondFormProjectileType;
             mainGun.FiringDelay = 0.05f;
-            mainGun.firingForce = 1000;
+            mainGun.firingForce = 1500;
             mainGun.spread = 2f;
 
             AudioSource gunSound = mainGun.GetComponent<AudioSource>();

@@ -13,8 +13,9 @@ public class LaserCannon : MonoBehaviour
     [SerializeField]
     private Transform _nozzleTrans = null;
 
+    [SerializeField]
     private GameObject _projectileType = null;
-    private ProjectileBehavior _projBehavior = null;
+    private ProjectileBehavior _projectileBehavior = null;
 
     public AudioSource firingSfx = null;
 
@@ -28,6 +29,11 @@ public class LaserCannon : MonoBehaviour
         _firingTimer = new CountUpTimer(0.1f);
     }
 
+    void Start()
+    {
+        _projectileBehavior = _projectileType.GetComponent<ProjectileBehavior>();
+    }
+
     /// <summary>
     /// Fires a projectiles at the target position, and consumes
     /// energy from the cell.
@@ -39,7 +45,7 @@ public class LaserCannon : MonoBehaviour
             _firingTimer.Start();
         }
 
-        if (_firingTimer.IsDone() && energyCell.UseEnergy(_projBehavior.energyCost)) {
+        if (_firingTimer.IsDone() && energyCell.UseEnergy(_projectileBehavior.energyCost)) {
             FireProjectile(targetPos, targetTag, energyCell, initialVelocity);
 
             // Allow for 'single fire' mode by doing a forced reset of the timer.
@@ -95,7 +101,7 @@ public class LaserCannon : MonoBehaviour
         set
         {
             _projectileType = value;
-            _projBehavior = _projectileType.GetComponent<ProjectileBehavior>();
+            _projectileBehavior = _projectileType.GetComponent<ProjectileBehavior>();
         }
     }
 

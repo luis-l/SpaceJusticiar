@@ -47,8 +47,22 @@ public class EnemySpawner : MonoBehaviour
                 nozzlePos.x = 1.0f;
                 nozzlePos.y = 0.0f;
                 ts.mainGun.GetNozzle().localPosition = nozzlePos;
-                ts.mainGun.FiringDelay = 0.3f;
-                ts.Range = 30f;
+
+                float firingForce = 3000f;
+                float firingDelay = 0.2f;
+
+                if (ts.mainGun.ProjectileType.name == "RedEnergyProjectile") {
+                    firingForce = 2500f;
+                    firingDelay = 0.35f;
+                }
+                else if (ts.mainGun.ProjectileType.name == "BlueProjectile") {
+                    firingForce = 1800f;
+                    firingDelay = 0.05f;
+                }
+
+                ts.mainGun.FiringDelay = firingDelay;
+                ts.mainGun.firingForce = firingForce;
+                ts.Range = 50f;
             }
         }
     }
