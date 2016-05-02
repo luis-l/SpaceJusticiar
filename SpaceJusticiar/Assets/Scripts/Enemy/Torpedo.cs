@@ -33,7 +33,7 @@ public class Torpedo : MonoBehaviour {
             ParticleSystem effect = explosion.GetComponent<ParticleSystem>();
             effect.Play();
 
-            Destroy(gameObject, 0.01f);
+            _oc.Destroy();
         }
     }
 }

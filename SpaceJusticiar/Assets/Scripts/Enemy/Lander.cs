@@ -22,7 +22,7 @@ public class Lander : MonoBehaviour
         mainGun.FiringDelay = 0.2f;
 
         Vector2 down = -CelestialBody.GetUp(_oc.PlanetTarget, transform);
-        GetComponent<Rigidbody2D>().AddForce(down * 70f);
+        GetComponent<Rigidbody2D>().velocity = down * 1f;
     }
 
     // Update is called once per frame
@@ -34,10 +34,9 @@ public class Lander : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other)
     {
         // Convert fighter to second form
-        if (other.gameObject.name == _oc.PlanetTarget.name) {
+        if (other.gameObject.name == _oc.PlanetTarget.Graphic.name) {
             Rigidbody2D rigid = GetComponent<Rigidbody2D>();
             rigid.velocity.Set(0, 0);
-            rigid.isKinematic = true;
 
             GetComponent<SpriteRenderer>().sprite = secondFormSprite;
             mainGun.ProjectileType = secondFormProjectileType;
