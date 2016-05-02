@@ -21,6 +21,7 @@ public class EnemySpawner : MonoBehaviour
         // Spawn frigate
         int frigateCount = 3;
         for (int i = 1; i <= frigateCount; i++) {
+
             GameObject frigate = GameObject.Instantiate(_frigatePrefab);
             frigate.transform.parent = planet.transform;
 
