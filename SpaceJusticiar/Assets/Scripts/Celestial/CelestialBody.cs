@@ -21,8 +21,6 @@ public class CelestialBody : MonoBehaviour {
     private GameObject _graphic = null;
     private MeshRenderer _graphicMeshRenderer = null;
 
-    private CircleCollider2D _planetSurfaceCollider = null;
-
     public bool bRotateBody = false;
 
     void Awake()
@@ -42,8 +40,6 @@ public class CelestialBody : MonoBehaviour {
         }
 
         _graphicMeshRenderer = _graphic.GetComponent<MeshRenderer>();
-
-        _planetSurfaceCollider = gameObject.GetComponent<CircleCollider2D>();
     }
 
 	// Use this for initialization
@@ -115,10 +111,6 @@ public class CelestialBody : MonoBehaviour {
 
         if (_areaOfInfluence != null) {
             _areaOfInfluence.radius = scale * 2.5f;
-        }
-
-        if (_planetSurfaceCollider != null) {
-            _planetSurfaceCollider.radius = scale;
         }
     }
 

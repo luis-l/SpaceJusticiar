@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
         _camController = camTransform.gameObject.GetComponent<CameraController>();
 
         Vector2 newPos = transform.position;
-        newPos.y = _planet.transform.position.y - _planet.transform.localScale.x * _planet.GetComponent<CircleCollider2D>().radius + 1;
+        newPos.y = _planet.transform.position.y - _planet.AreaOfInfluence.radius * 0.6f;
         transform.position = newPos;
 
         _thrustParticles = GameObject.Find("Player/Thrust").GetComponent<ParticleSystem>();

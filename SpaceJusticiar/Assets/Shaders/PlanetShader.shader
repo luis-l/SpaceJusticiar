@@ -156,7 +156,12 @@
 
 				// Project the fragment position onto the sphere edge.
 				float3 onSpherePos = posFromCenter;
-				onSpherePos.z = -sqrt(pow(_TransformScale, 2) - pow(onSpherePos.x, 2) - pow(onSpherePos.y, 2));
+
+				float xySquaredSum = pow(onSpherePos.x, 2) + pow(onSpherePos.y, 2); 
+				float zSquared = pow(_TransformScale, 2) - xySquaredSum;
+				onSpherePos.z = sqrt(abs(zSquared));
+
+				// onSpherePos.z = -sqrt(pow(_TransformScale, 2) - pow(onSpherePos.x, 2) - pow(onSpherePos.y, 2));
 
 				float3 lightToVertexOnSphere = onSpherePos - circleCenter + _SunPos;
 				float3 lightdir = normalize(lightToVertexOnSphere);

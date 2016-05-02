@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using LibNoise.Generator;
 
 public class MeshMaker
 {
@@ -61,9 +62,12 @@ public class MeshMaker
 
         return mesh;
     }
-    /*
+
     public static Mesh MakePlanetSurface(int verticesCount)
     {
+        Perlin perlinNoise = new Perlin(0.5, 2.0, 0.7, 5, Random.Range(0, 10000), LibNoise.QualityMode.High);
+        float noiseScale = 0.2f;
+
         Vector2[] vertices2d = new Vector2[verticesCount];
         Vector3[] vertices3d = new Vector3[verticesCount];
         Vector2[] uvs = new Vector2[verticesCount];
@@ -79,6 +83,14 @@ public class MeshMaker
         // Create vertices and UVs
         for (int i = 1; i < verticesCount; i++) {
             vertices3d[i] = Quaternion.AngleAxis(angle * (i - 1), Vector3.back) * Vector3.up;
+
+            // Modify the vertex with noise
+            float x = vertices3d[i].x / noiseScale;
+            float y = vertices3d[i].y / noiseScale;
+            float value = (float)perlinNoise.GetValue(x, y, 0);
+
+            value = (1 + value) / 2f;
+            vertices3d[i] *= (1 + value * 0.1f);
 
             // There is really no point in having normals for a flat circle, but this is the calculation.
             //normals[i] = vertices3d[i].normalized;
@@ -104,7 +116,7 @@ public class MeshMaker
         tris[lastTriangleIndex + 2] = 1;
 
         Mesh mesh = new Mesh();
-        mesh.name = "Circle";
+        mesh.name = "PlanetSurface";
 
         mesh.vertices = vertices3d;
         mesh.uv = uvs;
@@ -113,5 +125,5 @@ public class MeshMaker
         mesh.Optimize();
 
         return mesh;
-    } */
+    }
 }

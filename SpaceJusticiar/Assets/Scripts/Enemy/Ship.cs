@@ -128,7 +128,7 @@ public class Ship : MonoBehaviour
         oc.PlanetTarget = planetTarget;
 
         TargetingSystem ts = oc.gameObject.GetComponentInChildren<TargetingSystem>();
-        if (ts != null) {
+        if (ts != null && target != null) {
             ts.targetTrans = target.transform;
         }
     }

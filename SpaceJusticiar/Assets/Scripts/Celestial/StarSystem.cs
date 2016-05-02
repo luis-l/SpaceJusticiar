@@ -109,10 +109,15 @@ public class StarSystem
     {
         GameObject planet = GameObject.Instantiate(ResourceManager.CelestialResources.PlanetPrefab);
         planet.transform.position = _barycenter.transform.position + new Vector3(orbitRadius, 0, 0);
+
         CelestialBody body = planet.GetComponent<CelestialBody>();
         _planets.Add(body);
 
         body.currentOrbitAngle = Random.Range(0, 2 * Mathf.PI);
+
+        // Setup planet surface mesh
+        MeshFilter filter = body.Graphic.GetComponent<MeshFilter>();
+        filter.mesh = MeshMaker.MakePlanetSurface(200);
 
         MeshRenderer renderer = body.Graphic.GetComponent<MeshRenderer>();
         renderer.material = new Material(ResourceManager.CelestialResources.PlanetShader);
@@ -120,6 +125,14 @@ public class StarSystem
         float bodySize = Random.Range(10, 30);
         body.SetScale(bodySize);
         body.SetSunPos(_barycenter.transform.position);
+
+        // Setup the polygon collider that corresponds to the mesh
+        Vector2[] polyPoints = new Vector2[filter.mesh.vertexCount];
+        for (int i = 0; i < filter.mesh.vertices.Length; i++) {
+            polyPoints[i] = filter.mesh.vertices[i];
+        }
+        PolygonCollider2D bounds = body.Graphic.GetComponent<PolygonCollider2D>();
+        bounds.points = polyPoints;
 
         // Set planet color
         float hue = Random.value;
