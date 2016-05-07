@@ -77,7 +77,7 @@ public class CelestialBody : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         
         if (bRotateBody) {
             transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));

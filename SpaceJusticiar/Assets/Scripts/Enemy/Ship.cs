@@ -84,7 +84,7 @@ public class Ship : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         for (int i = 0; i < _spawners.Count; i++) {
             _spawners[i].Update();
