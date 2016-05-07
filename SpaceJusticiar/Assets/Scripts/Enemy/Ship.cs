@@ -75,7 +75,7 @@ public class Ship : MonoBehaviour
 
             ts.mainGun.FiringDelay = firingDelay;
             ts.mainGun.firingForce = firingForce;
-            ts.Range = 50f;
+            ts.Range = 40f;
         }
 
         foreach (Spawner s in _spawners) {

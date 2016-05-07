@@ -90,6 +90,8 @@ public class StarSystem
         float currentPlanetOrbitRadius = 400f + Random.Range(0, 50);
 
         int planetCount = Random.Range(SpaceEngine.MIN_PLANETS_PER_SYSTEM, SpaceEngine.MAX_PLANETS_PER_SYSTEM);
+        //int planetCount = 1;
+
         for (int i = 0; i < planetCount; i++) {
 
             CelestialBody planet = CreatePlanet(currentPlanetOrbitRadius);
@@ -117,7 +119,7 @@ public class StarSystem
 
         // Setup planet surface mesh
         MeshFilter filter = body.Graphic.GetComponent<MeshFilter>();
-        filter.mesh = MeshMaker.MakePlanetSurface(200);
+        filter.mesh = MeshMaker.MakePlanetSurface(150);
 
         MeshRenderer renderer = body.Graphic.GetComponent<MeshRenderer>();
         renderer.material = new Material(ResourceManager.CelestialResources.PlanetShader);
@@ -127,11 +129,15 @@ public class StarSystem
         body.SetSunPos(_barycenter.transform.position);
 
         // Setup the polygon collider that corresponds to the mesh
-        Vector2[] polyPoints = new Vector2[filter.mesh.vertexCount];
-        for (int i = 0; i < filter.mesh.vertices.Length; i++) {
+        Vector2[] polyPoints = new Vector2[filter.mesh.vertexCount + 1];
+
+        for (int i = 0; i < filter.mesh.vertexCount; i++) {
             polyPoints[i] = filter.mesh.vertices[i];
         }
-        PolygonCollider2D bounds = body.Graphic.GetComponent<PolygonCollider2D>();
+
+        polyPoints[filter.mesh.vertexCount] = polyPoints[0];
+
+        PolygonCollider2D bounds = body.Graphic.AddComponent<PolygonCollider2D>();
         bounds.points = polyPoints;
 
         // Set planet color

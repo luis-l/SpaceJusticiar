@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     private HealthComponent _health = null;
     private EnergyCell _energyCell = null;
 
-    private float _energySlowTimeDrainRate = 0.3f;
+    private float _energySlowTimeDrainRate = 0.24f;
     private bool _bInSlowMotion = false;
 
     public Text healthText = null;
