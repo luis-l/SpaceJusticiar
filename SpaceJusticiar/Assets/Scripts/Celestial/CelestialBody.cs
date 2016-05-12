@@ -13,6 +13,9 @@ public class CelestialBody : MonoBehaviour {
     public float orbitSpeed = 0.01f;
     public float currentOrbitAngle = 0f;
 
+    private int _seed;
+    public int Seed { get { return _seed; } }
+
     // Do not parent directly.
     // A celestial parent is just for orbital purposes.
     // We do not want moons to rotate if the parent is rotating.
@@ -25,6 +28,8 @@ public class CelestialBody : MonoBehaviour {
 
     void Awake()
     {
+        _seed = StarSystem.GetRandomInt();
+
         Transform aoiTrans = transform.FindChild("AreaOfInfluence");
         if (aoiTrans != null) {
             _areaOfInfluence = aoiTrans.gameObject.GetComponent<CircleCollider2D>();

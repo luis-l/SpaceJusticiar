@@ -63,9 +63,9 @@ public class MeshMaker
         return mesh;
     }
 
-    public static Mesh MakePlanetSurface(int verticesCount)
+    public static Mesh MakePlanetSurface(int verticesCount, int seed = 0)
     {
-        Perlin perlinNoise = new Perlin(0.5, 2.0, 0.7, 5, Random.Range(0, 10000), LibNoise.QualityMode.High);
+        Perlin perlinNoise = new Perlin(0.5, 2.0, 0.7, 5, seed, LibNoise.QualityMode.High);
         float noiseScale = 0.2f;
 
         Vector2[] vertices2d = new Vector2[verticesCount];

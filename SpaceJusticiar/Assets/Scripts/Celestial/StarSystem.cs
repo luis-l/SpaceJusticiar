@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+public enum SurfaceDetail {NONE, VERY_LOW, LOW, MED, HIGH, ULTRA };
+
 /// <summary>
 /// Creates and manages a star system which may contain multiple planets, suns, moons,
 /// and other celestial bodies.
@@ -8,9 +10,6 @@ using System.Collections.Generic;
 /// </summary>
 public class StarSystem
 {
-
-    public enum SurfaceDetail { VERY_LOW = 1, LOW, MED, HIGH, ULTRA };
-
     // The center of mass of the solar system. Stars and planets orbit around this.
     // A single star will be treated as the bary center for simplicity.
     GameObject _barycenter = new GameObject();
@@ -20,8 +19,12 @@ public class StarSystem
     //private List<CelestialBody> _moons;
     //private List<CelestialBody> _asteroids;
 
+    private int _seed = 0;
+
     public void Init()
     {
+        _seed = GetRandomInt();
+
         _barycenter.transform.position = Vector3.zero;
         _barycenter.name = "Barycenter";
 
@@ -34,6 +37,8 @@ public class StarSystem
 
     private void CreateSystem()
     {
+        Random.seed = _seed;
+
         CreateStars();
         CreatePlanets();
         CreateAsteroids();
@@ -164,12 +169,12 @@ public class StarSystem
         return body;
     }
 
-    private void GenerateSurface(SurfaceDetail detail, CelestialBody body)
+    public static void GenerateSurface(SurfaceDetail detail, CelestialBody body)
     {
-        int vertexCount = 150 * (int)detail;
+        int vertexCount = 100 * (int)detail;
 
         MeshFilter filter = body.Graphic.GetComponent<MeshFilter>();
-        filter.mesh = MeshMaker.MakePlanetSurface(vertexCount);
+        filter.mesh = MeshMaker.MakePlanetSurface(vertexCount, body.Seed);
 
         // Setup the polygon collider that corresponds to the mesh
         Vector2[] polyPoints = new Vector2[filter.mesh.vertexCount];
@@ -180,9 +185,13 @@ public class StarSystem
         }
 
         // Connect the last vertex with the second vertex to create a closed outer polygon.
-        polyPoints[filter.mesh.vertexCount-1] = polyPoints[1];
+        polyPoints[filter.mesh.vertexCount-1] = polyPoints[0];
 
-        EdgeCollider2D bounds = body.Graphic.AddComponent<EdgeCollider2D>();
+        EdgeCollider2D bounds = body.Graphic.GetComponent<EdgeCollider2D>();
+        if (bounds == null) {
+            bounds = body.Graphic.AddComponent<EdgeCollider2D>();
+        }
+
         bounds.points = polyPoints;
     }
 
@@ -204,5 +213,9 @@ public class StarSystem
     public CelestialBody GetStar(int index)
     {
         return _suns[index];
+    }
+
+    public static int GetRandomInt(){
+        return Random.Range(0, int.MaxValue);
     }
 }
