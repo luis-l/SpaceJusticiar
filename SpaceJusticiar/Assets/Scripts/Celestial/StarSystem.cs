@@ -124,18 +124,20 @@ public class StarSystem
         MeshRenderer renderer = body.Graphic.GetComponent<MeshRenderer>();
         renderer.material = new Material(ResourceManager.CelestialResources.PlanetShader);
 
-        float bodySize = Random.Range(10, 30);
+        float bodySize = Random.Range(16, 30);
         body.SetScale(bodySize);
         body.SetSunPos(_barycenter.transform.position);
 
         // Setup the polygon collider that corresponds to the mesh
         Vector2[] polyPoints = new Vector2[filter.mesh.vertexCount + 1];
 
-        for (int i = 0; i < filter.mesh.vertexCount; i++) {
+        // Start at second vertex since the first one is the center of the mesh.
+        for (int i = 1; i < filter.mesh.vertexCount; i++) {
             polyPoints[i] = filter.mesh.vertices[i];
         }
 
-        polyPoints[filter.mesh.vertexCount] = polyPoints[0];
+        // Connect the last vertex with the second vertex to create a closed outer polygon.
+        polyPoints[filter.mesh.vertexCount] = polyPoints[1];
 
         PolygonCollider2D bounds = body.Graphic.AddComponent<PolygonCollider2D>();
         bounds.points = polyPoints;

@@ -69,8 +69,8 @@ public class Ship : MonoBehaviour
                 firingDelay = 0.35f;
             }
             else if (ts.mainGun.ProjectileType.name == "BlueProjectile") {
-                firingForce = 1800f;
-                firingDelay = 0.05f;
+                firingForce = 1900f;
+                firingDelay = 0.04f;
             }
 
             ts.mainGun.FiringDelay = firingDelay;
