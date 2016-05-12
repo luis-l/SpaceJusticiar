@@ -9,6 +9,8 @@ using System.Collections.Generic;
 public class StarSystem
 {
 
+    public enum SurfaceDetail { VERY_LOW = 1, LOW, MED, HIGH, ULTRA };
+
     // The center of mass of the solar system. Stars and planets orbit around this.
     // A single star will be treated as the bary center for simplicity.
     GameObject _barycenter = new GameObject();
@@ -117,9 +119,7 @@ public class StarSystem
 
         body.currentOrbitAngle = Random.Range(0, 2 * Mathf.PI);
 
-        // Setup planet surface mesh
-        MeshFilter filter = body.Graphic.GetComponent<MeshFilter>();
-        filter.mesh = MeshMaker.MakePlanetSurface(150);
+        GenerateSurface(SurfaceDetail.LOW, body);
 
         MeshRenderer renderer = body.Graphic.GetComponent<MeshRenderer>();
         renderer.material = new Material(ResourceManager.CelestialResources.PlanetShader);
@@ -127,20 +127,6 @@ public class StarSystem
         float bodySize = Random.Range(16, 30);
         body.SetScale(bodySize);
         body.SetSunPos(_barycenter.transform.position);
-
-        // Setup the polygon collider that corresponds to the mesh
-        Vector2[] polyPoints = new Vector2[filter.mesh.vertexCount + 1];
-
-        // Start at second vertex since the first one is the center of the mesh.
-        for (int i = 1; i < filter.mesh.vertexCount; i++) {
-            polyPoints[i] = filter.mesh.vertices[i];
-        }
-
-        // Connect the last vertex with the second vertex to create a closed outer polygon.
-        polyPoints[filter.mesh.vertexCount] = polyPoints[1];
-
-        PolygonCollider2D bounds = body.Graphic.AddComponent<PolygonCollider2D>();
-        bounds.points = polyPoints;
 
         // Set planet color
         float hue = Random.value;
@@ -176,6 +162,28 @@ public class StarSystem
         body.orbitSpeed = 2.0f / orbitRadius;
 
         return body;
+    }
+
+    private void GenerateSurface(SurfaceDetail detail, CelestialBody body)
+    {
+        int vertexCount = 150 * (int)detail;
+
+        MeshFilter filter = body.Graphic.GetComponent<MeshFilter>();
+        filter.mesh = MeshMaker.MakePlanetSurface(vertexCount);
+
+        // Setup the polygon collider that corresponds to the mesh
+        Vector2[] polyPoints = new Vector2[filter.mesh.vertexCount];
+
+        // Start at second vertex since the first one is the center of the mesh.
+        for (int i = 1; i < filter.mesh.vertexCount; i++) {
+            polyPoints[i-1] = filter.mesh.vertices[i];
+        }
+
+        // Connect the last vertex with the second vertex to create a closed outer polygon.
+        polyPoints[filter.mesh.vertexCount-1] = polyPoints[1];
+
+        EdgeCollider2D bounds = body.Graphic.AddComponent<EdgeCollider2D>();
+        bounds.points = polyPoints;
     }
 
     private void CreateMoons(CelestialBody parentPlanet)
