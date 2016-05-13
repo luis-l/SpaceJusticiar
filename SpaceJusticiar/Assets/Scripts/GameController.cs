@@ -56,15 +56,15 @@ public class GameController : MonoBehaviour {
                 Camera.main.orthographicSize = MAX_CAM_SIZE;
             }
         }
-
+        
         SurfaceDetail nextDetail;
-        if (Camera.main.orthographicSize < 3) {
+        if (Camera.main.orthographicSize < 5) {
             nextDetail = SurfaceDetail.ULTRA;
         }
-        else if (Camera.main.orthographicSize < 8) {
+        else if (Camera.main.orthographicSize < 10) {
             nextDetail = SurfaceDetail.HIGH;
         }
-        else if (Camera.main.orthographicSize < 15) {
+        else if (Camera.main.orthographicSize < 18) {
             nextDetail = SurfaceDetail.MED;
         }
         else if (Camera.main.orthographicSize < 30) {
@@ -78,7 +78,7 @@ public class GameController : MonoBehaviour {
             _currentDetail = nextDetail;
             CelestialBody first = _starSys.GetPlanet(0);
             StarSystem.GenerateSurface(_currentDetail, first);
-        }
+        } 
     }
 
     public StarSystem StarSystem { get { return _starSys; } }

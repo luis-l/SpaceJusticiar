@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEditor;
 using LibNoise.Generator;
+using LibNoise.Operator;
 
 public class MeshMaker
 {
@@ -63,10 +64,32 @@ public class MeshMaker
         return mesh;
     }
 
-    public static Mesh MakePlanetSurface(int verticesCount, int seed = 0)
+    public static Mesh MakePlanetSurface(int verticesCount, int seed = 0, float scalar = 1, float offset = 0)
     {
-        Perlin perlinNoise = new Perlin(0.5, 2.0, 0.7, 5, seed, LibNoise.QualityMode.High);
-        float noiseScale = 0.2f;
+        Billow baseFlatTerrainNoise = new Billow();
+        baseFlatTerrainNoise.Seed = seed;
+        baseFlatTerrainNoise.Frequency = 0.5;
+
+        ScaleBias flatTerrain = new ScaleBias(baseFlatTerrainNoise);
+        flatTerrain.Scale = 0.1;
+        flatTerrain.Bias = -0.8f;
+
+        RidgedMultifractal mountainNoise = new RidgedMultifractal();
+        mountainNoise.Seed = seed;
+        mountainNoise.Frequency = 0.5f;
+        mountainNoise.OctaveCount = 6;
+
+        Perlin terrainType = new Perlin();
+        terrainType.Seed = seed;
+        terrainType.Frequency = 0.5;
+        terrainType.Persistence = 0.2;
+        terrainType.OctaveCount = 5;
+
+        Select finalTerrain = new Select(flatTerrain, mountainNoise, terrainType);
+        finalTerrain.SetBounds(0.0, 100.0);
+        finalTerrain.FallOff = 0.4;
+
+        float noiseScale = 0.1f;
 
         Vector2[] vertices2d = new Vector2[verticesCount];
         Vector3[] vertices3d = new Vector3[verticesCount];
@@ -87,7 +110,8 @@ public class MeshMaker
             // Modify the vertex with noise
             float x = vertices3d[i].x / noiseScale;
             float y = vertices3d[i].y / noiseScale;
-            float value = (float)perlinNoise.GetValue(x, y, 0);
+
+            float value = scalar * (float)finalTerrain.GetValue(x + offset, y + offset, 0);
 
             value = (1 + value) / 2f;
             vertices3d[i] *= (1 + value * 0.1f);

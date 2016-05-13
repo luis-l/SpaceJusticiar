@@ -2,7 +2,8 @@
 using System.Collections;
 using Vectrosity;
 
-public class CelestialBody : MonoBehaviour {
+public class CelestialBody : MonoBehaviour
+{
 
     // This collider marks the area in which the planet influences a gameobject.
     // In other words, the planet becomes the parent transform of the gameobject.
@@ -23,6 +24,9 @@ public class CelestialBody : MonoBehaviour {
     public GameObject celestialParent = null;
     private GameObject _graphic = null;
     private MeshRenderer _graphicMeshRenderer = null;
+
+    private MeshRenderer _backgroundMeshRenderer = null;
+    private GameObject _background = null;
 
     public bool bRotateBody = false;
 
@@ -47,9 +51,15 @@ public class CelestialBody : MonoBehaviour {
         }
 
         _graphicMeshRenderer = _graphic.GetComponent<MeshRenderer>();
+
+        Transform backgroundTrans = transform.FindChild("Background");
+        if (backgroundTrans != null) {
+            _background = backgroundTrans.gameObject;
+            _backgroundMeshRenderer = _background.GetComponent<MeshRenderer>();
+        }
     }
 
-	// Use this for initialization
+    // Use this for initialization
     void Start()
     {
 
@@ -71,21 +81,22 @@ public class CelestialBody : MonoBehaviour {
         if (_graphicMeshRenderer.material.shader.name == "Custom/Planet Shader") {
             glowSize = _graphicMeshRenderer.material.GetFloat("_AtmoSize");
         }
-        else if(_graphicMeshRenderer.material.shader.name == "Custom/Star Shader"){
+        else if (_graphicMeshRenderer.material.shader.name == "Custom/Star Shader") {
             glowSize = _graphicMeshRenderer.material.GetFloat("_SunLightSize");
         }
 
         // Modify the mesh bounds so the atmosphere does not disappear when the planet mesh goes out of camera view.
         if (glowSize != -1) {
             Mesh planetMesh = _graphic.GetComponent<MeshFilter>().mesh;
-            Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size *  glowSize);
+            Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size * glowSize);
             planetMesh.bounds = expandedPlanetBounds;
         }
     }
-	
-	// Update is called once per frame
-	void FixedUpdate () {
-        
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+
         if (bRotateBody) {
             transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));
         }
@@ -105,7 +116,7 @@ public class CelestialBody : MonoBehaviour {
             float y = orbitRadius * Mathf.Sin(currentOrbitAngle) + celestialParent.transform.position.y;
             transform.position = new Vector3(x, y, transform.position.z);
         }
-	}
+    }
 
     /// <summary>
     /// Should only be done once when constructing the planet.
@@ -116,8 +127,13 @@ public class CelestialBody : MonoBehaviour {
         _graphic.transform.localScale = new Vector3(scale, scale, scale);
         _graphicMeshRenderer.material.SetFloat("_TransformScale", scale);
 
+        if (_background != null) {
+            _background.transform.localScale = new Vector3(scale, scale, scale);
+            _backgroundMeshRenderer.material.SetFloat("_TransformScale", scale);
+        }
+
         if (_areaOfInfluence != null) {
-            _areaOfInfluence.radius = scale * 2.5f;
+            _areaOfInfluence.radius = scale * 1.5f;
         }
     }
 
@@ -128,11 +144,17 @@ public class CelestialBody : MonoBehaviour {
     public void SetSunPos(Vector2 pos)
     {
         _graphicMeshRenderer.material.SetVector("_SunPos", pos);
+        _backgroundMeshRenderer.material.SetVector("_SunPos", pos);
     }
 
     public GameObject Graphic
     {
         get { return _graphic; }
+    }
+
+    public GameObject Background
+    {
+        get { return _background; }
     }
 
     public CircleCollider2D AreaOfInfluence
@@ -149,6 +171,11 @@ public class CelestialBody : MonoBehaviour {
     {
         if (bIsGraphicActive != activate) {
             _graphic.SetActive(activate);
+
+            if (_background != null) {
+                _background.SetActive(activate);
+            }
+
             _bIsGraphicActive = activate;
         }
     }

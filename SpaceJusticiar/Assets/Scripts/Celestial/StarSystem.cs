@@ -129,7 +129,10 @@ public class StarSystem
         MeshRenderer renderer = body.Graphic.GetComponent<MeshRenderer>();
         renderer.material = new Material(ResourceManager.CelestialResources.PlanetShader);
 
-        float bodySize = Random.Range(16, 30);
+        MeshRenderer backgroundRenderer = body.Background.GetComponent<MeshRenderer>();
+        backgroundRenderer.material = new Material(ResourceManager.CelestialResources.PlanetBackgroundShader);
+
+        float bodySize = Random.Range(50, 60);
         body.SetScale(bodySize);
         body.SetSunPos(_barycenter.transform.position);
 
@@ -137,12 +140,24 @@ public class StarSystem
         float hue = Random.value;
         float value = Random.Range(0.8f, 1.0f);
         float sat = Random.Range(0.7f, 1.0f);
-        renderer.material.color = Color.HSVToRGB(hue, sat, value);
+        Color surfaceColor = Color.HSVToRGB(hue, sat, value);
 
-        renderer.material.SetFloat("_LightAttenA", 0.0018f);
-        renderer.material.SetFloat("_LightAttenB", 0.0f);
-        renderer.material.SetFloat("_Albedo", Random.Range(3.8f, 5.0f));
-        renderer.material.SetFloat("_Emission", Random.Range(0.02f, 0.025f));
+        float lightAttenA = 0.0018f;
+        float lightAttenB = 0.0f;
+        float albedo = Random.Range(3.8f, 5.0f);
+        float emission = Random.Range(0.02f, 0.025f);
+
+        renderer.material.color = surfaceColor;
+        renderer.material.SetFloat("_LightAttenA", lightAttenA);
+        renderer.material.SetFloat("_LightAttenB", lightAttenB);
+        renderer.material.SetFloat("_Albedo", albedo);
+        renderer.material.SetFloat("_Emission", emission);
+
+        backgroundRenderer.material.color = surfaceColor * 0.8f;
+        backgroundRenderer.material.SetFloat("_LightAttenA", lightAttenA);
+        backgroundRenderer.material.SetFloat("_LightAttenB", lightAttenB);
+        backgroundRenderer.material.SetFloat("_Albedo", albedo + 0.2f);
+        backgroundRenderer.material.SetFloat("_Emission", emission);
 
         // Random atmosphere hue/
         //Color atmoColor = Color.HSVToRGB(Random.value, 1.0f, 1.0f);
@@ -171,21 +186,26 @@ public class StarSystem
 
     public static void GenerateSurface(SurfaceDetail detail, CelestialBody body)
     {
-        int vertexCount = 100 * (int)detail;
+        int vertexCount = 200 * (int)detail;
 
-        MeshFilter filter = body.Graphic.GetComponent<MeshFilter>();
-        filter.mesh = MeshMaker.MakePlanetSurface(vertexCount, body.Seed);
+        MeshFilter surfaceFilter = body.Graphic.GetComponent<MeshFilter>();
+        surfaceFilter.mesh = MeshMaker.MakePlanetSurface(100, body.Seed);
+        //surfaceFilter.mesh = MeshMaker.MakeCircle(150);
 
+        MeshFilter backFilter = body.Background.GetComponent<MeshFilter>();
+        backFilter.mesh = MeshMaker.MakePlanetSurface(vertexCount, body.Seed, 1.2f, 1f);
+        
+        
         // Setup the polygon collider that corresponds to the mesh
-        Vector2[] polyPoints = new Vector2[filter.mesh.vertexCount];
+        Vector2[] polyPoints = new Vector2[surfaceFilter.mesh.vertexCount];
 
         // Start at second vertex since the first one is the center of the mesh.
-        for (int i = 1; i < filter.mesh.vertexCount; i++) {
-            polyPoints[i-1] = filter.mesh.vertices[i];
+        for (int i = 1; i < surfaceFilter.mesh.vertexCount; i++) {
+            polyPoints[i-1] = surfaceFilter.mesh.vertices[i];
         }
 
         // Connect the last vertex with the second vertex to create a closed outer polygon.
-        polyPoints[filter.mesh.vertexCount-1] = polyPoints[0];
+        polyPoints[surfaceFilter.mesh.vertexCount-1] = polyPoints[0];
 
         EdgeCollider2D bounds = body.Graphic.GetComponent<EdgeCollider2D>();
         if (bounds == null) {
@@ -193,6 +213,9 @@ public class StarSystem
         }
 
         bounds.points = polyPoints;
+
+        //CircleCollider2D bounds = body.Graphic.AddComponent<CircleCollider2D>();
+        //bounds.radius = body.transform.localScale.x;
     }
 
     private void CreateMoons(CelestialBody parentPlanet)
