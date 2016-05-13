@@ -29,7 +29,7 @@ public class PlayerShooting : MonoBehaviour
 
         prevPos = transform.position;
         prevMousePos = Input.mousePosition;
-        firingRateText.text = _mainGun.FiringDelay.ToString("#.##");
+        firingRateText.text = _mainGun.FiringDelay.ToString("0.##");
     }
 
     void Update()
@@ -73,7 +73,7 @@ public class PlayerShooting : MonoBehaviour
 
         // Update firing rate text.
         if (wheelDelta != 0) {
-            firingRateText.text = _mainGun.FiringDelay.ToString("#.##");
+            firingRateText.text = _mainGun.FiringDelay.ToString("0.##");
         }
     }
 

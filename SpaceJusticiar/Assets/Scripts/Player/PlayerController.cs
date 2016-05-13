@@ -31,7 +31,6 @@ public class PlayerController : MonoBehaviour
     public enum FrameOfReference { GLOBAL, PLANET };
     public FrameOfReference currentFrameOfRef = FrameOfReference.PLANET;
 
-    private HealthComponent _health = null;
     private EnergyCell _energyCell = null;
 
     private float _energySlowTimeDrainRate = 0.24f;
@@ -40,14 +39,12 @@ public class PlayerController : MonoBehaviour
     public Text healthText = null;
     public Text energyText = null;
 
+    [SerializeField]
+    private ObjectController _oc;
+
     public float Energy
     {
         get { return _energyCell.Charge; }
-    }
-
-    public float Health
-    {
-        get { return _health.GetHealth(); }
     }
 
     public EnergyCell EnergyCell
@@ -63,7 +60,6 @@ public class PlayerController : MonoBehaviour
         transform.localPosition = Vector2.zero;
 
         _energyCell = new EnergyCell();
-        _health = new HealthComponent();
 
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
         _camController = camTransform.gameObject.GetComponent<CameraController>();
@@ -111,7 +107,6 @@ public class PlayerController : MonoBehaviour
         }
 
         _energyCell.Update();
-        _health.Update();
 
         // Energy regen.
         if (Energy < EnergyCell.MAX_ENERGY) {
@@ -119,8 +114,8 @@ public class PlayerController : MonoBehaviour
         }
 
         // Health regen.
-        if (Health < HealthComponent.MAX_HEALTH) {
-            healthText.text = _health.GetPercentage().ToString();
+        if (_oc.Health.GetHealth() < HealthComponent.MAX_HEALTH) {
+            healthText.text = _oc.Health.GetPercentage().ToString();
         }
 
     }
@@ -242,20 +237,13 @@ public class PlayerController : MonoBehaviour
             ProjectileBehavior proj = other.gameObject.GetComponent<ProjectileBehavior>();
             if (proj.targetTag == gameObject.tag) {
 
-                _health.DealDamage(proj.damage);
-
                 CameraShake camShake = _camController.CameraShake;
                 camShake.duration = 0.5f;
                 camShake.magnitude = 1f;
                 camShake.speed = 3f;
-                
                 camShake.PlayShake();
 
                 _camController.FillScreen(Color.white, 0.1f);
-
-                if (Health == 0) {
-                    Destroy(gameObject, 0.1f);
-                }
             }
         }
 

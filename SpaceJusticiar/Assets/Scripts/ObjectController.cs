@@ -36,19 +36,24 @@ public class ObjectController : MonoBehaviour
     {
         _health.DealDamage(damage);
 
-        GameObject textDamage = UIPools.Instance.Fetch("DamageText");
-        TextBehavior textBehavior = textDamage.GetComponent<TextBehavior>();
-        textBehavior.life = 1.5f;
-        textBehavior.lerpSpeed = Random.Range(0.1f, 0.3f);
-        textBehavior.Text.text = damage.ToString("#.##");
-
-        Vector2 screenCoord = Camera.main.WorldToScreenPoint(transform.position);
-        textBehavior.RectTransform.position = screenCoord;
-        textBehavior.endPosition = screenCoord + Random.insideUnitCircle * 300;
+        SpawnDamageTextResponse(damage);
 
         if (_health.GetHealth() == 0) {
             Destroy();
         }
+    }
+
+    void SpawnDamageTextResponse(float damage)
+    {
+        GameObject textDamage = UIPools.Instance.Fetch("DamageText");
+        TextBehavior textBehavior = textDamage.GetComponent<TextBehavior>();
+        textBehavior.life = 1.5f;
+        textBehavior.lerpSpeed = Random.Range(0.15f, 0.5f);
+        textBehavior.Text.text = damage.ToString("0.##");
+
+        Vector2 screenCoord = Camera.main.WorldToScreenPoint(transform.position);
+        textBehavior.RectTransform.position = screenCoord;
+        textBehavior.endPosition = screenCoord + Random.insideUnitCircle * 300;
     }
 
     void OnTriggerEnter2D(Collider2D other)
