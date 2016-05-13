@@ -8,6 +8,10 @@ public class Torpedo : MonoBehaviour {
 
     private float _life = 60f;
 
+    bool _bDead = false;
+
+    public int particleEmissions = 3;
+
 	// Use this for initialization
     void Start()
     {
@@ -25,19 +29,25 @@ public class Torpedo : MonoBehaviour {
         _life -= Time.deltaTime;
 
         if (_life <= 0) {
-            GameObject.Destroy(gameObject, 0.1f);
+            _oc.Destroy();
         }
 	}
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (_bDead) return;
+
         if (other.tag == "Collidable") {
 
-            GameObject explosion = Pools.Instance.Fetch("GreenEnergyExplosion");
-            explosion.transform.position = transform.position;
+            _bDead = true;
 
-            ParticleSystem effect = explosion.GetComponent<ParticleSystem>();
-            effect.Play();
+            for (int i = 0; i < particleEmissions; i++) {
+                GameObject explosion = Pools.Instance.Fetch("GreenEnergyExplosion");
+                explosion.transform.position = transform.position;
+
+                ParticleSystem effect = explosion.GetComponent<ParticleSystem>();
+                effect.Play();
+            }
 
             _oc.Destroy();
         }

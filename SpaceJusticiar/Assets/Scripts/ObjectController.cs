@@ -29,7 +29,7 @@ public class ObjectController : MonoBehaviour
     public void Destroy()
     {
         OnDeathEvent();
-        Destroy(gameObject, 0.01f);
+        Destroy(gameObject, 0.001f);
     }
 
     private void ApplyDamage(float damage)

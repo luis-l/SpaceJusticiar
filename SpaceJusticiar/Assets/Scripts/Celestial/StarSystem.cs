@@ -193,7 +193,7 @@ public class StarSystem
         surfaceFilter.mesh = MeshMaker.MakeCircle(150);
 
         MeshFilter backFilter = body.Background.GetComponent<MeshFilter>();
-        backFilter.mesh = MeshMaker.MakePlanetSurface(vertexCount, body.Seed, 1.2f, 1f);
+        backFilter.mesh = MeshMaker.MakePlanetSurface(vertexCount, body.Seed);
         
         /*
         // Setup the polygon collider that corresponds to the mesh

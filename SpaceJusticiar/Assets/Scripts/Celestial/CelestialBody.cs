@@ -96,7 +96,7 @@ public class CelestialBody : MonoBehaviour
         // Modify the mesh bounds so the atmosphere does not disappear when the planet mesh goes out of camera view.
         if (glowSize != -1) {
             Mesh planetMesh = _graphic.GetComponent<MeshFilter>().mesh;
-            Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size * glowSize);
+            Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size * glowSize * 2f);
             planetMesh.bounds = expandedPlanetBounds;
         }
     }

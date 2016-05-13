@@ -58,16 +58,16 @@ public class GameController : MonoBehaviour {
         }
         
         SurfaceDetail nextDetail;
-        if (Camera.main.orthographicSize < 5) {
+        if (Camera.main.orthographicSize < 8) {
             nextDetail = SurfaceDetail.ULTRA;
         }
-        else if (Camera.main.orthographicSize < 10) {
+        else if (Camera.main.orthographicSize < 15) {
             nextDetail = SurfaceDetail.HIGH;
         }
-        else if (Camera.main.orthographicSize < 18) {
+        else if (Camera.main.orthographicSize < 25) {
             nextDetail = SurfaceDetail.MED;
         }
-        else if (Camera.main.orthographicSize < 30) {
+        else if (Camera.main.orthographicSize < 35) {
             nextDetail = SurfaceDetail.LOW;
         }
         else {
