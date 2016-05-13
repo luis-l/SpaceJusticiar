@@ -65,15 +65,23 @@ public class CelestialBody : MonoBehaviour
 
         // Create the influence graphic boundry.
         if (_areaOfInfluence != null) {
-            int segments = 45;
-            Material mat = Resources.Load<Material>("Materials/Line");
-            VectorLine areaInfluenceBorder = new VectorLine("AreaOfInfluence", new Vector3[segments * 2], mat, 4);
+            
+            // Uses up too much GC for some reason.
+            //int segments = 45;
+            //Material mat = Resources.Load<Material>("Materials/Line");
 
-            areaInfluenceBorder.MakeCircle(Vector3.zero, _areaOfInfluence.radius, segments);
-            areaInfluenceBorder.textureScale = 5f;
+            // VectorLine areaOfInfluenceLine = new VectorLine("AreaOfInfluence", new Vector2[segments * 2], mat, 4);
 
-            VectorManager.ObjectSetup(gameObject, areaInfluenceBorder, Visibility.Dynamic, Brightness.None);
-            areaInfluenceBorder.Draw3DAuto();
+            // areaOfInfluenceLine.MakeCircle(Vector2.zero, _areaOfInfluence.radius, segments);
+            // areaOfInfluenceLine.textureScale = 5f;
+
+            // areaOfInfluenceLine.drawTransform = transform;
+            // areaOfInfluenceLine.Draw();
+
+            //VectorManager.ObjectSetup(gameObject, areaInfluenceBorder, Visibility.Dynamic, Brightness.None);
+            //areaInfluenceBorder.
+            
+            //areaInfluenceBorder.Draw3DAuto();
         }
 
         // For planets it is the atmosphere and for the sun it is the light range.
