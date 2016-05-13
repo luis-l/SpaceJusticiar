@@ -11,9 +11,6 @@ public class ProjectileBehavior : MonoBehaviour
     // What the projectile can hit.
     public string targetTag = "None";
 
-    public Text scoreValueText = null;
-    private static int _playerScore = 0;
-
     public float energyCost = 0.03f;
 
     public float gravityScale = 0f;
@@ -30,7 +27,6 @@ public class ProjectileBehavior : MonoBehaviour
     void Start()
     {
         lifeTimer = life;
-        scoreValueText = GameObject.Find("Canvas/Score/ScoreValue").GetComponent<Text>();
         _rigid = GetComponent<Rigidbody2D>();
     }
 
@@ -78,11 +74,6 @@ public class ProjectileBehavior : MonoBehaviour
         }
 
         if (other.tag == "Collidable" || other.tag == targetTag){
-
-            if (other.tag == "Enemy") {
-                _playerScore += 100;
-                scoreValueText.text = _playerScore.ToString(); 
-            }
 
             // Make bullet impacts responsive near the player by shaking the camera a bit.
             if (other.tag != "Player") {

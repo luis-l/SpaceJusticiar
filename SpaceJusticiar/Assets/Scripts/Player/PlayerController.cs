@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour
     public GameController gameController;
 
     public Rigidbody2D rigidBody;
-    private SpriteRenderer _spriteRenderer;
 
     public float acceleration = 1f;
     public float maxVelocity = 10f;
@@ -16,14 +15,6 @@ public class PlayerController : MonoBehaviour
     // How much to wait in seconds in order to boost.
     private CountUpTimer _boostTimer = null;
     private float _boostScalar = 40f;
-
-    private float _colorTimer = 0;
-
-    // How often to change the player color in seconds.
-    public float colorChangeRate = 0.5f;
-
-    private float _minColor = 0.5f;
-    private float _maxColor = 1f;
 
     private CelestialBody _planet;
     public float gravityScale = 1f;
@@ -75,7 +66,6 @@ public class PlayerController : MonoBehaviour
         _health = new HealthComponent();
 
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
-        _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         _camController = camTransform.gameObject.GetComponent<CameraController>();
 
         Vector2 newPos = transform.position;
@@ -157,8 +147,6 @@ public class PlayerController : MonoBehaviour
         if (currentFrameOfRef == FrameOfReference.PLANET) {
             rigidBody.AddForce(-up() * gravityScale);
         }
-
-        setColor();
     }
 
 
@@ -244,23 +232,6 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 upDir = up();
         return new Vector2(upDir.y, -upDir.x);
-    }
-
-    void setColor()
-    {
-        // Change color based on the timer.
-        _colorTimer += Time.deltaTime;
-        if (_colorTimer >= colorChangeRate) {
-            _colorTimer = 0;
-
-            // Generate a random color.
-            float r = Random.Range(_minColor, _maxColor);
-            float g = Random.Range(_minColor, _maxColor);
-            float b = Random.Range(_minColor, _maxColor);
-            Color c = new Color(r, g, b);
-
-            _spriteRenderer.material.color = c;
-        }
     }
 
     void OnTriggerEnter2D(Collider2D other)

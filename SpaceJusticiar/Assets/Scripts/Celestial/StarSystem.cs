@@ -189,13 +189,13 @@ public class StarSystem
         int vertexCount = 200 * (int)detail;
 
         MeshFilter surfaceFilter = body.Graphic.GetComponent<MeshFilter>();
-        surfaceFilter.mesh = MeshMaker.MakePlanetSurface(100, body.Seed);
-        //surfaceFilter.mesh = MeshMaker.MakeCircle(150);
+        //surfaceFilter.mesh = MeshMaker.MakePlanetSurface(100, body.Seed);
+        surfaceFilter.mesh = MeshMaker.MakeCircle(150);
 
         MeshFilter backFilter = body.Background.GetComponent<MeshFilter>();
         backFilter.mesh = MeshMaker.MakePlanetSurface(vertexCount, body.Seed, 1.2f, 1f);
         
-        
+        /*
         // Setup the polygon collider that corresponds to the mesh
         Vector2[] polyPoints = new Vector2[surfaceFilter.mesh.vertexCount];
 
@@ -213,9 +213,9 @@ public class StarSystem
         }
 
         bounds.points = polyPoints; 
-
-        //CircleCollider2D bounds = body.Graphic.AddComponent<CircleCollider2D>();
-        //bounds.radius = body.transform.localScale.x;
+        */
+        CircleCollider2D bounds = body.Graphic.AddComponent<CircleCollider2D>();
+        bounds.radius = body.transform.localScale.x;
     }
 
     private void CreateMoons(CelestialBody parentPlanet)
