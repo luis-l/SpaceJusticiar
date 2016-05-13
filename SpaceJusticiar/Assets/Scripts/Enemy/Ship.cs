@@ -65,17 +65,18 @@ public class Ship : MonoBehaviour
             float firingDelay = 0.2f;
 
             if (ts.mainGun.ProjectileType.name == "RedEnergyProjectile") {
-                firingForce = 2500f;
-                firingDelay = 0.4f;
+                firingForce = 3100f;
+                firingDelay = 0.5f;
             }
             else if (ts.mainGun.ProjectileType.name == "BlueProjectile") {
-                firingForce = 1900f;
-                firingDelay = 0.06f;
+                firingForce = 2420f;
+                firingDelay = 0.085f;
+                ts.mainGun.spread = 0.5f;
             }
 
             ts.mainGun.FiringDelay = firingDelay;
             ts.mainGun.firingForce = firingForce;
-            ts.Range = 40f;
+            ts.Range = 35f;
         }
 
         foreach (Spawner s in _spawners) {

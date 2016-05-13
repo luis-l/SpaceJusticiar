@@ -179,6 +179,8 @@ public class CelestialBody : MonoBehaviour
     {
         if (bIsGraphicActive != activate) {
             _graphic.SetActive(activate);
+            //_graphicMeshRenderer.enabled = activate;
+
 
             if (_background != null) {
                 _background.SetActive(activate);

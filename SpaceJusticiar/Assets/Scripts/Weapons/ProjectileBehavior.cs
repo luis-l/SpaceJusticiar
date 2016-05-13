@@ -6,7 +6,7 @@ public class ProjectileBehavior : MonoBehaviour
 {
 
     public float life = 2f;
-    private float lifeTimer;
+    private float _lifeTimer;
 
     // What the projectile can hit.
     public string targetTag = "None";
@@ -26,7 +26,7 @@ public class ProjectileBehavior : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        lifeTimer = life;
+        _lifeTimer = life;
         _rigid = GetComponent<Rigidbody2D>();
     }
 
@@ -34,8 +34,8 @@ public class ProjectileBehavior : MonoBehaviour
     void Update()
     {
         // Tick life, once life runs out, recycle the projectile.
-        lifeTimer -= Time.deltaTime;
-        if (lifeTimer <= 0) {
+        _lifeTimer -= Time.deltaTime;
+        if (_lifeTimer <= 0) {
             Pools.Instance.Recycle(gameObject);
         }
     }
@@ -52,7 +52,7 @@ public class ProjectileBehavior : MonoBehaviour
     // Reset projectile timer, so it is ready to be reused.
     void OnEnable()
     {
-        lifeTimer = life;
+        _lifeTimer = life;
     }
 
     void OnDisable()

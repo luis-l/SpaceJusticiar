@@ -67,7 +67,7 @@ public class StarSystem
         MeshRenderer renderer = body.Graphic.GetComponent<MeshRenderer>();
         renderer.material = new Material(ResourceManager.CelestialResources.StarShader);
 
-        float size = Random.Range(35f, 60f);
+        float size = Random.Range(80, 130f);
         body.SetScale(size);
 
         Color color = Color.HSVToRGB(Random.value, Random.Range(0.2f, 0.5f), 1.0f);
@@ -94,7 +94,7 @@ public class StarSystem
 
     private void CreatePlanets()
     {
-        float currentPlanetOrbitRadius = 400f + Random.Range(0, 50);
+        float currentPlanetOrbitRadius = 500f + Random.Range(0, 50);
 
         int planetCount = Random.Range(SpaceEngine.MIN_PLANETS_PER_SYSTEM, SpaceEngine.MAX_PLANETS_PER_SYSTEM);
         //int planetCount = 1;
@@ -132,7 +132,7 @@ public class StarSystem
         MeshRenderer backgroundRenderer = body.Background.GetComponent<MeshRenderer>();
         backgroundRenderer.material = new Material(ResourceManager.CelestialResources.PlanetBackgroundShader);
 
-        float bodySize = Random.Range(50, 60);
+        float bodySize = Random.Range(45, 60);
         body.SetScale(bodySize);
         body.SetSunPos(_barycenter.transform.position);
 
@@ -145,7 +145,7 @@ public class StarSystem
         float lightAttenA = 0.0018f;
         float lightAttenB = 0.0f;
         float albedo = Random.Range(3.8f, 5.0f);
-        float emission = Random.Range(0.02f, 0.025f);
+        float emission = Random.Range(0.025f, 0.031f);
 
         renderer.material.color = surfaceColor;
         renderer.material.SetFloat("_LightAttenA", lightAttenA);
@@ -187,10 +187,11 @@ public class StarSystem
     public static void GenerateSurface(SurfaceDetail detail, CelestialBody body)
     {
         int vertexCount = 200 * (int)detail;
+        int surfaceCount = 40 * (int)detail;
 
         MeshFilter surfaceFilter = body.Graphic.GetComponent<MeshFilter>();
         //surfaceFilter.mesh = MeshMaker.MakePlanetSurface(100, body.Seed);
-        surfaceFilter.mesh = MeshMaker.MakeCircle(150);
+        surfaceFilter.mesh = MeshMaker.MakeCircle(surfaceCount);
 
         MeshFilter backFilter = body.Background.GetComponent<MeshFilter>();
         backFilter.mesh = MeshMaker.MakePlanetSurface(vertexCount, body.Seed);

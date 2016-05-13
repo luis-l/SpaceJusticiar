@@ -36,6 +36,16 @@ public class ObjectController : MonoBehaviour
     {
         _health.DealDamage(damage);
 
+        GameObject textDamage = UIPools.Instance.Fetch("DamageText");
+        TextBehavior textBehavior = textDamage.GetComponent<TextBehavior>();
+        textBehavior.life = 1.5f;
+        textBehavior.lerpSpeed = Random.Range(0.1f, 0.3f);
+        textBehavior.Text.text = damage.ToString("#.##");
+
+        Vector2 screenCoord = Camera.main.WorldToScreenPoint(transform.position);
+        textBehavior.RectTransform.position = screenCoord;
+        textBehavior.endPosition = screenCoord + Random.insideUnitCircle * 300;
+
         if (_health.GetHealth() == 0) {
             Destroy();
         }

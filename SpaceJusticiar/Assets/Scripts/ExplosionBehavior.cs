@@ -41,6 +41,7 @@ public class ExplosionBehavior : MonoBehaviour
         }
 
         if (_explosionSfx != null) {
+            _explosionSfx.pitch = Random.Range(0.9f, 1.2f);
             _explosionSfx.Play();
         }
     }

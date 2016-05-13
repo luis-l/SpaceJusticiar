@@ -12,7 +12,7 @@ public class SpaceEngine : MonoBehaviour {
     /// </summary>
     public static float chanceSingleStar = 0.7f;
 
-    public const int MAX_PLANETS_PER_SYSTEM = 10;
+    public const int MAX_PLANETS_PER_SYSTEM = 9;
     public const int MIN_PLANETS_PER_SYSTEM = 1;
 
 
