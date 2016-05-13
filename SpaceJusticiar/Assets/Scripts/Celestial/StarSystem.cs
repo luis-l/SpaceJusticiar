@@ -218,4 +218,6 @@ public class StarSystem
     public static int GetRandomInt(){
         return Random.Range(0, int.MaxValue);
     }
+
+    public List<CelestialBody> Planets { get { return _planets; } }
 }

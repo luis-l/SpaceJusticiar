@@ -6,6 +6,8 @@ public class Torpedo : MonoBehaviour {
     [SerializeField]
     private ObjectController _oc;
 
+    private float _life = 60f;
+
 	// Use this for initialization
     void Start()
     {
@@ -20,7 +22,11 @@ public class Torpedo : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        _life -= Time.deltaTime;
 
+        if (_life <= 0) {
+            GameObject.Destroy(gameObject, 0.1f);
+        }
 	}
 
     void OnTriggerEnter2D(Collider2D other)

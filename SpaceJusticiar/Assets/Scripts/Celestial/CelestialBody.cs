@@ -26,6 +26,8 @@ public class CelestialBody : MonoBehaviour {
 
     public bool bRotateBody = false;
 
+    private bool _bIsGraphicActive = true;
+
     void Awake()
     {
         _seed = StarSystem.GetRandomInt();
@@ -142,4 +144,14 @@ public class CelestialBody : MonoBehaviour {
     {
         return (t.position - body.transform.position).normalized;
     }
+
+    public void ActivateGraphic(bool activate)
+    {
+        if (bIsGraphicActive != activate) {
+            _graphic.SetActive(activate);
+            _bIsGraphicActive = activate;
+        }
+    }
+
+    public bool bIsGraphicActive { get { return _bIsGraphicActive; } }
 }

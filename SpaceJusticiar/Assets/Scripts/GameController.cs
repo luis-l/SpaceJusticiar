@@ -5,17 +5,22 @@ using System.Collections;
 public class GameController : MonoBehaviour {
 
     private float _camZoomDelta = 2f;
-    private float _minCamSize = 2f;
-    private float _maxCamSize = 50f;
+    public const float MIN_CAM_SIZE = 2f;
+    public const float MAX_CAM_SIZE = 50f;
 
     private StarSystem _starSys;
+    private SpaceEngine _spaceEngine;
 
     void Awake()
     {
+        _spaceEngine = GetComponent<SpaceEngine>();
+
         ResourceManager.Init();
 
         _starSys = new StarSystem();
         _starSys.Init();
+
+        _spaceEngine.currentStarSys = _starSys;
     }
 
 	// Use this for initialization
@@ -35,20 +40,20 @@ public class GameController : MonoBehaviour {
         // Change camera zoom.
         float wheelDelta = Input.GetAxis("Mouse ScrollWheel");
         if (Input.GetKey(KeyCode.LeftControl) && wheelDelta > 0) {
-            if (Camera.main.orthographicSize > _minCamSize) {
+            if (Camera.main.orthographicSize > MIN_CAM_SIZE) {
                 Camera.main.orthographicSize -= _camZoomDelta;
             }
             else {
-                Camera.main.orthographicSize = _minCamSize;
+                Camera.main.orthographicSize = MIN_CAM_SIZE;
             }
         }
 
         else if (Input.GetKey(KeyCode.LeftControl) && wheelDelta < 0) {
-            if (Camera.main.orthographicSize < _maxCamSize) {
+            if (Camera.main.orthographicSize < MAX_CAM_SIZE) {
                 Camera.main.orthographicSize += _camZoomDelta;
             }
             else {
-                Camera.main.orthographicSize = _maxCamSize;
+                Camera.main.orthographicSize = MAX_CAM_SIZE;
             }
         }
 
