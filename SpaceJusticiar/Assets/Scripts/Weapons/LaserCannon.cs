@@ -71,18 +71,15 @@ public class LaserCannon : MonoBehaviour
 
     private void FireProjectile(Vector2 targetPos, string targetTag, EnergyCell energyCell, Vector2 initialVelocity)
     {
-        GameObject proj = Pools.Instance.Fetch(_projectileType.name);
-
         Vector2 toTarget = targetPos - (Vector2)_nozzleTrans.position;
 
         if (spread != 0) {
-            float x = Random.Range(-1, 1);
-            float y = Random.Range(-1, 1);
-            toTarget += spread * new Vector2(x, y).normalized;
+            toTarget += spread * Random.insideUnitCircle;
         }
 
         toTarget.Normalize();
 
+        GameObject proj = Pools.Instance.Fetch(_projectileType.name);
         proj.transform.position = _nozzleTrans.position;
         proj.transform.rotation = _nozzleTrans.rotation;
 

@@ -71,6 +71,7 @@ public class ProjectileBehavior : MonoBehaviour
     {
         if (other.tag == "PlanetInfluence") {
             _planet = other.gameObject;
+            transform.parent = _planet.transform;
         }
 
         if (other.tag == "Collidable" || other.tag == targetTag){
@@ -107,6 +108,7 @@ public class ProjectileBehavior : MonoBehaviour
     {
         if (other.tag == "PlanetInfluence") {
             _planet = null;
+            transform.parent = null;
         }
     }
 

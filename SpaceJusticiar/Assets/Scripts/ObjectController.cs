@@ -49,7 +49,7 @@ public class ObjectController : MonoBehaviour
         TextBehavior textBehavior = textDamage.GetComponent<TextBehavior>();
         textBehavior.life = 1.5f;
         textBehavior.lerpSpeed = Random.Range(0.15f, 0.5f);
-        textBehavior.Text.text = damage.ToString("0.##");
+        textBehavior.Text.text = (damage * 100).ToString("0.##");
 
         Vector2 screenCoord = Camera.main.WorldToScreenPoint(transform.position);
         textBehavior.RectTransform.position = screenCoord;

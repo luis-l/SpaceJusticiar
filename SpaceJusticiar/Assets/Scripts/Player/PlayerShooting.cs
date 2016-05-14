@@ -24,7 +24,7 @@ public class PlayerShooting : MonoBehaviour
     {
         _mainGun.ProjectileType = projectileTypes[0];
 
-        _mainGun.firingForce = 3000f;
+        _mainGun.firingForce = 1000f;
         _mainGun.FiringDelay = 0.15f;
 
         prevPos = transform.position;
@@ -79,7 +79,7 @@ public class PlayerShooting : MonoBehaviour
 
     void LateUpdate()
     {
-        if (prevPos != transform.position || prevMousePos != Input.mousePosition) {
+       // if (prevPos != transform.position || prevMousePos != Input.mousePosition) {
 
             Vector3 toMouse = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             toMouse.Normalize();
@@ -89,6 +89,6 @@ public class PlayerShooting : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, 0f, rotationZ);
             prevPos = transform.position;
             prevPos = Input.mousePosition;
-        }
+        ///}
     }
 }
