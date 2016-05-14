@@ -40,12 +40,12 @@ public class PlayerShooting : MonoBehaviour
 
             if (Input.GetMouseButton(0) && _mainGun.ProjectileType.name != projectileTypes[0].name) {
                 _mainGun.ProjectileType = projectileTypes[0];
-                _mainGun.firingForce = 3000f;
+                _mainGun.firingForce = 1000f;
             }
 
             else if (Input.GetMouseButton(1) && _mainGun.ProjectileType.name != projectileTypes[1].name) {
                 _mainGun.ProjectileType = projectileTypes[1];
-                _mainGun.firingForce = 750f;
+                _mainGun.firingForce = 380f;
             }
 
             // Give bullet initial velocity of the player to start with.
@@ -79,7 +79,7 @@ public class PlayerShooting : MonoBehaviour
 
     void LateUpdate()
     {
-       // if (prevPos != transform.position || prevMousePos != Input.mousePosition) {
+        if (prevPos != transform.position || prevMousePos != Input.mousePosition) {
 
             Vector3 toMouse = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             toMouse.Normalize();
@@ -89,6 +89,6 @@ public class PlayerShooting : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, 0f, rotationZ);
             prevPos = transform.position;
             prevPos = Input.mousePosition;
-        ///}
+        }
     }
 }

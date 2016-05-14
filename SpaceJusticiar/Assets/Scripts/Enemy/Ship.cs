@@ -61,15 +61,15 @@ public class Ship : MonoBehaviour
             nozzlePos.y = 0.0f;
             ts.mainGun.GetNozzle().localPosition = nozzlePos;
 
-            float firingForce = 3000f;
+            float firingForce = 1000f;
             float firingDelay = 0.2f;
 
             if (ts.mainGun.ProjectileType.name == "RedEnergyProjectile") {
-                firingForce = 3100f;
+                firingForce = 1000f;
                 firingDelay = 0.5f;
             }
             else if (ts.mainGun.ProjectileType.name == "BlueProjectile") {
-                firingForce = 2420f;
+                firingForce = 600f;
                 firingDelay = 0.085f;
                 ts.mainGun.spread = 0.5f;
             }

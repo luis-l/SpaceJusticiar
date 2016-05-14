@@ -16,7 +16,7 @@ public class Torpedo : MonoBehaviour {
     void Start()
     {
         Vector2 down = -CelestialBody.GetUp(_oc.PlanetTarget, transform);
-        GetComponent<Rigidbody2D>().velocity = down * 7f;
+        GetComponent<Rigidbody2D>().velocity = down * 5f;
 
         float angle = Mathf.Atan2(down.y, down.x) * Mathf.Rad2Deg;
         transform.Rotate(0, 0, angle);
