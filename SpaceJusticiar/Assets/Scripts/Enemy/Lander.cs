@@ -19,10 +19,17 @@ public class Lander : MonoBehaviour
     {
         _energyCell = new EnergyCell(100f);
         _energyCell.setEmptiedCellWaitTime(1f);
-        mainGun.FiringDelay = 0.2f;
+        mainGun.FiringDelay = 0.25f;
 
-        Vector2 down = -CelestialBody.GetUp(_oc.PlanetTarget, transform);
-        GetComponent<Rigidbody2D>().velocity = down * 3f;
+        Vector2 up = CelestialBody.GetUp(_oc.PlanetTarget, transform);
+        Vector2 down = -up;
+
+        Rigidbody2D rigid = GetComponent<Rigidbody2D>();
+        rigid.velocity = down * 3f;
+        //rigid.MovePosition();
+
+        Vector2 pointOnSurface = (Vector2)_oc.PlanetTarget.transform.position + _oc.PlanetTarget.GetSurfaceRadius() * up;
+
     }
 
     // Update is called once per frame
@@ -41,7 +48,7 @@ public class Lander : MonoBehaviour
             GetComponent<SpriteRenderer>().sprite = secondFormSprite;
             mainGun.ProjectileType = secondFormProjectileType;
             mainGun.FiringDelay = 0.06f;
-            mainGun.firingForce = 500;
+            mainGun.firingForce = 800;
             mainGun.spread = 2f;
 
             AudioSource gunSound = mainGun.GetComponent<AudioSource>();

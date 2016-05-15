@@ -69,7 +69,7 @@ public class Ship : MonoBehaviour
                 firingDelay = 0.5f;
             }
             else if (ts.mainGun.ProjectileType.name == "BlueProjectile") {
-                firingForce = 600f;
+                firingForce = 800f;
                 firingDelay = 0.085f;
                 ts.mainGun.spread = 0.5f;
             }

@@ -191,4 +191,9 @@ public class CelestialBody : MonoBehaviour
     }
 
     public bool bIsGraphicActive { get { return _bIsGraphicActive; } }
+
+    public float GetSurfaceRadius()
+    {
+        return transform.localScale.x;
+    }
 }

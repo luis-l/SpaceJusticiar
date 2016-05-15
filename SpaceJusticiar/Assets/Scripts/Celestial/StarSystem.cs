@@ -215,7 +215,7 @@ public class StarSystem
 
         bounds.points = polyPoints; 
         */
-        CircleCollider2D bounds = body.Graphic.AddComponent<CircleCollider2D>();
+        CircleCollider2D bounds = body.Graphic.GetComponent<CircleCollider2D>();
         bounds.radius = body.transform.localScale.x;
     }
 

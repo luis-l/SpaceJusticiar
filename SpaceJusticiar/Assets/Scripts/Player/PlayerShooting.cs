@@ -36,7 +36,7 @@ public class PlayerShooting : MonoBehaviour
     {
         if (Input.GetMouseButton(0) || Input.GetMouseButton(1)) {
 
-            Vector2 initialProjVelocity = new Vector2(0, 0);
+            Vector2 initialProjVelocity = playerController.rigidBody.velocity * 0.9f;
 
             if (Input.GetMouseButton(0) && _mainGun.ProjectileType.name != projectileTypes[0].name) {
                 _mainGun.ProjectileType = projectileTypes[0];
@@ -50,7 +50,7 @@ public class PlayerShooting : MonoBehaviour
 
             // Give bullet initial velocity of the player to start with.
             if (_mainGun.ProjectileType.name == projectileTypes[1].name) {
-                initialProjVelocity = playerController.rigidBody.velocity * 0.75f;
+                initialProjVelocity = playerController.rigidBody.velocity * 0.85f;
             }
 
 

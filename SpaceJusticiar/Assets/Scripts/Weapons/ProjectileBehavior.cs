@@ -80,15 +80,15 @@ public class ProjectileBehavior : MonoBehaviour
             if (other.tag != "Player") {
                 Vector2 distToCam = Camera.main.transform.position - transform.position;
                 float mag = distToCam.magnitude;
-                if (mag < 25) {
+                if (mag < 15) {
 
                     // The closer the impact, the stronger the camera shake.
-                    float shakeScalar = 2 / mag;
+                    float shakeScalar = 5f / (mag * mag);
 
                     CameraShake camShake = Camera.main.gameObject.GetComponent<CameraController>().CameraShake;
-                    camShake.duration = 0.1f;
+                    camShake.duration = 0.2f;
                     camShake.magnitude = shakeScalar;
-                    camShake.speed = 1f;
+                    camShake.speed = 3f;
                     camShake.PlayShake();
 
                 }

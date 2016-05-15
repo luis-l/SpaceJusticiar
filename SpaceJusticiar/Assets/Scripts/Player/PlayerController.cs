@@ -12,10 +12,6 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 1f;
     public float maxVelocity = 10f;
 
-    // How much to wait in seconds in order to boost.
-    private CountUpTimer _boostTimer = null;
-    private float _boostScalar = 40f;
-
     private CelestialBody _planet;
     public float gravityScale = 1f;
 
@@ -42,6 +38,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private ObjectController _oc;
 
+    private Vector2 _thrustDir;
+
     public float Energy
     {
         get { return _energyCell.Charge; }
@@ -65,26 +63,17 @@ public class PlayerController : MonoBehaviour
         _camController = camTransform.gameObject.GetComponent<CameraController>();
 
         Vector2 newPos = transform.position;
-        newPos.y = _planet.transform.position.y - _planet.AreaOfInfluence.radius;
+        newPos.y = _planet.transform.position.y + _planet.AreaOfInfluence.radius * 0.67f;
         transform.position = newPos;
 
         _thrustParticles = GameObject.Find("Player/Thrust").GetComponent<ParticleSystem>();
 
         _prevPlayerPos = transform.position;
-
-        _boostTimer = new CountUpTimer(2f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 thrustForce = thrust();
-
-        // Cap velocity if accelerating.
-        if (thrustForce.sqrMagnitude != 0 && rigidBody.velocity.SqrMagnitude() > maxVelocity * maxVelocity) {
-            rigidBody.velocity = Vector2.ClampMagnitude(rigidBody.velocity, maxVelocity);
-        }
-
         if (Input.GetKeyDown(KeyCode.Space) && Energy > 0) {
             Time.timeScale = 0.5f;
             _bInSlowMotion = true;
@@ -118,6 +107,8 @@ public class PlayerController : MonoBehaviour
             healthText.text = _oc.Health.GetPercentage().ToString();
         }
 
+        _thrustDir = GetThrustDirection();
+        PlayThrustEffect(_thrustDir * acceleration, _thrustDir);
     }
 
     void LateUpdate()
@@ -138,14 +129,28 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Apply gravity
+
+        // If we are activating thrusters
+        if (_thrustDir != Vector2.zero) {
+
+            // Cap max velocity.
+            if (rigidBody.velocity.SqrMagnitude() > maxVelocity * maxVelocity) {
+                //rigidBody.velocity = Vector2.ClampMagnitude(rigidBody.velocity, maxVelocity);
+            }
+
+            // Accelerate
+            rigidBody.AddForce(_thrustDir * acceleration);
+
+        }
+
+        // Apply gravity and air resistance
         if (currentFrameOfRef == FrameOfReference.PLANET) {
             rigidBody.AddForce(-up() * gravityScale);
         }
     }
 
 
-    Vector3 thrust()
+    private Vector3 GetThrustDirection()
     {
         Vector2 upDir = new Vector2(0, 0);
         Vector2 rightDir = new Vector2(0, 0);
@@ -170,33 +175,13 @@ public class PlayerController : MonoBehaviour
             rightDir = right();
         }
 
-        float accel = boost();
-
-        Vector2 thrustDir = (upDir + rightDir).normalized;
-        Vector2 thrust = thrustDir * accel;
-
-        generateThrustParticles(thrust, thrustDir);
-        rigidBody.AddForce(thrust);
-
-        return thrust;
+        return (upDir + rightDir).normalized;
     }
 
-    // Boost the acceleration if ready.
-    private float boost()
-    {
-        // Boost if ready.
-        if (!_boostTimer.IsRunning() && Input.GetKeyDown(KeyCode.LeftShift)) {
-            _boostTimer.Start();
-            return acceleration * _boostScalar;
-        }
-
-        return acceleration;
-    }
-
-    void generateThrustParticles(Vector3 thrust, Vector3 thrustDir)
+    private void PlayThrustEffect(Vector3 thrustForce, Vector3 thrustDir)
     {
         // Play the thrust particles.
-        if (thrust.sqrMagnitude > 0f) {
+        if (thrustForce.sqrMagnitude > 0f) {
             if (_thrustParticles.isStopped)
                 _thrustParticles.Play();
 
@@ -238,8 +223,8 @@ public class PlayerController : MonoBehaviour
             if (proj.targetTag == gameObject.tag) {
 
                 CameraShake camShake = _camController.CameraShake;
-                camShake.duration = 0.5f;
-                camShake.magnitude = 1f;
+                camShake.duration = 0.65f;
+                camShake.magnitude = 1.5f;
                 camShake.speed = 3f;
                 camShake.PlayShake();
 
@@ -252,6 +237,9 @@ public class PlayerController : MonoBehaviour
             // Update the planet reference which is the owner of the AreaOfInfluence child object
             _planet = other.transform.parent.gameObject.GetComponent<CelestialBody>();
             transform.parent = _planet.transform;
+            
+            // Air resistance in planet
+            rigidBody.drag = 0.1f;
 
             StopCoroutine("AlignCameraToPlanetSurface");
             StartCoroutine("AlignCameraToPlanetSurface");
@@ -263,6 +251,10 @@ public class PlayerController : MonoBehaviour
         if (other.name == "AreaOfInfluence") {
             StopCoroutine("AlignCameraToPlanetSurface");
             currentFrameOfRef = FrameOfReference.GLOBAL;
+            
+            // No Drag in space;
+            rigidBody.drag = 0f;
+
             transform.parent = null;
             _planet = null;
         }

@@ -39,6 +39,12 @@ public class ObjectController : MonoBehaviour
         SpawnDamageTextResponse(damage);
 
         if (_health.GetHealth() == 0) {
+            GameObject explosion = Pools.Instance.Fetch("BlueEnergyExplosion");
+            explosion.transform.position = transform.position;
+
+            ParticleSystem effect = explosion.GetComponent<ParticleSystem>();
+            effect.Play();
+
             Destroy();
         }
     }
@@ -65,6 +71,16 @@ public class ObjectController : MonoBehaviour
             if (proj.targetTag == gameObject.tag) {
                 ApplyDamage(proj.damage);
             }
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        float impactForce = collision.relativeVelocity.magnitude;
+        float damage = impactForce * 0.05f;
+
+        if (damage > 0.08f) {
+            ApplyDamage(damage);
         }
     }
 

@@ -6,11 +6,12 @@ public class Torpedo : MonoBehaviour {
     [SerializeField]
     private ObjectController _oc;
 
-    private float _life = 60f;
+    // Life timer so torpedoes do not move forever if they miss target.
+    private float _lifeTimer = 60f;
 
     bool _bDead = false;
 
-    public int particleEmissions = 3;
+    public int particleEmissions = 2;
 
 	// Use this for initialization
     void Start()
@@ -26,9 +27,9 @@ public class Torpedo : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        _life -= Time.deltaTime;
+        _lifeTimer -= Time.deltaTime;
 
-        if (_life <= 0) {
+        if (_lifeTimer <= 0) {
             _oc.Destroy();
         }
 	}
