@@ -5,8 +5,6 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
 
-    public GameController gameController;
-
     public Rigidbody2D rigidBody;
 
     public float acceleration = 1f;
@@ -53,17 +51,20 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _planet = gameController.StarSystem.GetPlanet(0);
-        transform.parent = _planet.transform;
+        _planet = Systems.Instance.SpaceEngine.ActiveStarSystem.GetPlanet(0);
+        _oc.PlanetTarget = _planet;
+
+        //transform.parent = _planet.transform;
         transform.localPosition = Vector2.zero;
 
         _energyCell = new EnergyCell();
 
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
+
         _camController = camTransform.gameObject.GetComponent<CameraController>();
 
         Vector2 newPos = transform.position;
-        newPos.y = _planet.transform.position.y + _planet.GetSurfaceRadius();
+        newPos.y = _planet.transform.position.y + _planet.GetSurfaceRadius() + 0.1f;
         transform.position = newPos;
 
         _thrustParticles = GameObject.Find("Player/Thrust").GetComponent<ParticleSystem>();
@@ -130,20 +131,12 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
 
-        // If we are activating thrusters
+        // If we are activating thrusters, accelerate
         if (_thrustDir != Vector2.zero) {
-
-            // Cap max velocity.
-            if (rigidBody.velocity.SqrMagnitude() > maxVelocity * maxVelocity) {
-                //rigidBody.velocity = Vector2.ClampMagnitude(rigidBody.velocity, maxVelocity);
-            }
-
-            // Accelerate
             rigidBody.AddForce(_thrustDir * acceleration);
-
         }
 
-        // Apply gravity and air resistance
+        // Apply gravity
         if (currentFrameOfRef == FrameOfReference.PLANET) {
             rigidBody.AddForce(-up() * gravityScale);
         }
@@ -224,8 +217,8 @@ public class PlayerController : MonoBehaviour
 
                 CameraShake camShake = _camController.CameraShake;
                 camShake.duration = 0.65f;
-                camShake.magnitude = 1.5f;
-                camShake.speed = 3f;
+                camShake.magnitude = 1f;
+                camShake.speed = 5f;
                 camShake.PlayShake();
 
                 _camController.FillScreen(Color.white, 0.1f);
@@ -239,7 +232,7 @@ public class PlayerController : MonoBehaviour
             transform.parent = _planet.transform;
             
             // Air resistance in planet
-            rigidBody.drag = 0.1f;
+            rigidBody.drag = 0.3f;
 
             StopCoroutine("AlignCameraToPlanetSurface");
             StartCoroutine("AlignCameraToPlanetSurface");
@@ -252,8 +245,8 @@ public class PlayerController : MonoBehaviour
             StopCoroutine("AlignCameraToPlanetSurface");
             currentFrameOfRef = FrameOfReference.GLOBAL;
             
-            // No Drag in space;
-            rigidBody.drag = 0f;
+            // No Drag in space but we need to limit it
+            rigidBody.drag = 0.1f;
 
             transform.parent = null;
             _planet = null;
@@ -294,4 +287,5 @@ public class PlayerController : MonoBehaviour
         currentFrameOfRef = FrameOfReference.PLANET;
     }
 
+    public Vector2 Acceleration { get { return _thrustDir * acceleration; } }
 }

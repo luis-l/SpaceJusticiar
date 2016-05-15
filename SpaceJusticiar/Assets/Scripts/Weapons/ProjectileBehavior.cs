@@ -74,7 +74,7 @@ public class ProjectileBehavior : MonoBehaviour
             transform.parent = _planet.transform;
         }
 
-        if (other.tag == "Collidable" || other.tag == targetTag){
+        if (other.tag == "Collidable" || other.tag == targetTag) {
 
             // Make bullet impacts responsive near the player by shaking the camera a bit.
             if (other.tag != "Player") {
@@ -83,14 +83,16 @@ public class ProjectileBehavior : MonoBehaviour
                 if (mag < 15) {
 
                     // The closer the impact, the stronger the camera shake.
-                    float shakeScalar = 5f / (mag * mag);
+                    float shakeScalar = 1f / (mag * mag);
+                    if (shakeScalar > 0.4f) {
+                        shakeScalar = 0.4f;
+                    }
 
-                    CameraShake camShake = Camera.main.gameObject.GetComponent<CameraController>().CameraShake;
-                    camShake.duration = 0.2f;
+                    CameraShake camShake = Systems.Instance.SystemUI.CameraController.CameraShake;
+                    camShake.duration = 0.3f;
                     camShake.magnitude = shakeScalar;
                     camShake.speed = 3f;
                     camShake.PlayShake();
-
                 }
             }
 

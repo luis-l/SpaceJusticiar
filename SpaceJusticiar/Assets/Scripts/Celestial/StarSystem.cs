@@ -180,7 +180,7 @@ public class StarSystem
         body.celestialParent = _barycenter;
         body.orbitRadius = orbitRadius;
         //body.orbitSpeed = 2.0f / orbitRadius;
-        body.orbitSpeed = 0;
+        body.orbitSpeed = 0f;
         return body;
     }
 

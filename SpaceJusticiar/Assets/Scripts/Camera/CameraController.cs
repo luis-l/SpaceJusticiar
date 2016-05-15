@@ -1,45 +1,34 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// Class to access camera behaviors.
 public class CameraController : MonoBehaviour {
 
+    [SerializeField]
     private CameraFollow _camFollow;
-    private CameraShake _camShake;
 
-    public Transform transformToFollow = null;
+    [SerializeField]
+    private CameraShake _camShake;
 
     public CameraShake CameraShake { get { return _camShake; } }
     public CameraFollow CameraFollow { get { return _camFollow; } }
+
+    public Transform transformToFollow = null;
     private Color _originalColor;
 
 	// Use this for initialization
-	void Start () {
-        _camFollow = gameObject.AddComponent<CameraFollow>();
-        _camShake = gameObject.AddComponent<PerlinShake>();
+	void Awake () {
 
         if (transformToFollow == null) {
             transformToFollow = GameObject.FindGameObjectWithTag("Player").transform;
         }
 
-        _camShake.targetTrans = transformToFollow;
-        _camFollow.targetTrans = transformToFollow;
+        // Set camera follow parameters.
+        _camFollow.followingTransform = transformToFollow;
+        _camFollow.aheadFactor = 6f;
+        _camFollow.damping = 0.7f;
+
         _originalColor = Camera.main.backgroundColor;
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-
-        bool camIsShaking = _camShake.IsShaking();
-
-        if (!_camFollow.bFollow && !camIsShaking) {
-            _camFollow.bFollow = true;
-        }
-
-        else if (camIsShaking) {
-            _camFollow.bFollow = false;
-        }
-
 	}
 
     public void PlayShake()
@@ -70,5 +59,15 @@ public class CameraController : MonoBehaviour {
         }
 
         Camera.main.backgroundColor = _originalColor;
+    }
+
+    public float CameraSize
+    {
+        get { return Camera.main.orthographicSize; }
+        set
+        {
+            Camera.main.orthographicSize = value;
+            _camShake.targetCamera.orthographicSize = value;
+        }
     }
 }

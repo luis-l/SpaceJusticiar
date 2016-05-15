@@ -37,7 +37,7 @@ public class CountUpTimer
         _incrementScale = incrementScale;
         _counter = currentTick;
 
-        SystemTimer.RegisterTimer(this);
+        Systems.Instance.SystemTimer.RegisterTimer(this);
     }
 
     /// <summary>

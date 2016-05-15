@@ -1,66 +1,49 @@
 using UnityEngine;
 using System.Collections;
 
-public class RandomShake : CameraShake {
+public class RandomShake : CameraShake
+{
 
-	// -------------------------------------------------------------------------
-	void Update() {
-		if (test) {
-			test = false;
-		}
-	}
+    // -------------------------------------------------------------------------
+    void Update()
+    {
+        if (test) {
+            test = false;
+        }
+    }
 
-	// -------------------------------------------------------------------------
-	public override IEnumerator Shake() {
+    // -------------------------------------------------------------------------
+    public override IEnumerator Shake()
+    {
 
         _bIsShaking = true;
-		float elapsed = 0.0f;
+        float elapsed = 0.0f;
 
-		Vector3 originalCamPos = Camera.main.transform.position;
-		
-		while (elapsed < duration) {
-			
-			elapsed += Time.deltaTime;			
-			
-			float percentComplete = elapsed / duration;			
-			float damper = 1.0f - Mathf.Clamp(4.0f * percentComplete - 3.0f, 0.0f, 1.0f);
-			
-			// map noise to [-1, 1]
-			float x = Random.value * 2.0f - 1.0f;
-			float y = Random.value * 2.0f - 1.0f;
-			x *= magnitude * damper;
-			y *= magnitude * damper;
+        while (elapsed < duration) {
 
-            if (targetTrans != null) {
+            elapsed += Time.deltaTime;
 
-                Vector3 newCamPos = new Vector3(x, y, originalCamPos.z);
-                newCamPos.x += targetTrans.position.x;
-                newCamPos.y += targetTrans.position.y;
+            float percentComplete = elapsed / duration;
+            float damper = 1.0f - Mathf.Clamp(4.0f * percentComplete - 3.0f, 0.0f, 1.0f);
 
-                Camera.main.transform.position = newCamPos;
-                originalCamPos = newCamPos;
-            }
+            // map noise to [-1, 1]
+            float x = Random.value * 2.0f - 1.0f;
+            float y = Random.value * 2.0f - 1.0f;
 
-            //else {
-              //  Camera.main.transform.position = new Vector3(x, y, originalCamPos.z);
-            //}
+            x *= magnitude * damper;
+            y *= magnitude * damper;
 
-			yield return null;
-		}
+            // Move the camera for the shake effect.
+            targetCamera.transform.localPosition = new Vector2(x, y);
+
+            yield return null;
+        }
 
         if (elapsed > duration) {
             _bIsShaking = false;
         }
 
-        if (targetTrans != null) {
-
-            originalCamPos.x = targetTrans.position.x;
-            originalCamPos.y = targetTrans.position.y;
-            Camera.main.transform.position = originalCamPos;
-        }
-
-        else {
-            Camera.main.transform.position = originalCamPos;
-        }
-	}
+        // Center back the camera.
+        targetCamera.transform.localPosition = Vector3.zero;
+    }
 }

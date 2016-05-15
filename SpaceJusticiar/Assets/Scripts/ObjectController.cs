@@ -30,6 +30,11 @@ public class ObjectController : MonoBehaviour
     {
         OnDeathEvent();
         Destroy(gameObject, 0.001f);
+
+        // Do no let the camera die.
+        if (Camera.main.transform.parent == transform) {
+            Camera.main.transform.parent = null;
+        }
     }
 
     private void ApplyDamage(float damage)
@@ -78,7 +83,7 @@ public class ObjectController : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         float impactForce = collision.relativeVelocity.magnitude;
-        float damage = impactForce * 0.05f;
+        float damage = impactForce * impactForce * 0.01f;
 
         if (damage > 0.08f) {
             ApplyDamage(damage);

@@ -6,15 +6,13 @@ public class EnemySpawner : MonoBehaviour
 
     public GameObject player;
     private GameObject _frigatePrefab;
-    public GameController gameController;
 
     private const string ENEMY_PREFAB_PATH = "Prefabs/Enemy/";
 
     // Use this for initialization
     void Start()
     {
-        GameObject planet = gameController.StarSystem.GetPlanet(0).gameObject;
-        CelestialBody planetBody = planet.GetComponent<CelestialBody>();
+        CelestialBody planet = Systems.Instance.SpaceEngine.ActiveStarSystem.GetPlanet(0);
 
         _frigatePrefab = Resources.Load(ENEMY_PREFAB_PATH + "EnemyFrigate") as GameObject;
 
@@ -26,8 +24,8 @@ public class EnemySpawner : MonoBehaviour
             frigate.transform.parent = planet.transform;
 
             Ship ship = frigate.GetComponent<Ship>();
-            ship.planetTarget = planetBody;
-            ship.OrbitingHeight = planetBody.AreaOfInfluence.radius * 1.5f * i;
+            ship.planetTarget = planet;
+            ship.OrbitingHeight = planet.AreaOfInfluence.radius * 1.5f * i;
             ship.targetOrbitHeightFactor = 1 + i / 3.5f;
             ship.elevationSpeed = 0.05f;
             ship.SetCurrentOrbitAngle(Random.Range(0, 2 * Mathf.PI));

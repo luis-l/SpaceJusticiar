@@ -5,7 +5,8 @@ using System.Collections.Generic;
 /// Manages star systems. Contains data about how star systems are created.
 /// For example triple star systems are rare while single/binary systems are much more frequent.
 /// </summary>
-public class SpaceEngine : MonoBehaviour {
+public class SpaceEngine : SystemBase
+{
 
     /// <summary>
     /// The chance to make a single star system.
@@ -15,33 +16,35 @@ public class SpaceEngine : MonoBehaviour {
     public const int MAX_PLANETS_PER_SYSTEM = 9;
     public const int MIN_PLANETS_PER_SYSTEM = 1;
 
+    private StarSystem _currentStarSys = null;
+    public StarSystem ActiveStarSystem { get { return _currentStarSys; } }
 
-    public StarSystem currentStarSys = null;
+    public SpaceEngine()
+    {
+        _currentStarSys = new StarSystem();
+        _currentStarSys.Init();
+    }
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        for (int i = 0; i < currentStarSys.Planets.Count; i++) {
-            CelestialBody body = currentStarSys.GetPlanet(i);
+    // Update is called once per frame
+    public override void Update()
+    {
+        for (int i = 0; i < _currentStarSys.Planets.Count; i++) {
+            CelestialBody body = _currentStarSys.GetPlanet(i);
 
             float aoiRadius = body.AreaOfInfluence.radius * 2;
-            float camSize = GameController.MAX_CAM_SIZE;
+            float camSize = SystemUI.MAX_CAM_SIZE;
 
             Vector3 camWorldPos = Camera.main.transform.position;
 
             float sqDist = (body.transform.position - camWorldPos).sqrMagnitude;
             float radiiSum = aoiRadius + camSize;
 
-            if (sqDist < radiiSum * radiiSum){
+            if (sqDist < radiiSum * radiiSum) {
                 body.ActivateGraphic(true);
             }
             else {
                 body.ActivateGraphic(false);
             }
         }
-	}
+    }
 }

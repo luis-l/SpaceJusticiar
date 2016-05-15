@@ -4,13 +4,13 @@ using System.Collections.Generic;
 /// <summary>
 /// A timer manager that updates timers automatically.
 /// </summary>
-public class SystemTimer : MonoBehaviour
+public class SystemTimer : SystemBase
 {
 
-    private static List<CountUpTimer> _timers = new List<CountUpTimer>();
+    private List<CountUpTimer> _timers = new List<CountUpTimer>();
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
 
         // Iterate in reverse so null timers can be removed.
@@ -26,12 +26,12 @@ public class SystemTimer : MonoBehaviour
         }
     }
 
-    public static void RemoveTimer(CountUpTimer timer)
+    public void RemoveTimer(CountUpTimer timer)
     {
         _timers.Remove(timer);
     }
 
-    public static void RegisterTimer(CountUpTimer timer){
+    public void RegisterTimer(CountUpTimer timer){
         _timers.Add(timer);
     }
 }

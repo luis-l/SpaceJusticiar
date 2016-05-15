@@ -38,7 +38,7 @@ public class Lander : MonoBehaviour
         if (!_bLanded) {
             // Land on surface
             Vector2 up = CelestialBody.GetUp(_oc.PlanetTarget, transform);
-            Vector2 pointOnSurface = (Vector2)_oc.PlanetTarget.transform.position + _oc.PlanetTarget.GetSurfaceRadius() * up * 0.8f;
+            Vector2 pointOnSurface = (Vector2)_oc.PlanetTarget.transform.position + _oc.PlanetTarget.GetSurfaceRadius() * up * 0.85f;
             
             Vector2 nextPos = Vector2.Lerp(transform.position, pointOnSurface, Time.fixedDeltaTime * 0.1f);
             _rigid.MovePosition(nextPos);
