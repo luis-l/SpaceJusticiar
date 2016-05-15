@@ -14,22 +14,17 @@ public class Lander : MonoBehaviour
     public Sprite secondFormSprite = null;
     public GameObject secondFormProjectileType = null;
 
+    private Rigidbody2D _rigid;
+    private bool _bLanded = false;
+
     // Use this for initialization
     void Start()
     {
         _energyCell = new EnergyCell(100f);
         _energyCell.setEmptiedCellWaitTime(1f);
         mainGun.FiringDelay = 0.25f;
-
-        Vector2 up = CelestialBody.GetUp(_oc.PlanetTarget, transform);
-        Vector2 down = -up;
-
-        Rigidbody2D rigid = GetComponent<Rigidbody2D>();
-        rigid.velocity = down * 3f;
-        //rigid.MovePosition();
-
-        Vector2 pointOnSurface = (Vector2)_oc.PlanetTarget.transform.position + _oc.PlanetTarget.GetSurfaceRadius() * up;
-
+        
+        _rigid = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -38,10 +33,25 @@ public class Lander : MonoBehaviour
         _energyCell.Update();
     }
 
+    void FixedUpdate()
+    {
+        if (!_bLanded) {
+            // Land on surface
+            Vector2 up = CelestialBody.GetUp(_oc.PlanetTarget, transform);
+            Vector2 pointOnSurface = (Vector2)_oc.PlanetTarget.transform.position + _oc.PlanetTarget.GetSurfaceRadius() * up * 0.8f;
+            
+            Vector2 nextPos = Vector2.Lerp(transform.position, pointOnSurface, Time.fixedDeltaTime * 0.1f);
+            _rigid.MovePosition(nextPos);
+        }
+    }
+
     void OnCollisionEnter2D(Collision2D other)
     {
         // Convert fighter to second form
         if (other.gameObject.name == _oc.PlanetTarget.Graphic.name) {
+            
+            _bLanded = true;
+
             Rigidbody2D rigid = GetComponent<Rigidbody2D>();
             rigid.velocity.Set(0, 0);
 
@@ -56,4 +66,5 @@ public class Lander : MonoBehaviour
             gunSound.volume = 0.14f;
         }
     }
+
 }

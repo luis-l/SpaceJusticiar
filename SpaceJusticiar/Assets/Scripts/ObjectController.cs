@@ -62,6 +62,7 @@ public class ObjectController : MonoBehaviour
         textBehavior.endPosition = screenCoord + Random.insideUnitCircle * 300;
     }
 
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Projectile") {
