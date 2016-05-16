@@ -32,14 +32,14 @@ public class CameraFollow : MonoBehaviour
 
             Vector3 newPos = followingTransform.position;
 
-            Vector2 toTarget = followingTransform.position - transform.position;
+            Vector2 toTarget = followingTransform.position - transform.parent.position;
 
-            // Camera is too far away for lerping.
+            // Camera is too far away for smoothing.
             // Snap to target.
             if (toTarget.sqrMagnitude > snapDistanceSq) {
                 Vector3 snapPos = followingTransform.position;
-                snapPos.z = transform.position.z;
-                transform.position = snapPos;
+                snapPos.z = transform.parent.position.z;
+                transform.parent.position = snapPos;
             }
 
             // Get the direction towards the mouse from the target
@@ -51,10 +51,10 @@ public class CameraFollow : MonoBehaviour
             newPos += toMouse * aheadFactor * Camera.main.orthographicSize / 8f;
 
             // Keep the camera z the same.
-            newPos.z = transform.position.z;
+            newPos.z = transform.parent.position.z;
 
-            // Damp the camera.
-            transform.position = Vector3.SmoothDamp(transform.position, newPos, ref _currentVelocity, damping);
+            // Damp the camera parent.
+            transform.parent.position = Vector3.SmoothDamp(transform.parent.position, newPos, ref _currentVelocity, damping);
         }
     }
 }

@@ -2,12 +2,11 @@
 /* *** IMPORTANT !!! ***
  * 
  * Since the game uses camera damping and camera shaking, in order
- * for the both effects to work well together, the game uses two cameras.
+ * for the both effects to work well together, the game uses a dummy object that
+ * that is the parent of the main camera. 
  * 
- * Unity's main camera is used for damping and a secondary one is used for shaking.
- * The secondary camera is a child of the main one, that way the shaking algorithm
- * simply offsets the camera in local space. The final view of the player will be through
- * the secondary camera.
+ * The smooth damping moves the dummy parent and the CameraShake moves the main camera
+ * in local space.
  * */
 
 using UnityEngine;
@@ -23,7 +22,7 @@ public abstract class CameraShake : MonoBehaviour  {
 
     public bool test = false;
 
-    // The camera to shake in local space. This camera should be a child of the main one.
+    // The camera to shake in local space. This camera should be a child of object being damped.
     // At least for this game.
     public Camera targetCamera;
 

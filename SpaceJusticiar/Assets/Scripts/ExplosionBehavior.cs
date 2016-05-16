@@ -15,13 +15,11 @@ public class ExplosionBehavior : MonoBehaviour
         _explosionParticles = gameObject.GetComponent<ParticleSystem>();
     }
 
-    void FixedUpdate()
+    void Update()
     {
-
         // Play the particle system at a fixed time step.
         if (_explosionTimer <= _explosionParticles.startLifetime) {
-            _explosionParticles.Simulate(Time.fixedDeltaTime, false, false);
-            _explosionTimer += Time.fixedDeltaTime;
+            _explosionTimer += Time.deltaTime;
         }
 
         // Reset and recycle particles.

@@ -57,7 +57,7 @@ public class Lander : MonoBehaviour
 
             GetComponent<SpriteRenderer>().sprite = secondFormSprite;
             mainGun.ProjectileType = secondFormProjectileType;
-            mainGun.FiringDelay = 0.06f;
+            mainGun.FiringDelay = 0.07f;
             mainGun.firingForce = 800;
             mainGun.spread = 2f;
 

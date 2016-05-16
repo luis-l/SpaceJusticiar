@@ -32,8 +32,8 @@ public class ObjectController : MonoBehaviour
         Destroy(gameObject, 0.001f);
 
         // Do no let the camera die.
-        if (Camera.main.transform.parent == transform) {
-            Camera.main.transform.parent = null;
+        if (Camera.main.transform.parent.parent == transform) {
+            Camera.main.transform.parent.parent = null;
         }
     }
 

@@ -4,10 +4,7 @@ using System.Collections;
 // Class to access camera behaviors.
 public class CameraController : MonoBehaviour {
 
-    [SerializeField]
     private CameraFollow _camFollow;
-
-    [SerializeField]
     private CameraShake _camShake;
 
     public CameraShake CameraShake { get { return _camShake; } }
@@ -19,9 +16,14 @@ public class CameraController : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 
+        _camFollow = gameObject.AddComponent<CameraFollow>();
+        _camShake = gameObject.AddComponent<PerlinShake>();
+
         if (transformToFollow == null) {
             transformToFollow = GameObject.FindGameObjectWithTag("Player").transform;
         }
+
+        _camShake.targetCamera = Camera.main;
 
         // Set camera follow parameters.
         _camFollow.followingTransform = transformToFollow;
