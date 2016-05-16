@@ -35,7 +35,8 @@ public class Lander : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!_bLanded) {
+        // Has not landed yet and still going fast. We do not want the lander to go back up away from the planet.
+        if (!_bLanded && _rigid.velocity.sqrMagnitude > 4f) {
 
             // Slow down the lander as it approaches the surface.
             Vector2 up = CelestialBody.GetUp(_oc.PlanetTarget, transform);
