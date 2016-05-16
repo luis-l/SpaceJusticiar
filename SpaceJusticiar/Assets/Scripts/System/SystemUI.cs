@@ -3,7 +3,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 
-public class SystemUI : SystemBase {
+public class SystemUI : SystemBase
+{
 
     private float _camZoomDelta = 2f;
     public const float MIN_CAM_SIZE = 2f;
@@ -42,8 +43,9 @@ public class SystemUI : SystemBase {
         FocusOC = GameObject.Find("Player").GetComponent<ObjectController>();
     }
 
-	// Update is called once per frame
-	public override void Update () {
+    // Update is called once per frame
+    public override void Update()
+    {
 
         if (Input.GetKeyDown(KeyCode.R)) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -79,7 +81,7 @@ public class SystemUI : SystemBase {
                 _cameraController.CameraSize = MAX_CAM_SIZE;
             }
         }
-        
+
         // Update firing rate text.
         else if (wheelDelta != 0 && _focusGun != null) {
             firingRateText.text = _focusGun.FiringDelay.ToString("0.##");
@@ -106,8 +108,8 @@ public class SystemUI : SystemBase {
             _currentDetail = nextDetail;
             CelestialBody first = Systems.Instance.SpaceEngine.ActiveStarSystem.GetPlanet(0);
             StarSystem.GenerateSurface(_currentDetail, first);
-        } 
-	}
+        }
+    }
 
     public void DisplayDamageFeedback(ObjectController damagedObject, float damage)
     {

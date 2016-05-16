@@ -229,6 +229,24 @@ public class StarSystem
 
     }
 
+    private bool CanHoldLife(CelestialBody planet)
+    {
+        return true;
+    }
+
+    private void TerraformPlanet(CelestialBody planet)
+    {
+        // Decide temperature
+
+        // Decide aesthetics based on temperature
+
+        // Morph mountains and canyons
+
+        // Decide if it can hold life
+
+        // Place life entities
+    }
+
     public CelestialBody GetPlanet(int index)
     {
         return _planets[index];

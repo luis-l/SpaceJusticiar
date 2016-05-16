@@ -81,12 +81,18 @@ public class LaserCannon : MonoBehaviour
 
         GameObject proj = Pools.Instance.Fetch(_projectileType.name);
         proj.transform.position = _nozzleTrans.position;
-        proj.transform.rotation = _nozzleTrans.rotation;
 
         Rigidbody2D projRigid = proj.GetComponent<Rigidbody2D>();
         projRigid.velocity = initialVelocity;
         projRigid.AddForce(toTarget * firingForce);
-        proj.GetComponent<ProjectileBehavior>().targetTag = targetTag;
+
+        ProjectileBehavior projBehav = proj.GetComponent<ProjectileBehavior>();
+        projBehav.targetTag = targetTag;
+
+        // Rotate based on target position direction
+        Vector2 velDir = toTarget;
+        float z = Mathf.Atan2(velDir.y, velDir.x);
+        proj.transform.rotation = Quaternion.Euler(0, 0, Mathf.Rad2Deg * z);
 
         firingSfx.Play();
     }
