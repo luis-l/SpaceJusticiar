@@ -81,7 +81,7 @@ public class LaserCannon : MonoBehaviour
 
         GameObject proj = Pools.Instance.Fetch(_projectileType.name);
         proj.transform.position = _nozzleTrans.position;
-
+ 
         Rigidbody2D projRigid = proj.GetComponent<Rigidbody2D>();
         projRigid.velocity = initialVelocity;
         projRigid.AddForce(toTarget * firingForce);

@@ -16,6 +16,8 @@ public class PlayerShooting : MonoBehaviour
 
     public GameObject[] projectileTypes;
 
+    private TargetingSystem _targetSys;
+
     // Use this for initialization
     void Start()
     {
@@ -26,6 +28,12 @@ public class PlayerShooting : MonoBehaviour
 
         prevPos = transform.position;
         prevMousePos = Input.mousePosition;
+
+        _targetSys = gameObject.AddComponent<TargetingSystem>();
+        _targetSys.mainGun = _mainGun;
+        _targetSys.bManual = true;
+        _targetSys.Range = 100;
+        _targetSys.EnergyCell = gameObject.transform.parent.gameObject.GetComponent<ObjectController>().EnergyCell;
     }
 
     void Update()

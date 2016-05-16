@@ -46,7 +46,7 @@ public class ObjectController : MonoBehaviour
         }
     }
 
-    private void ApplyDamage(float damage)
+    public void ApplyDamage(float damage)
     {
         OnDamageEvent(this, damage);
         _health.DealDamage(damage);
@@ -62,6 +62,7 @@ public class ObjectController : MonoBehaviour
         }
     }
 
+    /*
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Projectile") {
@@ -72,6 +73,16 @@ public class ObjectController : MonoBehaviour
                 ApplyDamage(proj.damage);
             }
         }
+    }*/
+
+    void OnMouseEnter()
+    {
+        Systems.Instance.SystemUI.selectedTarget = transform;
+    }
+
+    void OnMouseExit()
+    {
+        Systems.Instance.SystemUI.selectedTarget = null;
     }
 
     void OnCollisionEnter2D(Collision2D collision)

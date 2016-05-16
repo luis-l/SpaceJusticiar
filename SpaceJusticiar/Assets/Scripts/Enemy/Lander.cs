@@ -23,6 +23,12 @@ public class Lander : MonoBehaviour
         mainGun.FiringDelay = 0.25f;
         
         _rigid = GetComponent<Rigidbody2D>();
+        
+        Vector2 up = CelestialBody.GetUp(_oc.PlanetTarget, transform);
+
+        Vector2 pointOnSurface = (Vector2)_oc.PlanetTarget.transform.position + _oc.PlanetTarget.GetSurfaceRadius() * up;
+        float distToSurfacePoint = (pointOnSurface - (Vector2)transform.position).magnitude;
+        _rigid.AddForce(-up * distToSurfacePoint * 3f);
 
         targetingSystem.EnergyCell = _oc.EnergyCell;
     }
@@ -30,12 +36,23 @@ public class Lander : MonoBehaviour
     void FixedUpdate()
     {
         if (!_bLanded) {
+
+            // Slow down the lander as it approaches the surface.
+            Vector2 up = CelestialBody.GetUp(_oc.PlanetTarget, transform);
+            Vector2 pointOnSurface = (Vector2)_oc.PlanetTarget.transform.position + _oc.PlanetTarget.GetSurfaceRadius() * up;
+
+            float distToSurfacePoint = (pointOnSurface - (Vector2)transform.position).magnitude;
+
+            Vector2 slowdownForce = up * (1 / distToSurfacePoint);
+            _rigid.AddForce(slowdownForce);
+
+            /*
             // Land on surface
             Vector2 up = CelestialBody.GetUp(_oc.PlanetTarget, transform);
             Vector2 pointOnSurface = (Vector2)_oc.PlanetTarget.transform.position + _oc.PlanetTarget.GetSurfaceRadius() * up * 0.85f;
             
             Vector2 nextPos = Vector2.Lerp(transform.position, pointOnSurface, Time.fixedDeltaTime * 0.1f);
-            _rigid.MovePosition(nextPos);
+            _rigid.MovePosition(nextPos); */
         }
     }
 

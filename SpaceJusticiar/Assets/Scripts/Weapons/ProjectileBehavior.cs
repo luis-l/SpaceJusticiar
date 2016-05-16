@@ -14,7 +14,7 @@ public class ProjectileBehavior : MonoBehaviour
     public float energyCost = 0.03f;
 
     public float gravityScale = 0f;
-    private GameObject _planet = null;
+    private CelestialBody _planet= null;
 
     private Rigidbody2D _rigid = null;
 
@@ -44,7 +44,7 @@ public class ProjectileBehavior : MonoBehaviour
     {
         // Apply gravity to projectile.
         if (gravityScale != 0 && _planet != null) {
-            Vector2 up = (transform.position - _planet.transform.position).normalized;
+            Vector2 up = CelestialBody.GetUp(_planet, transform);
             _rigid.AddForce(-up * gravityScale);
         }
     }
@@ -61,7 +61,7 @@ public class ProjectileBehavior : MonoBehaviour
     }
 
     // Sets the planet the influences the projectile.
-    public void SetPlanet(GameObject planet)
+    public void SetPlanet(CelestialBody planet)
     {
         _planet = planet;
     }
@@ -70,11 +70,16 @@ public class ProjectileBehavior : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "PlanetInfluence") {
-            _planet = other.gameObject;
+            _planet = other.transform.parent.gameObject.GetComponent<CelestialBody>();
             transform.parent = _planet.transform;
         }
 
         if (other.tag == "Collidable" || other.tag == targetTag) {
+
+            ObjectController oc = other.GetComponent<ObjectController>();
+            if (oc != null) {
+                oc.ApplyDamage(damage);
+            }
 
             // Make bullet impacts responsive near the player by shaking the camera a bit.
             if (other.tag != "Player") {

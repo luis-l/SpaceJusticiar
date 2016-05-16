@@ -22,6 +22,8 @@ public class SystemUI : SystemBase
     private ObjectController _focusOC;
     private LaserCannon _focusGun;
 
+    public Transform selectedTarget;
+
     private ObjectController FocusOC
     {
         get { return _focusOC; }

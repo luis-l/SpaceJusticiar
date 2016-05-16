@@ -34,13 +34,16 @@ public class PlayerController : MonoBehaviour
 
     public ObjectController OC { get { return _oc; } }
 
+    void Awake()
+    {
+        _oc.EnergyCell = new EnergyCell();
+    }
+
     // Use this for initialization
     void Start()
     {
         _planet = Systems.Instance.SpaceEngine.ActiveStarSystem.GetPlanet(0);
         _oc.PlanetTarget = _planet;
-
-        _oc.EnergyCell = new EnergyCell();
 
         //transform.parent = _planet.transform;
         transform.localPosition = Vector2.zero;
