@@ -22,8 +22,13 @@ public class TargetingSystem : MonoBehaviour
         set { _range = value; _rangeSq = value * value; }
     }
 
-    // Use this for initialization
-    void Start()
+    public EnergyCell EnergyCell
+    {
+        get { return _energyCell; }
+        set { _energyCell = value; }
+    }
+
+    void Awake()
     {
         Range = _range;
 

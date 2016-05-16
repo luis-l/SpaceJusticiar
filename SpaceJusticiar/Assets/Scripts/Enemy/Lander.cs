@@ -9,8 +9,6 @@ public class Lander : MonoBehaviour
     public LaserCannon mainGun = null;
     public TargetingSystem targetingSystem = null;
 
-    private EnergyCell _energyCell = null;
-
     public Sprite secondFormSprite = null;
     public GameObject secondFormProjectileType = null;
 
@@ -20,17 +18,13 @@ public class Lander : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _energyCell = new EnergyCell(100f);
-        _energyCell.setEmptiedCellWaitTime(1f);
+        _oc.EnergyCell = new EnergyCell(100f);
+        _oc.EnergyCell.setEmptiedCellWaitTime(1f);
         mainGun.FiringDelay = 0.25f;
         
         _rigid = GetComponent<Rigidbody2D>();
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        _energyCell.Update();
+        targetingSystem.EnergyCell = _oc.EnergyCell;
     }
 
     void FixedUpdate()

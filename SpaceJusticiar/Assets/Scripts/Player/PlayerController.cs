@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerController : MonoBehaviour
@@ -25,28 +24,15 @@ public class PlayerController : MonoBehaviour
     public enum FrameOfReference { GLOBAL, PLANET };
     public FrameOfReference currentFrameOfRef = FrameOfReference.PLANET;
 
-    private EnergyCell _energyCell = null;
-
     private float _energySlowTimeDrainRate = 0.24f;
     private bool _bInSlowMotion = false;
-
-    public Text healthText = null;
-    public Text energyText = null;
 
     [SerializeField]
     private ObjectController _oc;
 
     private Vector2 _thrustDir;
 
-    public float Energy
-    {
-        get { return _energyCell.Charge; }
-    }
-
-    public EnergyCell EnergyCell
-    {
-        get { return _energyCell; }
-    }
+    public ObjectController OC { get { return _oc; } }
 
     // Use this for initialization
     void Start()
@@ -54,10 +40,10 @@ public class PlayerController : MonoBehaviour
         _planet = Systems.Instance.SpaceEngine.ActiveStarSystem.GetPlanet(0);
         _oc.PlanetTarget = _planet;
 
+        _oc.EnergyCell = new EnergyCell();
+
         //transform.parent = _planet.transform;
         transform.localPosition = Vector2.zero;
-
-        _energyCell = new EnergyCell();
 
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
 
@@ -75,7 +61,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && Energy > 0) {
+        if (Input.GetKeyDown(KeyCode.Space) && _oc.EnergyCell.Charge > 0) {
             Time.timeScale = 0.5f;
             _bInSlowMotion = true;
         }
@@ -84,28 +70,15 @@ public class PlayerController : MonoBehaviour
             _bInSlowMotion = false;
         }
 
-        if (_bInSlowMotion && Energy > 0) {
-            _energyCell.UseEnergy(_energySlowTimeDrainRate * Time.deltaTime);
+        if (_bInSlowMotion && _oc.EnergyCell.Charge > 0) {
+            _oc.EnergyCell.UseEnergy(_energySlowTimeDrainRate * Time.deltaTime);
         }
 
         // Set to normal time scale if we ran out of energy.
         // Set other values when energy runs out too.
-        if (Energy == 0) {
+        if (_oc.EnergyCell.Charge == 0) {
             _bInSlowMotion = false;
             Time.timeScale = 1f;
-            energyText.text = "0";
-        }
-
-        _energyCell.Update();
-
-        // Energy regen.
-        if (Energy < EnergyCell.MAX_ENERGY) {
-            energyText.text = _energyCell.GetPercentage().ToString();
-        }
-
-        // Health regen.
-        if (_oc.Health.GetHealth() < HealthComponent.MAX_HEALTH) {
-            healthText.text = _oc.Health.GetPercentage().ToString();
         }
 
         _thrustDir = GetThrustDirection();

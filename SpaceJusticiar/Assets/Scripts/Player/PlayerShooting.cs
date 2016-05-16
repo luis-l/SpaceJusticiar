@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerShooting : MonoBehaviour
@@ -11,8 +10,6 @@ public class PlayerShooting : MonoBehaviour
     private float _firingDelayChange = 0.05f;
 
     public PlayerController playerController = null;
-
-    public Text firingRateText = null;
 
     [SerializeField]
     private LaserCannon _mainGun = null;
@@ -29,7 +26,6 @@ public class PlayerShooting : MonoBehaviour
 
         prevPos = transform.position;
         prevMousePos = Input.mousePosition;
-        firingRateText.text = _mainGun.FiringDelay.ToString("0.##");
     }
 
     void Update()
@@ -59,7 +55,7 @@ public class PlayerShooting : MonoBehaviour
                 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             }
 
-            _mainGun.Fire(mousePos, "Enemy", playerController.EnergyCell, initialProjVelocity);
+            _mainGun.Fire(mousePos, "Enemy", playerController.OC.EnergyCell, initialProjVelocity);
         }
 
         // Manage chaning firing rate
@@ -69,11 +65,6 @@ public class PlayerShooting : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.LeftShift) && wheelDelta < 0) {
             _mainGun.FiringDelay -= _firingDelayChange;
-        }
-
-        // Update firing rate text.
-        if (wheelDelta != 0) {
-            firingRateText.text = _mainGun.FiringDelay.ToString("0.##");
         }
     }
 

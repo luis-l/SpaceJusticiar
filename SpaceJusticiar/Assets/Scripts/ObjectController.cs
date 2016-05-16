@@ -4,10 +4,15 @@ using System.Collections;
 public class ObjectController : MonoBehaviour
 {
     private CelestialBody _planetTarget = null;
+    
     private HealthComponent _health = null;
+    private EnergyCell _energyCell = null;
 
     public delegate void OnDeathDelegate();
     public event OnDeathDelegate OnDeathEvent = delegate { };
+
+    public delegate void OnDamageDelegate(ObjectController damagedObject, float damage);
+    public event OnDamageDelegate OnDamageEvent = delegate { };
 
     void Awake()
     {
@@ -17,13 +22,17 @@ public class ObjectController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        OnDamageEvent += Systems.Instance.SystemUI.DisplayDamageFeedback;
     }
 
     // Update is called once per frame
     void Update()
     {
         _health.Update();
+
+        if (_energyCell != null) {
+            _energyCell.Update();
+        }
     }
 
     public void Destroy()
@@ -31,17 +40,16 @@ public class ObjectController : MonoBehaviour
         OnDeathEvent();
         Destroy(gameObject, 0.001f);
 
-        // Do no let the camera die.
-        if (Camera.main.transform.parent.parent == transform) {
-            Camera.main.transform.parent.parent = null;
+        // Do no let the camera die if it is a child of the game object.
+        if (Systems.Instance.SystemUI.CameraController.Parent == transform) {
+            Systems.Instance.SystemUI.CameraController.Parent = null;
         }
     }
 
     private void ApplyDamage(float damage)
     {
+        OnDamageEvent(this, damage);
         _health.DealDamage(damage);
-
-        SpawnDamageTextResponse(damage);
 
         if (_health.GetHealth() == 0) {
             GameObject explosion = Pools.Instance.Fetch("BlueEnergyExplosion");
@@ -53,20 +61,6 @@ public class ObjectController : MonoBehaviour
             Destroy();
         }
     }
-
-    void SpawnDamageTextResponse(float damage)
-    {
-        GameObject textDamage = UIPools.Instance.Fetch("DamageText");
-        TextBehavior textBehavior = textDamage.GetComponent<TextBehavior>();
-        textBehavior.life = 1.5f;
-        textBehavior.lerpSpeed = Random.Range(0.15f, 0.5f);
-        textBehavior.Text.text = (damage * 100).ToString("0.##");
-
-        Vector2 screenCoord = Camera.main.WorldToScreenPoint(transform.position);
-        textBehavior.RectTransform.position = screenCoord;
-        textBehavior.endPosition = screenCoord + Random.insideUnitCircle * 300;
-    }
-
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -100,8 +94,10 @@ public class ObjectController : MonoBehaviour
         }
     }
 
-    public HealthComponent Health
+    public HealthComponent Health { get { return _health; } }
+    public EnergyCell EnergyCell
     {
-        get { return _health; }
+        get { return _energyCell; }
+        set { _energyCell = value; }
     }
 }

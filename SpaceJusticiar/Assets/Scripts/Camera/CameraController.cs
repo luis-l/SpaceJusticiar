@@ -72,4 +72,13 @@ public class CameraController : MonoBehaviour {
             _camShake.targetCamera.orthographicSize = value;
         }
     }
+
+    /// <summary>
+    /// Get the parent of the dummy camera parent. Camera.main.transform.parent.parent
+    /// </summary>
+    public Transform Parent
+    {
+        get { return transform.parent.parent; }
+        set { transform.parent.parent = null; }
+    }
 }
