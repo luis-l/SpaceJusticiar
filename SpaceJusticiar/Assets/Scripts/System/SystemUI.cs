@@ -43,6 +43,8 @@ public class SystemUI : SystemBase
         firingRateText = GameObject.Find("Canvas/FiringRate/FiringRateValue").GetComponent<Text>();
 
         FocusOC = GameObject.Find("Player").GetComponent<ObjectController>();
+
+        _focusGun.gameObject.GetComponent<PlayerShooting>().OnChangeFiringRateEvent += UpdateFiringRateText;
     }
 
     // Update is called once per frame
@@ -84,11 +86,6 @@ public class SystemUI : SystemBase
             }
         }
 
-        // Update firing rate text.
-        else if (wheelDelta != 0 && _focusGun != null) {
-            firingRateText.text = _focusGun.FiringDelay.ToString("0.##");
-        }
-
         SurfaceDetail nextDetail;
         if (_cameraController.CameraSize < 8) {
             nextDetail = SurfaceDetail.ULTRA;
@@ -111,6 +108,11 @@ public class SystemUI : SystemBase
             CelestialBody first = Systems.Instance.SpaceEngine.ActiveStarSystem.GetPlanet(0);
             StarSystem.GenerateSurface(_currentDetail, first);
         }
+    }
+
+    private void UpdateFiringRateText()
+    {
+        firingRateText.text = _focusGun.FiringDelay.ToString("0.##");
     }
 
     public void DisplayDamageFeedback(ObjectController damagedObject, float damage)

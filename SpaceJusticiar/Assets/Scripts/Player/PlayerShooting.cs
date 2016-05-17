@@ -18,6 +18,9 @@ public class PlayerShooting : MonoBehaviour
 
     private TargetingSystem _targetSys;
 
+    public delegate void OnChangeFiringRateDelgate();
+    public event OnChangeFiringRateDelgate OnChangeFiringRateEvent = delegate { };
+
     // Use this for initialization
     void Start()
     {
@@ -70,9 +73,11 @@ public class PlayerShooting : MonoBehaviour
         float wheelDelta = Input.GetAxis("Mouse ScrollWheel");
         if (Input.GetKey(KeyCode.LeftShift) && wheelDelta > 0) {
             _mainGun.FiringDelay += _firingDelayChange;
+            OnChangeFiringRateEvent();
         }
         else if (Input.GetKey(KeyCode.LeftShift) && wheelDelta < 0) {
             _mainGun.FiringDelay -= _firingDelayChange;
+            OnChangeFiringRateEvent();
         }
     }
 
