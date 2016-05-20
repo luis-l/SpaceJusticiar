@@ -3,7 +3,10 @@ Shader "Custom/ColorInverterShader" {
 
 	Properties { 
 
-		_MainTex ("Alpha (A) only", 2D) = "white" {} 
+		_MainTex ("Alpha (A) only", 2D) = "white" {}
+
+		 // Scales the final color output after inversion. 
+		_ColorFactors ("Color Multipliers", Vector) = (1, 1, 1, 1)
 	} 
 
 	SubShader { 
@@ -22,10 +25,7 @@ Shader "Custom/ColorInverterShader" {
 
 			Fog { Mode Off } 
 
-			//Blend SrcAlpha One
 			Blend SrcAlpha OneMinusSrcAlpha
-			//Blend OneMinusDstColor OneMinusSrcAlpha
-
 
 			Lighting Off
 			ZWrite Off
@@ -41,6 +41,8 @@ Shader "Custom/ColorInverterShader" {
 			uniform sampler2D _MainTex;
 			uniform float4 _MainTex_ST;
 			uniform sampler2D _GrabTexture;
+
+			uniform float4 _ColorFactors;
 
 			struct v2f{
 
@@ -72,9 +74,9 @@ Shader "Custom/ColorInverterShader" {
 			    // But perserve the original opacity.
 			    orig.rgb = 1 - passCol;
 
-			    orig.rgb *= 0.8f;
-
-			    orig.g *= 1.7;
+			    orig.r *= _ColorFactors.r;
+			    orig.g *= _ColorFactors.g;
+			    orig.b *= _ColorFactors.b;
 
 				return orig;
 			} 
