@@ -18,7 +18,12 @@
 		// Render the planet body.
 		Pass{
 		
-			Tags {"RenderType"="Opaque"}
+			Tags {
+				"RenderType"="Opaque"
+				"Queue" = "Geometry+10"
+			}
+
+			ZWrite Off
 
 			CGPROGRAM
 

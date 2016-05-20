@@ -71,22 +71,22 @@ public class MeshMaker
         baseFlatTerrainNoise.Frequency = 0.5;
 
         ScaleBias flatTerrain = new ScaleBias(baseFlatTerrainNoise);
-        flatTerrain.Scale = 0.1;
-        flatTerrain.Bias = -0.8f;
+        flatTerrain.Scale = 0.08;
+        flatTerrain.Bias = -0.7;
 
         RidgedMultifractal mountainNoise = new RidgedMultifractal();
         mountainNoise.Seed = seed;
-        mountainNoise.Frequency = 0.5f;
-        mountainNoise.OctaveCount = 6;
+        mountainNoise.Frequency = 0.15f;
+        mountainNoise.OctaveCount = 5;
 
         Perlin terrainType = new Perlin();
         terrainType.Seed = seed;
         terrainType.Frequency = 0.5;
-        terrainType.Persistence = 0.2;
+        terrainType.Persistence = 0.5;
         terrainType.OctaveCount = 5;
 
         Select finalTerrain = new Select(flatTerrain, mountainNoise, terrainType);
-        finalTerrain.SetBounds(0.0, 100.0);
+        finalTerrain.SetBounds(0.0, 1);
         finalTerrain.FallOff = 0.4;
 
         float noiseScale = 0.1f;

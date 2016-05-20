@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        _oc.EnergyCell = new EnergyCell();
+        _oc.EnergyCell = new EnergyCell(0.1f);
     }
 
     // Use this for initialization

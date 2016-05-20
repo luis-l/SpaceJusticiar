@@ -28,7 +28,7 @@ public class Lander : MonoBehaviour
 
         Vector2 pointOnSurface = (Vector2)_oc.PlanetTarget.transform.position + _oc.PlanetTarget.GetSurfaceRadius() * up;
         float distToSurfacePoint = (pointOnSurface - (Vector2)transform.position).magnitude;
-        _rigid.AddForce(-up * distToSurfacePoint * 3f);
+        _rigid.AddForce(-up * distToSurfacePoint * 2f);
 
         targetingSystem.EnergyCell = _oc.EnergyCell;
     }

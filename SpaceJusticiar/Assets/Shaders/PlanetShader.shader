@@ -24,8 +24,15 @@
 		 // Render the atmosphere
 		Pass{
 
-			Tags {"Queue"="Transparent" "RenderType"="Transparent" }
+			Tags {
 
+				"Queue"="Transparent+10" 
+				"RenderType"="Transparent" 
+				"IgnoreProjector"="True"
+			}
+
+			Fog { Mode Off }
+			Lighting Off
 			Blend SrcAlpha One
 			ZWrite Off
 			Offset 0, 1
@@ -107,7 +114,12 @@
 		// Render the planet body.
 		Pass{
 		
-			Tags {"RenderType"="Opaque"}
+			Tags {
+				"RenderType"="Opaque"
+				"Queue" = "Geometry"
+			}
+
+			Lighting Off
 
 			CGPROGRAM
 

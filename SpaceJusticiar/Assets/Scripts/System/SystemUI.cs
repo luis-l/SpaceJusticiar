@@ -24,6 +24,8 @@ public class SystemUI : SystemBase
 
     public Transform selectedTarget;
 
+    private Transform _reticleTrans;
+
     private ObjectController FocusOC
     {
         get { return _focusOC; }
@@ -36,6 +38,8 @@ public class SystemUI : SystemBase
 
     public SystemUI()
     {
+        Cursor.visible = false;
+
         _cameraController = Camera.main.gameObject.GetComponent<CameraController>();
 
         healthText = GameObject.Find("Canvas/Health/HealthValueText").GetComponent<Text>();
@@ -45,11 +49,14 @@ public class SystemUI : SystemBase
         FocusOC = GameObject.Find("Player").GetComponent<ObjectController>();
 
         _focusGun.gameObject.GetComponent<PlayerShooting>().OnChangeFiringRateEvent += UpdateFiringRateText;
+
+        _reticleTrans = GameObject.Find("Canvas/Reticle").transform;
     }
 
     // Update is called once per frame
     public override void Update()
     {
+        _reticleTrans.position = Input.mousePosition;
 
         if (Input.GetKeyDown(KeyCode.R)) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
