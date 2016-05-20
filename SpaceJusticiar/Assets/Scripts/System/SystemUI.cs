@@ -25,6 +25,7 @@ public class SystemUI : SystemBase
     public Transform selectedTarget;
 
     private Transform _reticleTrans;
+    public Transform ReticleTransform { get { return _reticleTrans; } }
 
     private ObjectController FocusOC
     {
@@ -38,7 +39,7 @@ public class SystemUI : SystemBase
 
     public SystemUI()
     {
-        Cursor.visible = false;
+        //Cursor.visible = false;
 
         _cameraController = Camera.main.gameObject.GetComponent<CameraController>();
 
@@ -56,7 +57,7 @@ public class SystemUI : SystemBase
     // Update is called once per frame
     public override void Update()
     {
-        _reticleTrans.position = Input.mousePosition;
+        //_reticleTrans.position = Input.mousePosition;
 
         if (Input.GetKeyDown(KeyCode.R)) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);

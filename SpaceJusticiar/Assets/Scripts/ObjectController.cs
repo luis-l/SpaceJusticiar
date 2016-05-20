@@ -14,6 +14,10 @@ public class ObjectController : MonoBehaviour
     public delegate void OnDamageDelegate(ObjectController damagedObject, float damage);
     public event OnDamageDelegate OnDamageEvent = delegate { };
 
+    private Rigidbody2D _rigid;
+
+    public Rigidbody2D RigidBody { get { return _rigid; } }
+
     void Awake()
     {
         _health = new HealthComponent();
@@ -23,6 +27,7 @@ public class ObjectController : MonoBehaviour
     void Start()
     {
         OnDamageEvent += Systems.Instance.SystemUI.DisplayDamageFeedback;
+        _rigid = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -77,12 +82,13 @@ public class ObjectController : MonoBehaviour
 
     void OnMouseEnter()
     {
+
         Systems.Instance.SystemUI.selectedTarget = transform;
     }
 
     void OnMouseExit()
     {
-        Systems.Instance.SystemUI.selectedTarget = null;
+        //Systems.Instance.SystemUI.selectedTarget = null;
     }
 
     void OnCollisionEnter2D(Collision2D collision)

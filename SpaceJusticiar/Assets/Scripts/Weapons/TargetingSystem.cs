@@ -20,6 +20,8 @@ public class TargetingSystem : MonoBehaviour
     public bool bManual = false;
     public bool bAutoFire = true;
 
+    private ObjectController _oc;
+
     public float Range
     {
         get { return _range; }
@@ -40,10 +42,16 @@ public class TargetingSystem : MonoBehaviour
         _energyCell.setEmptiedCellWaitTime(1f);
     }
 
+    void Start()
+    {
+        _oc = transform.parent.GetComponent<ObjectController>();
+    }
+
+    private Vector2 _velocity;
+
     // Update is called once per frame
     void Update()
     {
-
         if (bManual) {
             targetTrans = Systems.Instance.SystemUI.selectedTarget;
         }
@@ -55,6 +63,7 @@ public class TargetingSystem : MonoBehaviour
             // Test if the target is within range.
             _bTargetInRange = distToTarget.sqrMagnitude <= _rangeSq;
 
+            // Rotate the gun.
             if (_bTargetInRange) {
                 Vector2 toTarget = distToTarget.normalized;
                 float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
@@ -70,6 +79,16 @@ public class TargetingSystem : MonoBehaviour
                     FireAtTarget(targetTrans.position, toTarget);
                 }
             }
+
+            if (bManual) {
+                Vector2 toTarget = distToTarget.normalized;
+                Vector2 targetLeadPos = TargetLeadPosition(targetTrans.position, ref toTarget);
+                Systems.Instance.SystemUI.ReticleTransform.position = Camera.main.WorldToScreenPoint(targetLeadPos);
+            }
+        }
+
+        else {
+            Systems.Instance.SystemUI.ReticleTransform.position = Input.mousePosition;
         }
 
         _energyCell.Update();
@@ -92,6 +111,14 @@ public class TargetingSystem : MonoBehaviour
         }
     }
 
+    void LateUpdate()
+    {
+        // Obtain the velocity of the parent, which is what moves the targeting system with it.
+        if (_oc != null && _oc.RigidBody != null) {
+            _velocity = _oc.RigidBody.velocity;
+        }
+    }
+
     // Pass in the position to fire at and the direction to the target.
     void FireAtTarget(Vector2 targetPos, Vector2 toTarget)
     {
@@ -99,7 +126,7 @@ public class TargetingSystem : MonoBehaviour
 
         float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
         mainGun.transform.rotation = Quaternion.Euler(0, 0, rotZ);
-        mainGun.Fire(targetPos, targetTrans.tag, _energyCell, new Vector2(0, 0));
+        mainGun.Fire(targetPos, targetTrans.tag, _energyCell, _velocity);
     }
 
     // Get the position to aim at using target leading.
@@ -110,7 +137,7 @@ public class TargetingSystem : MonoBehaviour
         float projectileMass = mainGun.ProjectileType.GetComponent<Rigidbody2D>().mass;
         float projectileSpeed = projectileForce / projectileMass * Time.fixedDeltaTime;
 
-        Vector2 targetVel = targetTrans.gameObject.GetComponent<Rigidbody2D>().velocity;
+        Vector2 targetVel = targetTrans.gameObject.GetComponent<Rigidbody2D>().velocity - _velocity;
 
         // Target leading quadratic coefficients
         // We are solving for time of impact of the projectile and target

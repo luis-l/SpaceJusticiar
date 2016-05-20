@@ -35,6 +35,7 @@ public class PlayerShooting : MonoBehaviour
         _targetSys = gameObject.AddComponent<TargetingSystem>();
         _targetSys.mainGun = _mainGun;
         _targetSys.bManual = true;
+        _targetSys.bAutoFire = false;
         _targetSys.Range = 100;
         _targetSys.EnergyCell = gameObject.transform.parent.gameObject.GetComponent<ObjectController>().EnergyCell;
     }
@@ -43,7 +44,7 @@ public class PlayerShooting : MonoBehaviour
     {
         if (Input.GetMouseButton(0) || Input.GetMouseButton(1)) {
 
-            Vector2 initialProjVelocity = playerController.rigidBody.velocity * 0.9f;
+            Vector2 initialProjVelocity = playerController.rigidBody.velocity;
 
             if (Input.GetMouseButton(0) && _mainGun.ProjectileType.name != projectileTypes[0].name) {
                 _mainGun.ProjectileType = projectileTypes[0];
@@ -54,12 +55,6 @@ public class PlayerShooting : MonoBehaviour
                 _mainGun.ProjectileType = projectileTypes[1];
                 _mainGun.firingForce = 480f;
             }
-
-            // Give bullet initial velocity of the player to start with.
-            if (_mainGun.ProjectileType.name == projectileTypes[1].name) {
-                initialProjVelocity = playerController.rigidBody.velocity * 0.5f;
-            }
-
 
             Vector2 mousePos = new Vector2();
             if (Camera.main.orthographic) {
