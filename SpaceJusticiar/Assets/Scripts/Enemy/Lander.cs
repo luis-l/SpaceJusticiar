@@ -15,6 +15,9 @@ public class Lander : MonoBehaviour
     private Rigidbody2D _rigid;
     private bool _bLanded = false;
 
+    [SerializeField]
+    private GameObject _thrust;
+
     // Use this for initialization
     void Start()
     {
@@ -69,9 +72,11 @@ public class Lander : MonoBehaviour
 
             GetComponent<SpriteRenderer>().sprite = secondFormSprite;
             mainGun.ProjectileType = secondFormProjectileType;
-            mainGun.FiringDelay = 0.07f;
+            mainGun.FiringDelay = 0.08f;
             mainGun.firingForce = 800;
             mainGun.spread = 2f;
+
+            _thrust.SetActive(false);
 
             AudioSource gunSound = mainGun.GetComponent<AudioSource>();
             gunSound.pitch = 1.4f;

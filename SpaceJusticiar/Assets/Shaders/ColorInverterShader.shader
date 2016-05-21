@@ -74,6 +74,7 @@ Shader "Custom/ColorInverterShader" {
 			    // But perserve the original opacity.
 			    orig.rgb = 1 - passCol;
 
+			    // Bias the color from the factors.
 			    orig.r *= _ColorFactors.r;
 			    orig.g *= _ColorFactors.g;
 			    orig.b *= _ColorFactors.b;
