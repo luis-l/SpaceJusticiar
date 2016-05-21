@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 
+using Vectrosity;
+
 public class SystemUI : SystemBase
 {
 
@@ -26,6 +28,9 @@ public class SystemUI : SystemBase
 
     private Transform _reticleTrans;
     public Transform ReticleTransform { get { return _reticleTrans; } }
+
+    // A line used to associate which gameobject is being targeted.
+    private VectorLine _targetingLine;
 
     private ObjectController FocusOC
     {
@@ -52,6 +57,9 @@ public class SystemUI : SystemBase
         _focusGun.gameObject.GetComponent<PlayerShooting>().OnChangeFiringRateEvent += UpdateFiringRateText;
 
         _reticleTrans = GameObject.Find("Canvas/Reticle").transform;
+
+        _targetingLine = new VectorLine("TargetingLine", new Vector2[2], null, 0.7f);
+        _targetingLine.SetColor(Color.cyan);
     }
 
     // Update is called once per frame
@@ -115,6 +123,25 @@ public class SystemUI : SystemBase
             _currentDetail = nextDetail;
             CelestialBody first = Systems.Instance.SpaceEngine.ActiveStarSystem.GetPlanet(0);
             StarSystem.GenerateSurface(_currentDetail, first);
+        }
+
+        RenderTargetingLine();
+    }
+
+    private void RenderTargetingLine()
+    {
+        if (selectedTarget != null) {
+
+            _targetingLine.active = true;
+
+            _targetingLine.points2[0] = Camera.main.WorldToScreenPoint(selectedTarget.transform.position);
+            _targetingLine.points2[1] = _reticleTrans.position;
+            
+            _targetingLine.Draw();
+        }
+
+        else if (_targetingLine.active) {
+            _targetingLine.active = false;
         }
     }
 
