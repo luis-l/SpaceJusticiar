@@ -222,7 +222,7 @@ public class PlayerController : MonoBehaviour
             currentFrameOfRef = FrameOfReference.GLOBAL;
             
             // No Drag in space but we need to limit it
-            rigidBody.drag = 0.1f;
+            rigidBody.drag = 0.18f;
 
             transform.parent = null;
             _planet = null;

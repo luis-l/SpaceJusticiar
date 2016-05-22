@@ -83,7 +83,10 @@ public class CelestialBody : MonoBehaviour
             
             //areaInfluenceBorder.Draw3DAuto();
         }
+    }
 
+    public void RecalculateBounds()
+    {
         // For planets it is the atmosphere and for the sun it is the light range.
         float glowSize = -1;
         if (_graphicMeshRenderer.material.shader.name == "Custom/Planet Shader") {
@@ -95,15 +98,20 @@ public class CelestialBody : MonoBehaviour
 
         // Modify the mesh bounds so the atmosphere does not disappear when the planet mesh goes out of camera view.
         if (glowSize != -1) {
-            Mesh planetMesh = _graphic.GetComponent<MeshFilter>().mesh;
-            Bounds expandedPlanetBounds = new Bounds(planetMesh.bounds.center, planetMesh.bounds.size * glowSize * 2f);
-            planetMesh.bounds = expandedPlanetBounds;
+            Mesh mesh = _graphic.GetComponent<MeshFilter>().mesh;
+
+            Vector2 size = mesh.bounds.size * glowSize;
+            Bounds expandedBounds = new Bounds(mesh.bounds.center, size);
+
+            mesh.bounds = expandedBounds;
         }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+
+        //Debug.Log(_graphic.GetComponent<MeshFilter>().mesh.bounds);
 
         if (bRotateBody) {
             transform.Rotate(new Vector3(0, 0, rotationSpeed * Time.deltaTime));

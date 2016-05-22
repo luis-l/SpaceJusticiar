@@ -96,8 +96,8 @@ public class StarSystem
     {
         float currentPlanetOrbitRadius = 500f + Random.Range(0, 50);
 
-        int planetCount = Random.Range(SpaceEngine.MIN_PLANETS_PER_SYSTEM, SpaceEngine.MAX_PLANETS_PER_SYSTEM);
-        //int planetCount = 1;
+        //int planetCount = Random.Range(SpaceEngine.MIN_PLANETS_PER_SYSTEM, SpaceEngine.MAX_PLANETS_PER_SYSTEM);
+        int planetCount = 1;
 
         for (int i = 0; i < planetCount; i++) {
 
@@ -123,8 +123,6 @@ public class StarSystem
         _planets.Add(body);
 
         body.currentOrbitAngle = Random.Range(0, 2 * Mathf.PI);
-
-        GenerateSurface(SurfaceDetail.LOW, body);
 
         MeshRenderer renderer = body.Graphic.GetComponent<MeshRenderer>();
         renderer.material = new Material(ResourceManager.CelestialResources.PlanetShader);
@@ -172,6 +170,8 @@ public class StarSystem
         renderer.material.SetFloat("_AtmoBrightness", Random.Range(3.5f, 4.4f));
         renderer.material.SetFloat("_AtmoEmission", 0.16f);
 
+        GenerateSurface(SurfaceDetail.LOW, body);
+
         // Set planet rotations and orbit speeds
         //
         //
@@ -179,7 +179,7 @@ public class StarSystem
 
         body.celestialParent = _barycenter;
         body.orbitRadius = orbitRadius;
-        body.orbitSpeed = 2.0f / orbitRadius;
+        body.orbitSpeed = 1.0f / orbitRadius;
         //body.orbitSpeed = 0f;
         return body;
     }
@@ -217,6 +217,8 @@ public class StarSystem
         */
         CircleCollider2D bounds = body.Graphic.GetComponent<CircleCollider2D>();
         bounds.radius = body.transform.localScale.x;
+
+        body.RecalculateBounds();
     }
 
     private void CreateMoons(CelestialBody parentPlanet)
