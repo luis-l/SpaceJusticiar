@@ -27,7 +27,7 @@ public class CameraController : MonoBehaviour {
 
         // Set camera follow parameters.
         _camFollow.followingTransform = transformToFollow;
-        _camFollow.aheadFactor = 6f;
+        _camFollow.aheadFactor = 7f;
         _camFollow.damping = 0.7f;
 
         _originalColor = Camera.main.backgroundColor;

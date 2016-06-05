@@ -58,7 +58,7 @@ public class Pools : MonoBehaviour
     /// Add a pool to hold plain GameObjects.
     /// </summary>
     /// <param name="template"></param>
-    public void AddSubPool(GameObject template, int initialReserve = 20)
+    public void AddSubPool(GameObject template, int initialReserve = 10)
     {
         if (template != null) {
             // Create the game object to attach pool script.
