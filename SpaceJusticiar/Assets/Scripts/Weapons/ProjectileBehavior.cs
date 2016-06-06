@@ -86,7 +86,7 @@ public class ProjectileBehavior : MonoBehaviour
             if (other.tag != "Player") {
                 Vector2 distToCam = Camera.main.transform.position - transform.position;
                 float mag = distToCam.magnitude;
-                if (mag < 15) {
+                if (mag < 20) {
 
                     // The closer the impact, the stronger the camera shake.
                     float shakeScalar = 1f / (mag * mag);

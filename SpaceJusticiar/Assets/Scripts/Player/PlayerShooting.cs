@@ -34,7 +34,6 @@ public class PlayerShooting : MonoBehaviour
 
         _targetSys = gameObject.AddComponent<TargetingSystem>();
         _targetSys.mainGun = _mainGun;
-        _targetSys.bManual = true;
         _targetSys.bAutoFire = false;
         _targetSys.Range = 100;
         _targetSys.EnergyCell = gameObject.transform.parent.gameObject.GetComponent<ObjectController>().EnergyCell;

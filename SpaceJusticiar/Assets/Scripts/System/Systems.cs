@@ -54,7 +54,7 @@ public class Systems : MonoBehaviour {
             }
         }
     }
-	
+
 	// Update is called once per frame
 	void Update () {
         for (int i = 0; i < _systems.Count; i++) {

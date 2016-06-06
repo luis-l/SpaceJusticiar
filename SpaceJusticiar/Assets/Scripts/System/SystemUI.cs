@@ -42,6 +42,8 @@ public class SystemUI : SystemBase
         }
     }
 
+    private TargetingSystem _focusTargetSys;
+
     public SystemUI()
     {
         //Cursor.visible = false;
@@ -62,11 +64,8 @@ public class SystemUI : SystemBase
         _targetingLine.SetColor(Color.cyan);
     }
 
-    // Update is called once per frame
     public override void Update()
     {
-        //_reticleTrans.position = Input.mousePosition;
-
         if (Input.GetKeyDown(KeyCode.R)) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
@@ -126,6 +125,7 @@ public class SystemUI : SystemBase
         }
 
         RenderTargetingLine();
+        HandleReticle();
     }
 
     private void RenderTargetingLine()
@@ -143,6 +143,24 @@ public class SystemUI : SystemBase
         else if (_targetingLine.active) {
             _targetingLine.active = false;
         }
+    }
+
+    private void HandleReticle()
+    {
+        if (_focusTargetSys == null) {
+            _focusTargetSys = _focusGun.GetComponent<TargetingSystem>();
+        }
+
+        _focusTargetSys.targetTrans = selectedTarget;
+
+        if (selectedTarget == null) {
+            Systems.Instance.SystemUI.ReticleTransform.position = Input.mousePosition;
+        }
+
+        else {
+            Systems.Instance.SystemUI.ReticleTransform.position = Camera.main.WorldToScreenPoint(_focusTargetSys.LeadingPosition);
+        }
+
     }
 
     private void UpdateFiringRateText()

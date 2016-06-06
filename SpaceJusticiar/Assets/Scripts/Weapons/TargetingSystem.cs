@@ -17,10 +17,12 @@ public class TargetingSystem : MonoBehaviour
     private EnergyCell _energyCell = null;
     public bool bUseTargetLeading = true;
 
-    public bool bManual = false;
     public bool bAutoFire = true;
 
     private ObjectController _oc;
+
+    public bool bBurst = false;
+    private CountUpTimer _burstTimer;
 
     public float Range
     {
@@ -45,6 +47,8 @@ public class TargetingSystem : MonoBehaviour
     void Start()
     {
         _oc = transform.parent.GetComponent<ObjectController>();
+
+        _burstTimer = new CountUpTimer(0.2f);
     }
 
     private Vector2 _velocity;
@@ -52,10 +56,6 @@ public class TargetingSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (bManual) {
-            targetTrans = Systems.Instance.SystemUI.selectedTarget;
-        }
-
         if (targetTrans != null) {
 
             Vector2 distToTarget = targetTrans.position - transform.position;
@@ -63,32 +63,8 @@ public class TargetingSystem : MonoBehaviour
             // Test if the target is within range.
             _bTargetInRange = distToTarget.sqrMagnitude <= _rangeSq;
 
-            // Rotate the gun.
-            if (_bTargetInRange) {
-                Vector2 toTarget = distToTarget.normalized;
-                float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
-                mainGun.transform.rotation = Quaternion.Euler(0, 0, rotZ);
-            }
-
-            // Fire at the target if constraints are satisfied
-            if (_bTargetInSight && _bTargetInRange && _bNozzleIsClear) {
-
-                // Fire when gun is ready - that is, let the script fire on its own.
-                if (bManual && bAutoFire || !bManual) {
-                    Vector2 toTarget = distToTarget.normalized;
-                    FireAtTarget(targetTrans.position, toTarget);
-                }
-            }
-
-            if (bManual) {
-                Vector2 toTarget = distToTarget.normalized;
-                Vector2 targetLeadPos = TargetLeadPosition(targetTrans.position, ref toTarget);
-                Systems.Instance.SystemUI.ReticleTransform.position = Camera.main.WorldToScreenPoint(targetLeadPos);
-            }
-        }
-
-        else {
-            Systems.Instance.SystemUI.ReticleTransform.position = Input.mousePosition;
+            AlignGun(distToTarget);
+            HandleAuto(distToTarget);
         }
 
         _energyCell.Update();
@@ -119,8 +95,28 @@ public class TargetingSystem : MonoBehaviour
         }
     }
 
+    private void AlignGun(Vector2 distToTarget)
+    {
+        if (_bTargetInRange) {
+            Vector2 toTarget = distToTarget.normalized;
+            float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
+            mainGun.transform.rotation = Quaternion.Euler(0, 0, rotZ);
+        }
+    }
+
+    private void HandleAuto(Vector2 distToTarget)
+    {
+        bool bCanFire = _bTargetInSight && _bTargetInRange && _bNozzleIsClear && bAutoFire;
+
+        // Fire at the target if constraints are satisfied
+        if (bCanFire) {
+            Vector2 toTarget = distToTarget.normalized;
+            FireAtTarget(targetTrans.position, toTarget);
+        }
+    }
+
     // Pass in the position to fire at and the direction to the target.
-    void FireAtTarget(Vector2 targetPos, Vector2 toTarget)
+    private void FireAtTarget(Vector2 targetPos, Vector2 toTarget)
     {
         targetPos = TargetLeadPosition(targetPos, ref toTarget);
 
@@ -163,6 +159,15 @@ public class TargetingSystem : MonoBehaviour
         }
 
         return targetPos;
+    }
+
+    public Vector2 LeadingPosition
+    {
+        get
+        {
+            Vector2 dir = new Vector2();
+            return TargetLeadPosition(targetTrans.position, ref dir);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
