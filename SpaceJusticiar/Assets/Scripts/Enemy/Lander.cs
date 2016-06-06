@@ -23,7 +23,7 @@ public class Lander : MonoBehaviour
     {
         _oc.EnergyCell = new EnergyCell(100f);
         _oc.EnergyCell.setEmptiedCellWaitTime(1f);
-        mainGun.FiringDelay = 0.25f;
+        mainGun.FiringDelay = 0.07f;
         
         _rigid = GetComponent<Rigidbody2D>();
         
@@ -34,6 +34,8 @@ public class Lander : MonoBehaviour
         _rigid.AddForce(-up * distToSurfacePoint * 2f);
 
         targetingSystem.EnergyCell = _oc.EnergyCell;
+        targetingSystem.bBurst = true;
+        targetingSystem.bVariableBurst = true;
     }
 
     void FixedUpdate()
@@ -75,6 +77,8 @@ public class Lander : MonoBehaviour
             mainGun.FiringDelay = 0.08f;
             mainGun.firingForce = 800;
             mainGun.spread = 2f;
+
+            targetingSystem.bBurst = false;
 
             _thrust.SetActive(false);
 

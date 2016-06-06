@@ -90,6 +90,8 @@ public class StarSystem
             body.orbitRadius = totalOffset;
             body.orbitSpeed = 0.01f;
         }*/
+
+        body.RecalculateBounds();
     }
 
     private void CreatePlanets()

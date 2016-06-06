@@ -59,6 +59,8 @@ public class PlayerController : MonoBehaviour
         _thrustParticles = GameObject.Find("Player/Thrust").GetComponent<ParticleSystem>();
 
         _prevPlayerPos = transform.position;
+
+        Systems.Instance.SystemUI.SetFocusObject(_oc);
     }
 
     // Update is called once per frame

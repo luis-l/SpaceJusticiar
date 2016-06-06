@@ -21,8 +21,29 @@ public class TargetingSystem : MonoBehaviour
 
     private ObjectController _oc;
 
-    public bool bBurst = false;
+    private bool _bBurst = false;
+    public bool bBurst
+    {
+        get { return _bBurst; }
+        set
+        {
+            _bBurst = value;
+
+            if (_bBurst) {
+                _burstTimer.Start();
+                _burstWaitTimer.Stop();
+            }
+
+            else {
+                _burstTimer.Stop();
+                _burstWaitTimer.Stop();
+            }
+        }
+    }
+    
+    public bool bVariableBurst = false;
     private CountUpTimer _burstTimer;
+    private CountUpTimer _burstWaitTimer;
 
     public float Range
     {
@@ -42,13 +63,14 @@ public class TargetingSystem : MonoBehaviour
 
         _energyCell = new EnergyCell(100f);
         _energyCell.setEmptiedCellWaitTime(1f);
+
+        _burstTimer = new CountUpTimer(0.25f);
+        _burstWaitTimer = new CountUpTimer(0.5f);
     }
 
     void Start()
     {
         _oc = transform.parent.GetComponent<ObjectController>();
-
-        _burstTimer = new CountUpTimer(0.2f);
     }
 
     private Vector2 _velocity;
@@ -108,11 +130,37 @@ public class TargetingSystem : MonoBehaviour
     {
         bool bCanFire = _bTargetInSight && _bTargetInRange && _bNozzleIsClear && bAutoFire;
 
-        // Fire at the target if constraints are satisfied
-        if (bCanFire) {
-            Vector2 toTarget = distToTarget.normalized;
-            FireAtTarget(targetTrans.position, toTarget);
+        // Cannot fire since constraints are not satisfied.
+        if (!bCanFire) return;
+
+        if (_bBurst && !CanBurst()) return;
+
+        Vector2 toTarget = distToTarget.normalized;
+        FireAtTarget(targetTrans.position, toTarget);
+
+    }
+
+    private bool CanBurst()
+    {
+        // Once bursting is done, we need to wait a bit until we can burst again.
+        if (_burstTimer.IsDone()) {
+
+            if (bVariableBurst) {
+                _burstWaitTimer.TargetTime = Random.Range(0.2f, 1.0f);
+            }
+
+            _burstWaitTimer.Start();
+            _burstTimer.Stop();
+
         }
+
+        // Done waiting, start burst.
+        else if (_burstWaitTimer.IsDone()) {
+            _burstTimer.Start();
+            _burstWaitTimer.Stop();
+        }
+
+        return _burstTimer.IsRunning(); 
     }
 
     // Pass in the position to fire at and the direction to the target.

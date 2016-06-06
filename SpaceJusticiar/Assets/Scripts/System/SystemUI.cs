@@ -54,14 +54,26 @@ public class SystemUI : SystemBase
         energyText = GameObject.Find("Canvas/Energy/EnergyValueText").GetComponent<Text>();
         firingRateText = GameObject.Find("Canvas/FiringRate/FiringRateValue").GetComponent<Text>();
 
-        FocusOC = GameObject.Find("Player").GetComponent<ObjectController>();
-
-        _focusGun.gameObject.GetComponent<PlayerShooting>().OnChangeFiringRateEvent += UpdateFiringRateText;
-
         _reticleTrans = GameObject.Find("Canvas/Reticle").transform;
 
         _targetingLine = new VectorLine("TargetingLine", new Vector2[2], null, 0.7f);
         _targetingLine.SetColor(Color.cyan);
+    }
+
+    public void SetFocusObject(ObjectController oc)
+    {
+        FocusOC = oc;
+
+        FocusOC.OnDeathEvent += OnFocusDeath;
+
+        _focusGun.GetComponent<PlayerShooting>().OnChangeFiringRateEvent += UpdateFiringRateText;
+
+        _focusTargetSys = _focusGun.GetComponent<TargetingSystem>();
+    }
+
+    private void OnFocusDeath()
+    {
+        _reticleTrans.gameObject.SetActive(false);
     }
 
     public override void Update()
@@ -147,9 +159,7 @@ public class SystemUI : SystemBase
 
     private void HandleReticle()
     {
-        if (_focusTargetSys == null) {
-            _focusTargetSys = _focusGun.GetComponent<TargetingSystem>();
-        }
+        if (_focusTargetSys == null) return;
 
         _focusTargetSys.targetTrans = selectedTarget;
 
@@ -160,7 +170,6 @@ public class SystemUI : SystemBase
         else {
             Systems.Instance.SystemUI.ReticleTransform.position = Camera.main.WorldToScreenPoint(_focusTargetSys.LeadingPosition);
         }
-
     }
 
     private void UpdateFiringRateText()
