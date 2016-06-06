@@ -154,9 +154,9 @@ public class SystemUI : SystemBase
     {
         GameObject textDamage = UIPools.Instance.Fetch("DamageText");
         TextBehavior textBehavior = textDamage.GetComponent<TextBehavior>();
-        textBehavior.life = 1.5f;
+        textBehavior.life = 1.7f;
         textBehavior.lerpSpeed = Random.Range(0.15f, 0.5f);
-        textBehavior.Text.text = (damage * 100).ToString("0.##");
+        textBehavior.Text.text = (damage * 100).ToString("0");
 
         Vector2 screenCoord = Camera.main.WorldToScreenPoint(damagedObject.transform.position);
         textBehavior.RectTransform.position = screenCoord;

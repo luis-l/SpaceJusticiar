@@ -78,7 +78,8 @@ public class ProjectileBehavior : MonoBehaviour
 
             ObjectController oc = other.GetComponent<ObjectController>();
             if (oc != null) {
-                oc.ApplyDamage(damage);
+                Vector2 velDiff = oc.RigidBody.velocity - _rigid.velocity;
+                oc.ApplyDamage(damage * velDiff.magnitude * 0.06f);
             }
 
             // Make bullet impacts responsive near the player by shaking the camera a bit.
