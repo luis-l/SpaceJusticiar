@@ -1,11 +1,14 @@
-﻿Shader "Custom/Glow Shader" {
+﻿
+// 2D Fresnel
+
+Shader "Custom/Fresnel Shader" {
 	Properties {
 
 		_TransformScale("Transform Scale", float) = 1
 
 		_GlowSize("Size", Range(1, 4)) = 1.1
 		_Color("Color", Color) = (0, 1, 1, 1)
-		_GradientExp("Gradient Exponent", Range(0, 3)) = 1
+		_GradientExp("Gradient Exponent", Range(0, 4)) = 1
 		_Brightness("Brightness", Range(0, 10)) = 1
 	}
 
@@ -76,7 +79,7 @@
 				float ratio = 1.0 - pow(distToSurfaceNormalized, _GradientExp);
 
 				// Apply gradient ratio.
-				_Color *= ratio;
+				_Color *= 1 - ratio;
 
 				float4 diffuseReflection = _Color * _Brightness;
 				return diffuseReflection;

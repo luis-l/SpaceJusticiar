@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private ObjectController _oc;
 
+    [SerializeField]
+    private GameObject _shield;
+
     private Vector2 _thrustDir;
 
     public ObjectController OC { get { return _oc; } }
@@ -60,31 +63,15 @@ public class PlayerController : MonoBehaviour
 
         _prevPlayerPos = transform.position;
 
+        _shield.SetActive(false);
+
         Systems.Instance.SystemUI.SetFocusObject(_oc);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && _oc.EnergyCell.Charge > 0) {
-            Time.timeScale = 0.5f;
-            _bInSlowMotion = true;
-        }
-        else if (Input.GetKeyUp(KeyCode.Space)) {
-            Time.timeScale = 1f;
-            _bInSlowMotion = false;
-        }
-
-        if (_bInSlowMotion && _oc.EnergyCell.Charge > 0) {
-            _oc.EnergyCell.UseEnergy(_energySlowTimeDrainRate * Time.deltaTime);
-        }
-
-        // Set to normal time scale if we ran out of energy.
-        // Set other values when energy runs out too.
-        if (_oc.EnergyCell.Charge == 0) {
-            _bInSlowMotion = false;
-            Time.timeScale = 1f;
-        }
+        HandleSpecial();
 
         _thrustDir = GetThrustDirection();
         PlayThrustEffect(_thrustDir * acceleration, _thrustDir);
@@ -120,6 +107,32 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+    private void HandleSpecial()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && _oc.EnergyCell.Charge > 0) {
+            //Time.timeScale = 0.5f;
+            _bInSlowMotion = true;
+            _shield.SetActive(true);
+        }
+        else if (Input.GetKeyUp(KeyCode.Space)) {
+            //Time.timeScale = 1f;
+            _bInSlowMotion = false;
+            _shield.SetActive(false);
+        }
+
+        if (_bInSlowMotion && _oc.EnergyCell.Charge > 0) {
+            _oc.EnergyCell.UseEnergy(_energySlowTimeDrainRate * Time.deltaTime);
+        }
+
+        // Set to normal time scale if we ran out of energy.
+        // Set other values when energy runs out too.
+        if (_oc.EnergyCell.Charge == 0) {
+            _bInSlowMotion = false;
+            //Time.timeScale = 1f;
+            _shield.SetActive(false);
+        }
+    }
 
     private Vector3 GetThrustDirection()
     {

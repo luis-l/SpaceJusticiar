@@ -146,7 +146,8 @@ public class TargetingSystem : MonoBehaviour
         if (_burstTimer.IsDone()) {
 
             if (bVariableBurst) {
-                _burstWaitTimer.TargetTime = Random.Range(0.2f, 1.0f);
+                _burstWaitTimer.TargetTime = Random.Range(0.1f, 1.2f);
+                _burstTimer.TargetTime = Random.Range(0.18f, 0.35f);
             }
 
             _burstWaitTimer.Start();

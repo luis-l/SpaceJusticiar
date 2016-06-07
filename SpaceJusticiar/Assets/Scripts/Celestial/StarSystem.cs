@@ -240,13 +240,11 @@ public class StarSystem
 
     private void TerraformPlanet(CelestialBody planet)
     {
-        // Decide temperature
+        // Determine rough temperature based on distance from star
 
         // Decide aesthetics based on temperature
 
-        // Morph mountains and canyons
-
-        // Decide if it can hold life
+        // Place non-life entities
 
         // Place life entities
     }

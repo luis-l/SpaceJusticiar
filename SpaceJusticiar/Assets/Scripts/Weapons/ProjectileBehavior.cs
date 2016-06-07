@@ -74,7 +74,12 @@ public class ProjectileBehavior : MonoBehaviour
             transform.parent = _planet.transform;
         }
 
-        if (other.tag == "Collidable" || other.tag == targetTag) {
+        else if (other.tag == "Reflector") {
+            _rigid.velocity = -_rigid.velocity * 0.8f;
+            other.GetComponent<AudioSource>().Play();
+        }
+
+        else if (other.tag == "Collidable" || other.tag == targetTag) {
 
             ObjectController oc = other.GetComponent<ObjectController>();
             if (oc != null) {
