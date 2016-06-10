@@ -74,6 +74,7 @@ public class SystemUI : SystemBase
     private void OnFocusDeath()
     {
         _reticleTrans.gameObject.SetActive(false);
+        _targetingLine.active = false;
     }
 
     public override void Update()

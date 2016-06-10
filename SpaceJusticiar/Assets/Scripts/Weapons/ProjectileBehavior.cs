@@ -75,7 +75,29 @@ public class ProjectileBehavior : MonoBehaviour
         }
 
         else if (other.tag == "Reflector") {
-            _rigid.velocity = -_rigid.velocity * 0.8f;
+
+            Vector2 toReflector = transform.position - other.transform.position;
+
+            // Normal between reflector and projectile
+            Vector2 normal = toReflector.normalized;
+            
+            // The tangent of the normal
+            Vector2 tangent = new Vector2(normal.y, -normal.x);
+
+            // Project the velocity of the projectile to the normal;
+            float velNormalProjection = Vector2.Dot(_rigid.velocity, normal);
+
+            // Project the velocity of the projectile to the tanget.
+            float velTangentProjection = Vector2.Dot(_rigid.velocity, tangent);
+
+            // Convert projections to vectors.
+            Vector2 reflectedNormal = normal * velNormalProjection;
+            Vector2 reflectedTangent = tangent * velTangentProjection;
+
+            Vector2 reflection = -reflectedNormal + reflectedTangent;
+
+            _rigid.velocity = reflection * 0.7f;
+
             other.GetComponent<AudioSource>().Play();
         }
 
