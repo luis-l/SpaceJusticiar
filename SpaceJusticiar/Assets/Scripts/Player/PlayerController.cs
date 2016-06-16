@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
     public float gravityScale = 1f;
 
     public Transform camTransform = null;
-    private CameraController _camController = null;
 
     private Vector3 _prevPlayerPos;
 
@@ -52,8 +51,6 @@ public class PlayerController : MonoBehaviour
         transform.localPosition = Vector2.zero;
 
         rigidBody = gameObject.GetComponent<Rigidbody2D>();
-
-        _camController = camTransform.gameObject.GetComponent<CameraController>();
 
         Vector2 newPos = transform.position;
         newPos.y = _planet.transform.position.y + _planet.GetSurfaceRadius() + 0.1f;
@@ -200,28 +197,12 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Projectile") {
-
-            // Projectile is meant to hit enemy
-            ProjectileBehavior proj = other.gameObject.GetComponent<ProjectileBehavior>();
-            if (proj.targetTag == gameObject.tag) {
-
-                CameraShake camShake = _camController.CameraShake;
-                camShake.duration = 0.65f;
-                camShake.magnitude = 1f;
-                camShake.speed = 5f;
-                camShake.PlayShake();
-
-                _camController.FillScreen(Color.white, 0.1f);
-            }
-        }
-
-        else if (other.name == "AreaOfInfluence") {
+        if (other.name == "AreaOfInfluence") {
 
             // Update the planet reference which is the owner of the AreaOfInfluence child object
             _planet = other.transform.parent.gameObject.GetComponent<CelestialBody>();
             transform.parent = _planet.transform;
-            
+
             // Air resistance in planet
             rigidBody.drag = 0.3f;
 

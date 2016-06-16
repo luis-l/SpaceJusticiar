@@ -14,7 +14,7 @@ public class ProjectileBehavior : MonoBehaviour
     public float energyCost = 0.03f;
 
     public float gravityScale = 0f;
-    private CelestialBody _planet= null;
+    private CelestialBody _planet = null;
 
     private Rigidbody2D _rigid = null;
 
@@ -76,27 +76,7 @@ public class ProjectileBehavior : MonoBehaviour
 
         else if (other.tag == "Reflector") {
 
-            Vector2 toReflector = transform.position - other.transform.position;
-
-            // Normal between reflector and projectile
-            Vector2 normal = toReflector.normalized;
-            
-            // The tangent of the normal
-            Vector2 tangent = new Vector2(normal.y, -normal.x);
-
-            // Project the velocity of the projectile to the normal;
-            float velNormalProjection = Vector2.Dot(_rigid.velocity, normal);
-
-            // Project the velocity of the projectile to the tanget.
-            float velTangentProjection = Vector2.Dot(_rigid.velocity, tangent);
-
-            // Convert projections to vectors.
-            Vector2 reflectedNormal = normal * velNormalProjection;
-            Vector2 reflectedTangent = tangent * velTangentProjection;
-
-            Vector2 reflection = -reflectedNormal + reflectedTangent;
-
-            _rigid.velocity = reflection * 0.7f;
+            Reflect(other.transform);
 
             other.GetComponent<AudioSource>().Play();
         }
@@ -111,22 +91,12 @@ public class ProjectileBehavior : MonoBehaviour
 
             // Make bullet impacts responsive near the player by shaking the camera a bit.
             if (other.tag != "Player") {
-                Vector2 distToCam = Camera.main.transform.position - transform.position;
-                float mag = distToCam.magnitude;
-                if (mag < 20) {
+                NearImpactShake();
+            }
 
-                    // The closer the impact, the stronger the camera shake.
-                    float shakeScalar = 1f / (mag * mag);
-                    if (shakeScalar > 0.4f) {
-                        shakeScalar = 0.4f;
-                    }
-
-                    CameraShake camShake = Systems.Instance.SystemUI.CameraController.CameraShake;
-                    camShake.duration = 0.3f;
-                    camShake.magnitude = shakeScalar;
-                    camShake.speed = 3f;
-                    camShake.PlayShake();
-                }
+            // Player is hit.
+            else {
+                OnHitShake();
             }
 
             GameObject explosion = Pools.Instance.Fetch(_explosionTypeName);
@@ -137,6 +107,62 @@ public class ProjectileBehavior : MonoBehaviour
 
             Pools.Instance.Recycle(gameObject);
         }
+    }
+
+    private void Reflect(Transform other)
+    {
+        Vector2 toReflector = transform.position - other.position;
+
+        // Normal between reflector and projectile
+        Vector2 normal = toReflector.normalized;
+
+        // The tangent of the normal
+        Vector2 tangent = new Vector2(normal.y, -normal.x);
+
+        // Project the velocity of the projectile to the normal;
+        float velNormalProjection = Vector2.Dot(_rigid.velocity, normal);
+
+        // Project the velocity of the projectile to the tanget.
+        float velTangentProjection = Vector2.Dot(_rigid.velocity, tangent);
+
+        // Convert projections to vectors.
+        Vector2 reflectedNormal = normal * velNormalProjection;
+        Vector2 reflectedTangent = tangent * velTangentProjection;
+
+        Vector2 reflection = -reflectedNormal + reflectedTangent;
+
+        _rigid.velocity = reflection * 0.7f;
+    }
+
+    private void NearImpactShake()
+    {
+        Vector2 distToCam = Camera.main.transform.position - transform.position;
+        float mag = distToCam.magnitude;
+        if (mag < 20) {
+
+            // The closer the impact, the stronger the camera shake.
+            float shakeScalar = 1f / (mag * mag);
+            if (shakeScalar > 0.4f) {
+                shakeScalar = 0.4f;
+            }
+
+            CameraShake camShake = Systems.Instance.SystemUI.CameraController.CameraShake;
+            camShake.duration = 0.3f;
+            camShake.magnitude = shakeScalar;
+            camShake.speed = 3f;
+            camShake.PlayShake();
+        }
+    }
+
+    private void OnHitShake()
+    {
+        CameraShake camShake = Systems.Instance.SystemUI.CameraController.CameraShake;
+        camShake.duration = 0.75f;
+        camShake.magnitude = Mathf.Clamp(damage * 15, 0f, 1.5f);
+        camShake.speed = 5f;
+        camShake.PlayShake();
+
+        Systems.Instance.SystemUI.CameraController.FillScreen(new Color(1, 1, 1, damage * 10), 0.1f);
     }
 
     void OnTriggerExit2D(Collider2D other)
