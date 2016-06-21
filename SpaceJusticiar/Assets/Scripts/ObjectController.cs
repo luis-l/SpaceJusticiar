@@ -18,6 +18,11 @@ public class ObjectController : MonoBehaviour
 
     public Rigidbody2D RigidBody { get { return _rigid; } }
 
+    /// <summary>
+    /// Make weaker or stronger.
+    /// </summary>
+    public float damageMultiplier = 1f;
+
     void Awake()
     {
         _health = new HealthComponent();
@@ -53,6 +58,7 @@ public class ObjectController : MonoBehaviour
 
     public void ApplyDamage(float damage)
     {
+        damage *= damageMultiplier;
         OnDamageEvent(this, damage);
         _health.DealDamage(damage);
 

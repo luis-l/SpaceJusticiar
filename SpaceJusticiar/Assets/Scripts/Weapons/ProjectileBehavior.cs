@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class ProjectileBehavior : MonoBehaviour
 {
 

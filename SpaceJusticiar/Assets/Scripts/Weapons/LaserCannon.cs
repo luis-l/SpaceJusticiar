@@ -21,12 +21,15 @@ public class LaserCannon : MonoBehaviour
 
     public float spread = 0f;
 
+    [SerializeField]
+    private float _firingDelay = 0.1f;
+
     void Awake()
     {
         if (_nozzleTrans == null)
             _nozzleTrans = transform;
 
-        _firingTimer = new CountUpTimer(0.1f);
+        _firingTimer = new CountUpTimer(_firingDelay);
     }
 
     void Start()
@@ -39,14 +42,14 @@ public class LaserCannon : MonoBehaviour
     /// energy from the cell.
     /// </summary>
     /// <param name="targetPos"></param>
-    public void Fire(Vector2 targetPos, string targetTag, EnergyCell energyCell, Vector2 initialVelocity)
+    public void Fire(Vector2 targetPos, string targetTag, EnergyCell energyCell, Vector2 initialVelocity, Transform targetTrans = null)
     {
         if (!_firingTimer.HasStarted()) {
             _firingTimer.Start();
         }
 
         if (_firingTimer.IsDone() && energyCell.UseEnergy(_projectileBehavior.energyCost)) {
-            FireProjectile(targetPos, targetTag, energyCell, initialVelocity);
+            FireProjectile(targetPos, targetTag, energyCell, initialVelocity, targetTrans);
 
             // Allow for 'single fire' mode by doing a forced reset of the timer.
             _firingTimer.Restart();
@@ -69,7 +72,7 @@ public class LaserCannon : MonoBehaviour
         }
     }
 
-    private void FireProjectile(Vector2 targetPos, string targetTag, EnergyCell energyCell, Vector2 initialVelocity)
+    private void FireProjectile(Vector2 targetPos, string targetTag, EnergyCell energyCell, Vector2 initialVelocity, Transform targetTrans)
     {
         Vector2 toTarget = targetPos - (Vector2)_nozzleTrans.position;
 
@@ -81,6 +84,11 @@ public class LaserCannon : MonoBehaviour
 
         GameObject proj = Pools.Instance.Fetch(_projectileType.name);
         proj.transform.position = _nozzleTrans.position;
+
+        // Setup missile
+        if (_projectileType.name == "Missile" && targetTrans != null) {
+            proj.GetComponent<Homing>().target = targetTrans;
+        }
  
         Rigidbody2D projRigid = proj.GetComponent<Rigidbody2D>();
         projRigid.velocity = initialVelocity;

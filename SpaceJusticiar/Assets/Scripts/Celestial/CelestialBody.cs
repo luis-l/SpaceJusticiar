@@ -32,6 +32,8 @@ public class CelestialBody : MonoBehaviour
 
     private bool _bIsGraphicActive = true;
 
+    //private VectorLine _influenceBorder;
+
     void Awake()
     {
         _seed = StarSystem.GetRandomInt();
@@ -62,27 +64,24 @@ public class CelestialBody : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        /*
         // Create the influence graphic boundry.
         if (_areaOfInfluence != null) {
-            
-            // Uses up too much GC for some reason.
-            //int segments = 45;
-            //Material mat = Resources.Load<Material>("Materials/Line");
 
-            // VectorLine areaOfInfluenceLine = new VectorLine("AreaOfInfluence", new Vector2[segments * 2], mat, 4);
+            int segments = 45;
+            Material mat = Resources.Load<Material>("Materials/Line");
 
-            // areaOfInfluenceLine.MakeCircle(Vector2.zero, _areaOfInfluence.radius, segments);
-            // areaOfInfluenceLine.textureScale = 5f;
+            _influenceBorder = new VectorLine("AreaOfInfluence", new Vector2[segments * 2], mat, 4);
 
-            // areaOfInfluenceLine.drawTransform = transform;
-            // areaOfInfluenceLine.Draw();
+            Vector2 screenPos = Camera.main.WorldToScreenPoint(transform.position);
 
-            //VectorManager.ObjectSetup(gameObject, areaInfluenceBorder, Visibility.Dynamic, Brightness.None);
-            //areaInfluenceBorder.
-            
-            //areaInfluenceBorder.Draw3DAuto();
-        }
+            float radius = Camera.main.WorldToScreenPoint(new Vector2(_areaOfInfluence.radius, 0)).magnitude;
+
+            _influenceBorder.MakeCircle(screenPos, 400, segments);
+            _influenceBorder.textureScale = 5f;
+
+            _influenceBorder.drawTransform = transform;
+        } */
     }
 
     public void RecalculateBounds()
@@ -105,6 +104,13 @@ public class CelestialBody : MonoBehaviour
 
             mesh.bounds = expandedBounds;
         }
+    }
+
+    void Update()
+    {
+        //if (_influenceBorder != null) {
+           // _influenceBorder.Draw();
+        //}
     }
 
     // Update is called once per frame

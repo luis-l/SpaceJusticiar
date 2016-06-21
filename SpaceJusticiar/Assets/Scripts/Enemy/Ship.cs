@@ -74,6 +74,11 @@ public class Ship : MonoBehaviour
                 ts.mainGun.spread = 2f;
             }
 
+            else if (ts.mainGun.ProjectileType.name == "Missile") {
+                firingForce = 800f;
+                firingDelay = 1f;
+            }
+
             ts.mainGun.FiringDelay = firingDelay;
             ts.mainGun.firingForce = firingForce;
             ts.Range = 30f;

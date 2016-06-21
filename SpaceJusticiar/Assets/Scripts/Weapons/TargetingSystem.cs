@@ -171,12 +171,14 @@ public class TargetingSystem : MonoBehaviour
 
         float rotZ = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
         mainGun.transform.rotation = Quaternion.Euler(0, 0, rotZ);
-        mainGun.Fire(targetPos, targetTrans.tag, _energyCell, _velocity);
+        mainGun.Fire(targetPos, targetTrans.tag, _energyCell, _velocity, targetTrans);
     }
 
     // Get the position to aim at using target leading.
     private Vector2 TargetLeadPosition(Vector2 targetPos, ref Vector2 toTarget)
     {
+
+        if (!bUseTargetLeading) return targetPos;
 
         float projectileForce = mainGun.firingForce;
         float projectileMass = mainGun.ProjectileType.GetComponent<Rigidbody2D>().mass;

@@ -60,7 +60,7 @@ public class PlayerShooting : MonoBehaviour
                 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             }
 
-            _mainGun.Fire(mousePos, "Enemy", playerController.OC.EnergyCell, initialProjVelocity);
+            _mainGun.Fire(mousePos, "Enemy", playerController.OC.EnergyCell, initialProjVelocity, _targetSys.targetTrans);
         }
 
         // Manage chaning firing rate
