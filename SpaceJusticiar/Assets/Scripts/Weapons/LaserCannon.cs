@@ -4,6 +4,7 @@ public class LaserCannon : MonoBehaviour
 {
     private float _lowestFiringDelay = 0.05f;
     private float _highestFiringDelay = 0.25f;
+    public bool bCapDelay = false;
 
     public float firingForce = 3000f;
 
@@ -61,14 +62,13 @@ public class LaserCannon : MonoBehaviour
         get { return _firingTimer.TargetTime; }
         set
         {
-            if (value > _highestFiringDelay)
-                _firingTimer.TargetTime = _highestFiringDelay;
+            float firingRate = value;
 
-            else if (value < _lowestFiringDelay)
-                _firingTimer.TargetTime = _lowestFiringDelay;
+            if (bCapDelay) {
+                firingRate = Mathf.Clamp(firingRate, _lowestFiringDelay, _highestFiringDelay);
+            }
 
-            else
-                _firingTimer.TargetTime = value;
+            _firingTimer.TargetTime = firingRate;
         }
     }
 

@@ -28,6 +28,7 @@ public class PlayerShooting : MonoBehaviour
 
         _mainGun.firingForce = 1050f;
         _mainGun.FiringDelay = 0.15f;
+        _mainGun.bCapDelay = true;
 
         prevPos = transform.position;
         prevMousePos = Input.mousePosition;
