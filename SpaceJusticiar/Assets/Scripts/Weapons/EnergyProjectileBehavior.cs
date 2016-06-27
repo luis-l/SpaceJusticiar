@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class ProjectileBehavior : MonoBehaviour
+public class EnergyProjectileBehavior : EnergyObject
 {
 
     public float life = 2f;
@@ -12,17 +12,10 @@ public class ProjectileBehavior : MonoBehaviour
     // What the projectile can hit.
     public string targetTag = "None";
 
-    public float energyCost = 0.03f;
-
     public float gravityScale = 0f;
     private CelestialBody _planet = null;
 
     private Rigidbody2D _rigid = null;
-
-    public float damage = 0.2f;
-
-    [SerializeField]
-    private string _explosionTypeName = "GreenEnergyExplosion";
 
     // Use this for initialization
     void Start()

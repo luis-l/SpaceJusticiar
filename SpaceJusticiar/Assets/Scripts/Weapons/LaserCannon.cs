@@ -15,7 +15,7 @@ public class LaserCannon : MonoBehaviour
 
     [SerializeField]
     private GameObject _projectileType = null;
-    private ProjectileBehavior _projectileBehavior = null;
+    private EnergyObject _projectileBehavior = null;
 
     public AudioSource firingSfx = null;
 
@@ -34,7 +34,7 @@ public class LaserCannon : MonoBehaviour
 
     void Start()
     {
-        _projectileBehavior = _projectileType.GetComponent<ProjectileBehavior>();
+        _projectileBehavior = _projectileType.GetComponent<EnergyObject>();
     }
 
     /// <summary>
@@ -89,18 +89,32 @@ public class LaserCannon : MonoBehaviour
         if (_projectileType.name == "Missile" && targetTrans != null) {
             proj.GetComponent<Homing>().target = targetTrans;
         }
- 
-        Rigidbody2D projRigid = proj.GetComponent<Rigidbody2D>();
-        projRigid.velocity = initialVelocity;
-        projRigid.AddForce(toTarget * firingForce);
 
-        ProjectileBehavior projBehav = proj.GetComponent<ProjectileBehavior>();
-        projBehav.targetTag = targetTag;
+        if (proj.tag == "Projectile") {
 
-        // Rotate based on target position direction
-        Vector2 velDir = toTarget;
-        float z = Mathf.Atan2(velDir.y, velDir.x);
-        proj.transform.rotation = Quaternion.Euler(0, 0, Mathf.Rad2Deg * z);
+            Rigidbody2D projRigid = proj.GetComponent<Rigidbody2D>();
+            projRigid.velocity = initialVelocity;
+            projRigid.AddForce(toTarget * firingForce);
+
+            EnergyProjectileBehavior projBehav = proj.GetComponent<EnergyProjectileBehavior>();
+            projBehav.targetTag = targetTag;
+
+            // Rotate based on target position direction
+            Vector2 velDir = toTarget;
+            float z = Mathf.Atan2(velDir.y, velDir.x);
+            proj.transform.rotation = Quaternion.Euler(0, 0, Mathf.Rad2Deg * z);
+        }
+
+        else if (proj.tag == "Beam") {
+
+            BeamBehavior beam = proj.GetComponent<BeamBehavior>();
+            beam.targetPosition = targetPos;
+            beam.Project();
+        }
+
+        else {
+            Debug.LogWarning("Unkown object to fire, name = " + proj.name);
+        }
 
         firingSfx.Play();
     }
@@ -112,7 +126,7 @@ public class LaserCannon : MonoBehaviour
         set
         {
             _projectileType = value;
-            _projectileBehavior = _projectileType.GetComponent<ProjectileBehavior>();
+            _projectileBehavior = _projectileType.GetComponent<EnergyObject>();
         }
     }
 

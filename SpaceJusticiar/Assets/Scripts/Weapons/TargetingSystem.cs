@@ -179,6 +179,7 @@ public class TargetingSystem : MonoBehaviour
     {
 
         if (!bUseTargetLeading) return targetPos;
+        if (mainGun.ProjectileType.tag == "Beam") return targetPos;
 
         float projectileForce = mainGun.firingForce;
         float projectileMass = mainGun.ProjectileType.GetComponent<Rigidbody2D>().mass;

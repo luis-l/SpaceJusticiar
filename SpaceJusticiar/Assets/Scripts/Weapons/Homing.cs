@@ -2,7 +2,7 @@
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(ProjectileBehavior))]
+[RequireComponent(typeof(EnergyProjectileBehavior))]
 public class Homing : MonoBehaviour {
 
     /// <summary>
@@ -13,6 +13,8 @@ public class Homing : MonoBehaviour {
     private Rigidbody2D _rigid;
 
     public float turningForce = 100f;
+
+    private float _maxHomingSpeed = 15f;
 
 	// Use this for initialization
 	void Start () {
@@ -34,8 +36,8 @@ public class Homing : MonoBehaviour {
             _rigid.AddForce(toTarget * turningForce);
 
             // Cap velocity
-            if (_rigid.velocity.magnitude > 30f) {
-                _rigid.velocity = _rigid.velocity.normalized * 30f;
+            if (_rigid.velocity.sqrMagnitude > _maxHomingSpeed * _maxHomingSpeed) {
+                _rigid.velocity = _rigid.velocity.normalized * _maxHomingSpeed;
             }
         }
     }
