@@ -65,7 +65,12 @@ public class BeamBehavior : EnergyObject
             // Deal damage
             ObjectController oc = hit.collider.gameObject.GetComponent<ObjectController>();
             if (oc != null) {
-                oc.ApplyDamage(damage);
+
+                // Less damage is dealt at farther ranges.
+                float beamLength = (start - hit.point).magnitude;
+                float hitDistRatio = beamLength / range;
+                float finalDamage = damage * (1 - hitDistRatio);
+                oc.ApplyDamage(finalDamage);
 
                 // Make bullet impacts responsive near the player by shaking the camera a bit.
                 if (hit.collider.tag != "Player") {
@@ -74,7 +79,7 @@ public class BeamBehavior : EnergyObject
 
                 // Player is hit.
                 else {
-                    OnHitShake();
+                    OnHitShake(finalDamage);
                 }
             }
 
@@ -129,11 +134,11 @@ public class BeamBehavior : EnergyObject
         }
     }
 
-    private void OnHitShake()
+    private void OnHitShake(float damageScalar)
     {
         CameraShake camShake = Systems.Instance.SystemUI.CameraController.CameraShake;
         camShake.duration = 0.75f;
-        camShake.magnitude = Mathf.Clamp(damage * 15, 0f, 1.5f);
+        camShake.magnitude = Mathf.Clamp(damageScalar, 0.3f, 1.5f);
         camShake.speed = 5f;
         camShake.PlayShake();
 
