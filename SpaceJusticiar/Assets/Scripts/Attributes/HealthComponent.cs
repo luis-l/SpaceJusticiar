@@ -17,6 +17,8 @@ public class HealthComponent
         _regenRate = regenRate;
         _hitWaitTimer = new CountUpTimer(1f);
         Health = initialHealth;
+
+
     }
 
     public void Update()

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 using Vectrosity;
 
@@ -32,6 +32,8 @@ public class SystemUI : SystemBase
     // A line used to associate which gameobject is being targeted.
     private VectorLine _targetingLine;
 
+    private Dictionary<ObjectController, HealthBarData> _displayedHealthBars = new Dictionary<ObjectController, HealthBarData>();
+
     private ObjectController FocusOC
     {
         get { return _focusOC; }
@@ -46,6 +48,7 @@ public class SystemUI : SystemBase
 
     public SystemUI()
     {
+
         //Cursor.visible = false;
 
         _cameraController = Camera.main.gameObject.GetComponent<CameraController>();
@@ -139,6 +142,7 @@ public class SystemUI : SystemBase
 
         RenderTargetingLine();
         HandleReticle();
+        UpdateHealthBars();
     }
 
     private void RenderTargetingLine()
@@ -149,7 +153,7 @@ public class SystemUI : SystemBase
 
             _targetingLine.points2[0] = Camera.main.WorldToScreenPoint(selectedTarget.transform.position);
             _targetingLine.points2[1] = _reticleTrans.position;
-            
+
             _targetingLine.Draw();
         }
 
@@ -181,15 +185,106 @@ public class SystemUI : SystemBase
     public void DisplayDamageFeedback(ObjectController damagedObject, float damage)
     {
         GameObject textDamage = UIPools.Instance.Fetch("DamageText");
-        TextBehavior textBehavior = textDamage.GetComponent<TextBehavior>();
-        textBehavior.life = 1.7f;
-        textBehavior.lerpSpeed = Random.Range(0.15f, 0.5f);
-        textBehavior.Text.text = (damage * 100).ToString("0");
+
+        UIFader textFader = textDamage.GetComponent<UIFader>();
+        textFader.life = 1.7f;
+        textFader.lerpSpeed = Random.Range(0.15f, 0.5f);
+        textFader.alphaDecayRate = 1.2f;
+
+        Text text = (Text)textFader.Graphics[0];
+        text.text = (damage * 100).ToString("0");
 
         Vector2 screenCoord = Camera.main.WorldToScreenPoint(damagedObject.transform.position);
-        textBehavior.RectTransform.position = screenCoord;
-        textBehavior.endPosition = screenCoord + Random.insideUnitCircle * 300;
+        textFader.RectTransform.position = screenCoord;
+        textFader.endPosition = screenCoord + Random.insideUnitCircle * 300;
+
+        BindHealthBar(damagedObject);
+    }
+
+    private void BindHealthBar(ObjectController damagedObject)
+    {
+        if (_displayedHealthBars.ContainsKey(damagedObject)) {
+            HealthBarData data = _displayedHealthBars[damagedObject];
+            data.Fader.SetAlpha(1f);
+            data.Fader.ResetLife();
+            return;
+        }
+
+        GameObject healthBar = UIPools.Instance.Fetch("HealthBar");
+
+        UIFader healthFader = healthBar.GetComponent<UIFader>();
+        healthFader.associatedOC = damagedObject;
+        healthFader.life = 8f;
+        healthFader.lerpSpeed = 0;
+        healthFader.alphaDecayRate = 0.2f;
+
+        Slider slider = healthFader.GetComponent<Slider>();
+        slider.value = damagedObject.Health.GetHealth();
+
+        Vector2 screenCoord = Camera.main.WorldToScreenPoint(damagedObject.transform.position);
+        float width = healthFader.RectTransform.rect.width;
+        float height = healthFader.RectTransform.rect.height;
+        
+        healthFader.RectTransform.position = screenCoord + new Vector2(width / 2f, -height);
+
+        _displayedHealthBars.Add(damagedObject, new HealthBarData(damagedObject, slider, healthFader));
+    }
+
+    public void UpdateHealthBars()
+    {
+        if (_displayedHealthBars.Count == 0) return;
+
+        foreach (KeyValuePair<ObjectController, HealthBarData> pair in _displayedHealthBars) {
+
+            ObjectController oc = pair.Key;
+            Slider healthSlider = pair.Value.Slider;
+            UIFader fader = pair.Value.Fader;
+
+            healthSlider.value = oc.Health.GetHealth();
+
+            Vector2 screenCoord = Camera.main.WorldToScreenPoint(oc.transform.position);
+
+            float width = fader.RectTransform.rect.width;
+            float height = fader.RectTransform.rect.height;
+
+            fader.RectTransform.position = screenCoord + new Vector2(width / 2f, -height);
+        }
+    }
+
+    public void OnOcDeath(ObjectController oc)
+    {
+        if (_displayedHealthBars.ContainsKey(oc)) {
+            HealthBarData data = _displayedHealthBars[oc];
+            data.Fader.CleanUp();
+            _displayedHealthBars.Remove(oc);
+        }
+    }
+
+    public void OnUI_FaderEnd(UIFader fader)
+    {
+        ObjectController oc = fader.associatedOC;
+        if (oc != null) {
+            _displayedHealthBars.Remove(oc);
+        }
     }
 
     public CameraController CameraController { get { return _cameraController; } }
+
+    private class HealthBarData
+    {
+        public HealthBarData(ObjectController oc, Slider slider, UIFader fader)
+        {
+            _oc = oc;
+            _slider = slider;
+            _fader = fader;
+        }
+
+        private ObjectController _oc;
+        private Slider _slider;
+        private UIFader _fader;
+
+        public ObjectController OC { get { return _oc; } }
+        public Slider Slider { get { return _slider; } }
+        public UIFader Fader { get { return _fader; } }
+    }
 }

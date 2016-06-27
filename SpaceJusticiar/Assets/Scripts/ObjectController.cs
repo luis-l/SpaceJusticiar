@@ -11,6 +11,9 @@ public class ObjectController : MonoBehaviour
     public delegate void OnDeathDelegate();
     public event OnDeathDelegate OnDeathEvent = delegate { };
 
+    public delegate void OnOcDeathDelegate(ObjectController oc);
+    public event OnOcDeathDelegate OnOcDeathEvent = delegate { };
+
     public delegate void OnDamageDelegate(ObjectController damagedObject, float damage);
     public event OnDamageDelegate OnDamageEvent = delegate { };
 
@@ -32,6 +35,8 @@ public class ObjectController : MonoBehaviour
     void Start()
     {
         OnDamageEvent += Systems.Instance.SystemUI.DisplayDamageFeedback;
+        OnOcDeathEvent += Systems.Instance.SystemUI.OnOcDeath;
+
         _rigid = GetComponent<Rigidbody2D>();
     }
 
@@ -48,6 +53,7 @@ public class ObjectController : MonoBehaviour
     public void Destroy()
     {
         OnDeathEvent();
+        OnOcDeathEvent(this);
         Destroy(gameObject, 0.001f);
 
         // Do no let the camera die if it is a child of the game object.
