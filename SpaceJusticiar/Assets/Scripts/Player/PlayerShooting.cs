@@ -49,11 +49,13 @@ public class PlayerShooting : MonoBehaviour
             if (Input.GetMouseButton(0) && _mainGun.ProjectileType.name != projectileTypes[0].name) {
                 _mainGun.ProjectileType = projectileTypes[0];
                 _mainGun.firingForce = 1000f;
+                _mainGun.firingSfx.pitch = 1;
             }
 
             else if (Input.GetMouseButton(1) && _mainGun.ProjectileType.name != projectileTypes[1].name) {
                 _mainGun.ProjectileType = projectileTypes[1];
                 _mainGun.firingForce = 480f;
+                _mainGun.firingSfx.pitch = 2.2f;
             }
 
             Vector2 mousePos = new Vector2();
