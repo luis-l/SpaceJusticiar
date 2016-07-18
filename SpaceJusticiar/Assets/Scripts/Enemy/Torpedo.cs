@@ -13,9 +13,13 @@ public class Torpedo : MonoBehaviour {
 
     public int particleEmissions = 2;
 
+    public float damage;
+
 	// Use this for initialization
     void Start()
     {
+        damage = 0.02f;
+
         Vector2 down = -CelestialBody.GetUp(_oc.PlanetTarget, transform);
         GetComponent<Rigidbody2D>().velocity = down * 5f;
 

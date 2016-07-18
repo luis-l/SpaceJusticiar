@@ -34,6 +34,13 @@ public class SystemUI : SystemBase
 
     private Dictionary<ObjectController, HealthBarData> _displayedHealthBars = new Dictionary<ObjectController, HealthBarData>();
 
+    private Dictionary<CelestialBody, PlanetData> _planetData = new Dictionary<CelestialBody, PlanetData>();
+    private HashSet<ObjectController> _landedInvaders = new HashSet<ObjectController>();
+
+    private Text _timerText;
+    private Text _onPlanetText;
+    private Text _planetIntegrityText;
+
     private ObjectController FocusOC
     {
         get { return _focusOC; }
@@ -45,6 +52,11 @@ public class SystemUI : SystemBase
     }
 
     private TargetingSystem _focusTargetSys;
+
+    // How long the player played until losing.
+    private float _scoreTimer = 0;
+    private bool _bStopScoreTimer = false;
+    private int _pastSecondUpdate = 0;
 
     public SystemUI()
     {
@@ -61,6 +73,21 @@ public class SystemUI : SystemBase
 
         _targetingLine = new VectorLine("TargetingLine", new Vector2[2], null, 0.7f);
         _targetingLine.SetColor(Color.cyan);
+
+        _timerText = GameObject.Find("Canvas/Timer/Value").GetComponent<Text>();
+        _onPlanetText = GameObject.Find("Canvas/OnPlanetCounter/Value").GetComponent<Text>();
+        _planetIntegrityText = GameObject.Find("Canvas/PlanetIntegrity/Value").GetComponent<Text>();
+
+        foreach (CelestialBody body in Systems.Instance.SpaceEngine.ActiveStarSystem.Planets) {
+
+            CelestialPhysical cp = body.CelestialPhysical;
+
+            cp.OnInvaderLandingEvent += OnInvaderLands;
+            cp.OnEnergyObjectHitEvent += OnEnergyObjectHits;
+            cp.OnPhysicalHitEvent += OnPhysicalHits;
+
+            _planetData.Add(body, new PlanetData());
+        }
     }
 
     public void SetFocusObject(ObjectController oc)
@@ -78,11 +105,14 @@ public class SystemUI : SystemBase
     {
         _reticleTrans.gameObject.SetActive(false);
         _targetingLine.active = false;
+
+        _bStopScoreTimer = true;
     }
 
     public override void Update()
     {
         if (Input.GetKeyDown(KeyCode.R)) {
+            Time.timeScale = 1f;
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
@@ -143,6 +173,7 @@ public class SystemUI : SystemBase
         RenderTargetingLine();
         HandleReticle();
         UpdateHealthBars();
+        UpdateScoreTimer();
     }
 
     private void RenderTargetingLine()
@@ -253,6 +284,14 @@ public class SystemUI : SystemBase
 
     public void OnOcDeath(ObjectController oc)
     {
+        if (_landedInvaders.Contains(oc)) {
+            _landedInvaders.Remove(oc);
+
+            _planetData[oc.PlanetTarget].landedInvadersCount--;
+
+            _onPlanetText.text = _planetData[oc.PlanetTarget].landedInvadersCount.ToString();
+        }
+
         if (_displayedHealthBars.ContainsKey(oc)) {
             HealthBarData data = _displayedHealthBars[oc];
             data.Fader.CleanUp();
@@ -266,6 +305,71 @@ public class SystemUI : SystemBase
         if (oc != null) {
             _displayedHealthBars.Remove(oc);
         }
+    }
+
+    private void UpdateScoreTimer()
+    {
+        if (_bStopScoreTimer) return;
+
+        _scoreTimer += Time.deltaTime;
+
+        // New second.
+        if (_pastSecondUpdate != (int)_scoreTimer) {
+
+            _timerText.text = _scoreTimer.ToString("#");
+            _pastSecondUpdate = (int)_scoreTimer;
+        }
+    }
+
+
+    private void OnInvaderLands(CelestialBody body, ObjectController oc)
+    {
+        if (oc.gameObject.name == "Torpedo" || oc.gameObject.name == "Torpedo(Clone)") return;
+
+        _landedInvaders.Add(oc);
+
+        _planetData[body].landedInvadersCount++;
+
+        _onPlanetText.text = _planetData[body].landedInvadersCount.ToString();
+
+        if (_planetData[body].landedInvadersCount > 8) {
+            _bStopScoreTimer = true;
+            Time.timeScale = 0f;
+        }
+    }
+
+    private void OnEnergyObjectHits(CelestialBody body, EnergyObject eo)
+    {
+        float damageApplied = eo.damage / 40f;
+
+        _planetData[body].integrity -= damageApplied;
+
+        if (_planetData[body].integrity < 0) {
+            _planetData[body].integrity = 0;
+            _bStopScoreTimer = true;
+            Time.timeScale = 0f;
+        }
+
+        int integrityPercent = (int)(_planetData[body].integrity * 100f);
+
+        _planetIntegrityText.text = integrityPercent.ToString();
+    }
+
+    private void OnPhysicalHits(CelestialBody body, Torpedo torpedo)
+    {
+        float damageApplied = torpedo.damage;
+
+        _planetData[body].integrity -= damageApplied;
+
+        if (_planetData[body].integrity < 0) {
+            _planetData[body].integrity = 0;
+            _bStopScoreTimer = true;
+            Time.timeScale = 0f;
+        }
+
+        int integrityPercent = (int)(_planetData[body].integrity * 100f);
+
+        _planetIntegrityText.text = integrityPercent.ToString();
     }
 
     public CameraController CameraController { get { return _cameraController; } }
@@ -286,5 +390,11 @@ public class SystemUI : SystemBase
         public ObjectController OC { get { return _oc; } }
         public Slider Slider { get { return _slider; } }
         public UIFader Fader { get { return _fader; } }
+    }
+
+    private class PlanetData
+    {
+        public int landedInvadersCount = 0;
+        public float integrity = 1f;
     }
 }

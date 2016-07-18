@@ -98,8 +98,8 @@ public class StarSystem
     {
         float currentPlanetOrbitRadius = 500f + Random.Range(0, 50);
 
-        //int planetCount = Random.Range(SpaceEngine.MIN_PLANETS_PER_SYSTEM, SpaceEngine.MAX_PLANETS_PER_SYSTEM);
-        int planetCount = 1;
+        int planetCount = Random.Range(SpaceEngine.MIN_PLANETS_PER_SYSTEM, SpaceEngine.MAX_PLANETS_PER_SYSTEM);
+        //int planetCount = 1;
 
         for (int i = 0; i < planetCount; i++) {
 

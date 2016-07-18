@@ -34,6 +34,10 @@ public class CelestialBody : MonoBehaviour
 
     //private VectorLine _influenceBorder;
 
+    [SerializeField]
+    private CelestialPhysical _celestialPhysical;
+    public CelestialPhysical CelestialPhysical { get { return _celestialPhysical; } }
+
     void Awake()
     {
         _seed = StarSystem.GetRandomInt();
