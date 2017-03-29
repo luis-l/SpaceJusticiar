@@ -7,10 +7,8 @@ Feel free to use the code for any means.
 
 Video footage of game:
 
-[I'm an inline-style link](https://www.google.com)
-
-[YouTube Dev Log] (https://www.youtube.com/channel/UCAdhxvlol0r-qTvhzCgB81A)
+[YouTube Dev Log](https://www.youtube.com/channel/UCAdhxvlol0r-qTvhzCgB81A)
 
 My twitter also has some video footage.
 
-[Game Clip] (https://twitter.com/Unit_978/status/740043133287682048)
+[Game Clip](https://twitter.com/Unit_978/status/740043133287682048)
