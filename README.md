@@ -7,7 +7,7 @@ Feel free to use the code for any means.
 
 Video footage of game:
 
-[wut] (www.google.com)
+[I'm an inline-style link](https://www.google.com)
 
 [YouTube Dev Log] (https://www.youtube.com/channel/UCAdhxvlol0r-qTvhzCgB81A)
 
